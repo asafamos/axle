@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# axle
 
-## Getting Started
+Continuous accessibility compliance for the modern web. Scans on every PR, surfaces WCAG 2.1 / 2.2 AA violations inline, and generates real code fixes with Claude — never overlay widgets.
 
-First, run the development server:
+## Status
+
+Early private build. Pieces in place:
+
+- `lib/scanner.ts` — Playwright + axe-core scanner
+- `lib/fixer.ts` — Claude-powered fix generator (Sonnet 4.6, prompt-cached)
+- `app/page.tsx` — interactive scan/fix dashboard
+- `scripts/ci-scan.ts` — CLI for CI use, emits JSON + markdown
+- `.github/workflows/a11y.yml` — PR check that comments inline with results and suggested fixes
+
+## Local use
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npx playwright install chromium
+cp .env.local.example .env.local  # add ANTHROPIC_API_KEY
+npm run dev                           # interactive web UI at localhost:3000
+npm run a11y:ci -- --url https://example.com --with-ai-fixes true
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## In CI
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Drop the workflow in `.github/workflows/a11y.yml`. Add `ANTHROPIC_API_KEY` as a repo secret to enable AI fix suggestions in PR comments (otherwise scans still run, without fixes).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Every PR gets one auto-updating comment summarising violations grouped by WCAG rule, with severity, affected elements, and optional suggested diffs.

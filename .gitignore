@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# strategy / internal notes — keep local
+/docs
+.claude/settings.local.json
+
+# CI artifacts
+a11y-report.json
+a11y-report.md
