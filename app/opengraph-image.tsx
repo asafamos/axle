@@ -56,7 +56,7 @@ export default function OG() {
           </div>
         </div>
 
-        <div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
               fontSize: 80,
