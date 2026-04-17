@@ -1,0 +1,199 @@
+name: "axle — Accessibility Compliance CI"
+description: "Scan every PR for WCAG 2.1 / 2.2 AA violations, optionally generate AI code fixes, comment inline, and block merge on regressions."
+author: "axle"
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  url:
+    description: "URL to scan. If empty, the action will attempt to build + start the project on localhost:3000 (requires an npm-based Node project)."
+    required: false
+    default: ""
+  fail-on:
+    description: "Severity threshold that fails the check: critical | serious | moderate | minor | none"
+    required: false
+    default: "serious"
+  with-ai-fixes:
+    description: "Generate AI fix suggestions using Claude Sonnet (requires anthropic-api-key)."
+    required: false
+    default: "false"
+  max-ai-fixes:
+    description: "Cap on the number of AI fix calls per run (cost control)."
+    required: false
+    default: "10"
+  anthropic-api-key:
+    description: "Anthropic API key used when with-ai-fixes is true. Keep it in repository secrets."
+    required: false
+  anthropic-model:
+    description: "Model to use for AI fix generation."
+    required: false
+    default: "claude-sonnet-4-6"
+  github-token:
+    description: "Token used to post the PR comment. Defaults to the workflow-provided token."
+    required: false
+    default: ${{ github.token }}
+  comment-on-pr:
+    description: "Whether to post / update the axle comment on the triggering PR."
+    required: false
+    default: "true"
+  install-command:
+    description: "Command used to install your project's dependencies (used only when url is empty)."
+    required: false
+    default: "npm ci"
+  build-command:
+    description: "Command to build the app before serving on localhost (used only when url is empty)."
+    required: false
+    default: "npm run build"
+  start-command:
+    description: "Command to start the app (backgrounded; used only when url is empty)."
+    required: false
+    default: "npm start"
+  wait-on-port:
+    description: "Port to wait for before scanning (used only when url is empty)."
+    required: false
+    default: "3000"
+
+outputs:
+  json-path:
+    description: "Path to the full JSON scan report."
+    value: ${{ steps.run.outputs.json-path }}
+  markdown-path:
+    description: "Path to the markdown report posted on the PR."
+    value: ${{ steps.run.outputs.markdown-path }}
+  failing:
+    description: "'true' when violations were found at or above the fail-on threshold."
+    value: ${{ steps.run.outputs.failing }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+
+    - name: Resolve axle CLI package root
+      id: axle-pkg
+      shell: bash
+      run: |
+        # Composite actions expose their own source tree via github.action_path.
+        # The CLI bundle ships next to this action.yml under ./cli.
+        echo "dir=${{ github.action_path }}/cli" >> "$GITHUB_OUTPUT"
+
+    - name: Install axle CLI dependencies
+      shell: bash
+      working-directory: ${{ steps.axle-pkg.outputs.dir }}
+      run: npm ci --omit=optional
+
+    - name: Cache Playwright browsers
+      id: pw
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: axle-playwright-${{ runner.os }}-${{ hashFiles(format('{0}/package-lock.json', steps.axle-pkg.outputs.dir)) }}
+
+    - name: Install Chromium (cache miss)
+      if: steps.pw.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ${{ steps.axle-pkg.outputs.dir }}
+      run: npx playwright install chromium --with-deps
+
+    - name: Install Chromium system deps (cache hit)
+      if: steps.pw.outputs.cache-hit == 'true'
+      shell: bash
+      working-directory: ${{ steps.axle-pkg.outputs.dir }}
+      run: npx playwright install-deps chromium
+
+    - name: Build + start host project (when url is empty)
+      if: inputs.url == ''
+      shell: bash
+      run: |
+        ${{ inputs.install-command }}
+        ${{ inputs.build-command }}
+        nohup ${{ inputs.start-command }} > axle-server.log 2>&1 &
+        echo $! > axle-server.pid
+        npx --yes wait-on "http://localhost:${{ inputs.wait-on-port }}" --timeout 90000
+
+    - name: Scan
+      id: run
+      shell: bash
+      working-directory: ${{ steps.axle-pkg.outputs.dir }}
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        ANTHROPIC_MODEL: ${{ inputs.anthropic-model }}
+      run: |
+        TARGET="${{ inputs.url }}"
+        if [ -z "$TARGET" ]; then
+          TARGET="http://localhost:${{ inputs.wait-on-port }}"
+        fi
+        set +e
+        node dist/ci-scan.js \
+          --url "$TARGET" \
+          --fail-on "${{ inputs.fail-on }}" \
+          --with-ai-fixes "${{ inputs.with-ai-fixes }}" \
+          --max-ai-fixes "${{ inputs.max-ai-fixes }}" \
+          --json-out "$GITHUB_WORKSPACE/axle-report.json" \
+          --markdown-out "$GITHUB_WORKSPACE/axle-report.md"
+        rc=$?
+        set -e
+        echo "json-path=$GITHUB_WORKSPACE/axle-report.json" >> "$GITHUB_OUTPUT"
+        echo "markdown-path=$GITHUB_WORKSPACE/axle-report.md" >> "$GITHUB_OUTPUT"
+        if [ $rc -eq 1 ]; then
+          echo "failing=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "failing=false" >> "$GITHUB_OUTPUT"
+        fi
+        exit $rc
+
+    - name: Stop host project
+      if: always() && inputs.url == ''
+      shell: bash
+      run: |
+        if [ -f axle-server.pid ]; then
+          kill "$(cat axle-server.pid)" 2>/dev/null || true
+        fi
+
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: axle-report-${{ github.run_id }}
+        path: |
+          axle-report.json
+          axle-report.md
+          axle-server.log
+
+    - name: Comment on PR
+      if: always() && github.event_name == 'pull_request' && inputs.comment-on-pr == 'true'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require("fs");
+          const p = `${process.env.GITHUB_WORKSPACE}/axle-report.md`;
+          if (!fs.existsSync(p)) {
+            core.warning("axle: no report to comment with");
+            return;
+          }
+          const body = fs.readFileSync(p, "utf8");
+          const marker = "<!-- axle-report -->";
+          const fullBody = `${marker}\n${body}`;
+          const { data: comments } = await github.rest.issues.listComments({
+            ...context.repo,
+            issue_number: context.issue.number,
+            per_page: 100,
+          });
+          const existing = comments.find((c) => c.body?.includes(marker));
+          if (existing) {
+            await github.rest.issues.updateComment({
+              ...context.repo,
+              comment_id: existing.id,
+              body: fullBody,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: fullBody,
+            });
+          }
