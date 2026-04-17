@@ -3,7 +3,7 @@
  * CLI entry for CI environments. Scans a URL, optionally requests AI fixes,
  * writes JSON + markdown reports, and exits non-zero when violations at or
  * above the fail-on severity are present. Designed to be wrapped by the
- * a11y-fixer GitHub Action, but is usable locally for debugging.
+ * axle GitHub Action, but is usable locally for debugging.
  */
 import { writeFile, mkdir } from "fs/promises";
 import { dirname, resolve } from "path";
@@ -98,7 +98,7 @@ function renderMarkdown(
       "",
       `_axe-core automated checks catch roughly 57% of WCAG issues. Manual review still recommended._`,
       "",
-      `<sub>Powered by [a11y-fixer](https://github.com/asafamos/a11y-fixer) · Remediation assistance, not compliance certification.</sub>`,
+      `<sub>Powered by [axle](https://github.com/asafamos/axle) · Remediation assistance, not compliance certification.</sub>`,
     ].join("\n");
   }
 
@@ -113,7 +113,7 @@ function renderMarkdown(
     "",
     ...sections,
     "---",
-    `<sub>Powered by [a11y-fixer](https://github.com/asafamos/a11y-fixer) · Remediation assistance, not compliance certification.</sub>`,
+    `<sub>Powered by [axle](https://github.com/asafamos/axle) · Remediation assistance, not compliance certification.</sub>`,
   ].join("\n");
 }
 
@@ -177,17 +177,17 @@ function renderViolation(
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  console.log(`[a11y-fixer] scanning ${args.url}…`);
+  console.log(`[axle] scanning ${args.url}…`);
   const result = await scanUrl(args.url);
   console.log(
-    `[a11y-fixer] ${result.violations.length} rule(s), ${result.summary.critical}c / ${result.summary.serious}s / ${result.summary.moderate}m / ${result.summary.minor}mi`
+    `[axle] ${result.violations.length} rule(s), ${result.summary.critical}c / ${result.summary.serious}s / ${result.summary.moderate}m / ${result.summary.minor}mi`
   );
 
   const fixes = new Map<string, FixResult>();
   if (args.withAiFixes && result.violations.length > 0) {
     if (!process.env.ANTHROPIC_API_KEY) {
       console.warn(
-        "[a11y-fixer] --with-ai-fixes set but ANTHROPIC_API_KEY missing; skipping fix generation"
+        "[axle] --with-ai-fixes set but ANTHROPIC_API_KEY missing; skipping fix generation"
       );
     } else {
       const tasks: Array<{ v: AxeViolation; idx: number; key: string }> = [];
@@ -198,13 +198,13 @@ async function main() {
         }
         if (tasks.length >= args.maxAiFixes) break;
       }
-      console.log(`[a11y-fixer] generating ${tasks.length} AI fix(es)…`);
+      console.log(`[axle] generating ${tasks.length} AI fix(es)…`);
       const results = await Promise.allSettled(
         tasks.map((t) => generateFix(t.v, t.idx))
       );
       results.forEach((r, i) => {
         if (r.status === "fulfilled") fixes.set(tasks[i].key, r.value);
-        else console.warn(`[a11y-fixer] fix ${tasks[i].key} failed: ${r.reason}`);
+        else console.warn(`[axle] fix ${tasks[i].key} failed: ${r.reason}`);
       });
     }
   }
@@ -216,13 +216,13 @@ async function main() {
   await writeFile(args.jsonOut, JSON.stringify({ result, fixes: Object.fromEntries(fixes) }, null, 2));
   await writeFile(args.markdownOut, markdown);
 
-  console.log(`[a11y-fixer] wrote ${args.jsonOut} and ${args.markdownOut}`);
-  console.log(`[a11y-fixer] ${failing ? "FAILING" : "passing"} (threshold: ${args.failOn})`);
+  console.log(`[axle] wrote ${args.jsonOut} and ${args.markdownOut}`);
+  console.log(`[axle] ${failing ? "FAILING" : "passing"} (threshold: ${args.failOn})`);
 
   process.exit(failing ? 1 : 0);
 }
 
 main().catch((err) => {
-  console.error("[a11y-fixer] fatal:", err);
+  console.error("[axle] fatal:", err);
   process.exit(2);
 });

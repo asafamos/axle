@@ -1,0 +1,14 @@
+name: axle
+inputs:
+  - name: failOn
+    description: Severity threshold to fail the build (critical|serious|moderate|minor|none)
+    default: serious
+  - name: withAiFixes
+    description: "Generate AI fix suggestions (requires ANTHROPIC_API_KEY env var)"
+    default: false
+  - name: maxAiFixes
+    description: Cap on the number of AI fix calls per build
+    default: 10
+  - name: url
+    description: "Override scan URL. If omitted, uses the Netlify deploy-prime URL."
+    default: ""
