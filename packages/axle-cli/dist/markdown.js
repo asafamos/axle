@@ -21,7 +21,7 @@ export function renderMarkdown(result, fixes, failing, failOn) {
             "",
             `_axe-core automated checks catch roughly 57% of WCAG issues. Manual review still recommended._`,
             "",
-            `<sub>Powered by [axle](https://axle.dev) · Remediation assistance, not compliance certification.</sub>`,
+            `<sub>Powered by **[axle](https://axle-iota.vercel.app)** — the overlay-free accessibility CI. [Try it free ↗](https://axle-iota.vercel.app) · [Docs ↗](https://github.com/asafamos/axle-action) · Remediation assistance, not compliance certification.</sub>`,
         ].join("\n");
     }
     const sections = result.violations.map((v) => renderViolation(v, fixes));
@@ -34,7 +34,7 @@ export function renderMarkdown(result, fixes, failing, failOn) {
         "",
         ...sections,
         "---",
-        `<sub>Powered by [axle](https://axle.dev) · Remediation assistance, not compliance certification.</sub>`,
+        `<sub>Powered by **[axle](https://axle-iota.vercel.app)** — the overlay-free accessibility CI. [Try it free ↗](https://axle-iota.vercel.app) · [Docs ↗](https://github.com/asafamos/axle-action) · Remediation assistance, not compliance certification.</sub>`,
     ].join("\n");
 }
 function renderViolation(v, fixes) {

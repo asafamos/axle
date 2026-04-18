@@ -74,8 +74,15 @@ function shouldFail(result, failOn) {
     const threshold = SEVERITY_RANK[failOn];
     return result.violations.some((v) => v.impact !== null && SEVERITY_RANK[v.impact] >= threshold);
 }
+function printBanner() {
+    console.log("────────────────────────────────────────");
+    console.log(" axle — accessibility compliance CI");
+    console.log(" https://axle-iota.vercel.app");
+    console.log("────────────────────────────────────────");
+}
 async function main() {
     const { args } = parseArgs(process.argv.slice(2));
+    printBanner();
     console.log(`[axle] scanning ${args.url}…`);
     const result = await scanUrl(args.url);
     console.log(`[axle] ${result.violations.length} rule(s), ${result.summary.critical}c / ${result.summary.serious}s / ${result.summary.moderate}m / ${result.summary.minor}mi`);
