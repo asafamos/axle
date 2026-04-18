@@ -512,7 +512,40 @@ function IntegrationsStrip() {
 }
 
 function PricingPreview() {
-  const tiers = [
+  const [checkoutPlan, setCheckoutPlan] = useState<null | "team" | "business">(
+    null
+  );
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  async function subscribe(plan: "team" | "business") {
+    setCheckoutPlan(plan);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Checkout failed");
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      setCheckoutError(err instanceof Error ? err.message : "Unknown error");
+      setCheckoutPlan(null);
+    }
+  }
+
+  const tiers: Array<{
+    name: string;
+    price: string;
+    sub: string;
+    bullets: string[];
+    cta: string;
+    highlight: boolean;
+    onClick: () => void;
+  }> = [
     {
       name: "Open",
       price: "$0",
@@ -526,6 +559,10 @@ function PricingPreview() {
       ],
       cta: "Install free",
       highlight: false,
+      onClick: () =>
+        document
+          .getElementById("features")
+          ?.scrollIntoView({ behavior: "smooth" }),
     },
     {
       name: "Team",
@@ -538,8 +575,9 @@ function PricingPreview() {
         "Audit trail PDF exports",
         "Slack + email alerts",
       ],
-      cta: "Start 14-day trial",
+      cta: "Subscribe",
       highlight: true,
+      onClick: () => subscribe("team"),
     },
     {
       name: "Business",
@@ -554,6 +592,9 @@ function PricingPreview() {
       ],
       cta: "Contact sales",
       highlight: false,
+      onClick: () =>
+        (window.location.href =
+          "mailto:asaf@amoss.co.il?subject=axle%20Business%20plan"),
     },
   ];
   return (
@@ -607,17 +648,26 @@ function PricingPreview() {
               </ul>
               <button
                 type="button"
-                className={`mt-6 w-full rounded-md px-4 py-2 text-sm font-semibold ${
+                onClick={t.onClick}
+                disabled={checkoutPlan !== null}
+                className={`mt-6 w-full rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-50 ${
                   t.highlight
                     ? "bg-white text-slate-900 hover:bg-slate-100"
                     : "bg-slate-900 text-white hover:bg-slate-700"
                 }`}
               >
-                {t.cta}
+                {checkoutPlan === t.name.toLowerCase()
+                  ? "Redirecting…"
+                  : t.cta}
               </button>
             </div>
           ))}
         </div>
+        {checkoutError && (
+          <div className="mx-auto mt-6 max-w-xl rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+            Checkout failed: {checkoutError}
+          </div>
+        )}
       </div>
     </section>
   );
