@@ -1,6 +1,6 @@
-import { chromium, type Browser } from "playwright";
 import { readFileSync } from "fs";
 import { join } from "path";
+import type { Browser, LaunchOptions } from "playwright-core";
 
 export type AxeViolation = {
   id: string;
@@ -38,6 +38,32 @@ const AXE_SCRIPT_PATH = join(
   "axe.min.js"
 );
 
+// Serverless (Vercel / AWS Lambda) needs @sparticuz/chromium — Playwright's
+// default browser download is not available in those runtimes. Locally we
+// fall back to the full `playwright` package which manages its own browsers.
+const IS_SERVERLESS =
+  !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+async function launchBrowser(): Promise<Browser> {
+  if (IS_SERVERLESS) {
+    const [{ chromium: playwrightChromium }, sparticuzModule] = await Promise.all([
+      import("playwright-core"),
+      import("@sparticuz/chromium"),
+    ]);
+    const sparticuz = sparticuzModule.default;
+    const executablePath = await sparticuz.executablePath();
+    const options: LaunchOptions = {
+      args: sparticuz.args,
+      executablePath,
+      headless: true,
+    };
+    return playwrightChromium.launch(options);
+  }
+
+  const { chromium: playwrightChromium } = await import("playwright");
+  return playwrightChromium.launch({ headless: true });
+}
+
 export async function scanUrl(url: string): Promise<ScanResult> {
   if (!/^https?:\/\//i.test(url)) {
     throw new Error("URL must start with http:// or https://");
@@ -45,10 +71,10 @@ export async function scanUrl(url: string): Promise<ScanResult> {
 
   let browser: Browser | null = null;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await launchBrowser();
     const context = await browser.newContext({
       userAgent:
-        "Mozilla/5.0 (A11yFixer/0.1; +https://a11yfixer.example/bot)",
+        "Mozilla/5.0 (axle/0.1; +https://axle.dev/bot)",
       viewport: { width: 1280, height: 800 },
     });
     const page = await context.newPage();
