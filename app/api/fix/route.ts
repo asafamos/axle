@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { generateFix } from "@/lib/fixer";
 import type { AxeViolation } from "@/lib/scanner";
 import { consumeFreeFix, lookupKey } from "@/lib/billing/keys";
+import { kv } from "@/lib/billing/kv";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -10,6 +11,16 @@ function clientIp(req: Request): string {
   const fwd = req.headers.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0]!.trim();
   return req.headers.get("x-real-ip") || "unknown";
+}
+
+async function bumpFixStats(): Promise<void> {
+  const redis = kv();
+  if (!redis) return;
+  try {
+    await redis.incr("axle:stats:fixes:all");
+  } catch {
+    /* no-op */
+  }
 }
 
 export async function POST(req: Request) {
@@ -65,11 +76,13 @@ export async function POST(req: Request) {
       }
       const nodeIndex = body.nodeIndex ?? 0;
       const fix = await generateFix(body.violation, nodeIndex);
+      await bumpFixStats();
       return NextResponse.json({ ...fix, tier, remaining: quota.remaining, limit: quota.limit });
     }
 
     const nodeIndex = body.nodeIndex ?? 0;
     const fix = await generateFix(body.violation, nodeIndex);
+    await bumpFixStats();
     return NextResponse.json({ ...fix, tier });
   } catch (err) {
     const message =

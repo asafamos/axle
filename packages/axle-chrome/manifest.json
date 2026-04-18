@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "axle — Accessibility Scanner",
+  "version": "0.1.0",
+  "description": "Scan the current tab for WCAG 2.1 / 2.2 AA violations with axe-core. Free, no signup, results in 2 seconds.",
+  "author": "axle",
+  "homepage_url": "https://axle-iota.vercel.app",
+  "action": {
+    "default_title": "axle — Scan this page",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [
+    {
+      "resources": ["axe.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

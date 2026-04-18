@@ -98,7 +98,7 @@ function renderMarkdown(
       "",
       `_axe-core automated checks catch roughly 57% of WCAG issues. Manual review still recommended._`,
       "",
-      `<sub>Powered by [axle](https://github.com/asafamos/axle) · Remediation assistance, not compliance certification.</sub>`,
+      `<sub>Powered by **[axle](https://axle-iota.vercel.app)** — the overlay-free accessibility CI. [Try it free ↗](https://axle-iota.vercel.app) · [Docs ↗](https://github.com/asafamos/axle-action) · Remediation assistance, not compliance certification.</sub>`,
     ].join("\n");
   }
 
@@ -113,7 +113,7 @@ function renderMarkdown(
     "",
     ...sections,
     "---",
-    `<sub>Powered by [axle](https://github.com/asafamos/axle) · Remediation assistance, not compliance certification.</sub>`,
+    `<sub>Powered by **[axle](https://axle-iota.vercel.app)** — the overlay-free accessibility CI. [Try it free ↗](https://axle-iota.vercel.app) · [Docs ↗](https://github.com/asafamos/axle-action) · Remediation assistance, not compliance certification.</sub>`,
   ].join("\n");
 }
 

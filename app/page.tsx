@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ScanResult, AxeViolation } from "@/lib/scanner";
 
 type FixResult = {
@@ -184,6 +184,43 @@ function Header() {
   );
 }
 
+function ScanCounter() {
+  const [stats, setStats] = useState<{
+    scans_today: number;
+    scans_all_time: number;
+    fixes_all_time: number;
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/stats")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) setStats(d);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!stats || (stats.scans_all_time === 0 && stats.fixes_all_time === 0)) {
+    return null;
+  }
+
+  const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
+
+  return (
+    <p className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+      <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+      <span>
+        <strong className="text-slate-700">{fmt(stats.scans_all_time)}</strong> scans ·{" "}
+        <strong className="text-slate-700">{fmt(stats.fixes_all_time)}</strong> AI fixes shipped
+      </span>
+    </p>
+  );
+}
+
 function Hero({
   url,
   setUrl,
@@ -239,6 +276,7 @@ function Hero({
             <p className="mt-3 text-xs text-slate-500">
               No signup. Real headless browser + axe-core 4.11. ~15s.
             </p>
+            <ScanCounter />
             <div className="mt-6 flex flex-wrap gap-3 text-sm">
               <a
                 href="https://github.com/marketplace/actions/axle"

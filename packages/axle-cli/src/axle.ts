@@ -91,8 +91,16 @@ function shouldFail(result: ScanResult, failOn: Args["failOn"]): boolean {
   );
 }
 
+function printBanner(): void {
+  console.log("────────────────────────────────────────");
+  console.log(" axle — accessibility compliance CI");
+  console.log(" https://axle-iota.vercel.app");
+  console.log("────────────────────────────────────────");
+}
+
 async function main() {
   const { args } = parseArgs(process.argv.slice(2));
+  printBanner();
 
   console.log(`[axle] scanning ${args.url}…`);
   const result = await scanUrl(args.url);
