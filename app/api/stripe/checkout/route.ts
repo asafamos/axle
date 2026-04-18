@@ -20,7 +20,6 @@ export async function POST(req: Request) {
       cancel_url: `${site}/#pricing`,
       allow_promotion_codes: true,
       billing_address_collection: "auto",
-      customer_creation: "always",
       customer_email: body.email || undefined,
       subscription_data: {
         metadata: { plan },
