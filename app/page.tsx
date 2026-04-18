@@ -521,7 +521,7 @@ function PricingPreview() {
     setCheckoutPlan(plan);
     setCheckoutError(null);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),

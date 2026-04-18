@@ -1,22 +1,37 @@
 import Link from "next/link";
 import { stripe } from "@/lib/billing/stripe";
+import { polar } from "@/lib/billing/polar";
 
 export const dynamic = "force-dynamic";
 
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  searchParams: Promise<{
+    session_id?: string;
+    checkout_id?: string;
+    provider?: string;
+  }>;
 }) {
   const params = await searchParams;
-  const sessionId = params?.session_id;
 
   let email: string | null = null;
   let error: string | null = null;
 
-  if (sessionId) {
+  // Polar success: /checkout/success?provider=polar&checkout_id=...
+  // Stripe success: /checkout/success?session_id=...
+  if (params?.provider === "polar" && params?.checkout_id) {
     try {
-      const session = await stripe().checkout.sessions.retrieve(sessionId);
+      const checkout = await polar().checkouts.get({ id: params.checkout_id });
+      email = checkout.customerEmail || null;
+    } catch (err) {
+      error = err instanceof Error ? err.message : "Unknown error";
+    }
+  } else if (params?.session_id) {
+    try {
+      const session = await stripe().checkout.sessions.retrieve(
+        params.session_id
+      );
       email =
         session.customer_details?.email || session.customer_email || null;
     } catch (err) {
@@ -37,7 +52,8 @@ export default async function CheckoutSuccessPage({
             : "We just emailed your axle API key. Check your inbox."}
         </p>
         <p className="mt-2 text-sm text-emerald-700">
-          If it doesn't arrive in 2 minutes, check spam. Subject: "Your axle API key — welcome to Team".
+          If it doesn't arrive in 2 minutes, check spam. Subject: "Your axle API
+          key — welcome to Team".
         </p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
@@ -55,8 +71,8 @@ export default async function CheckoutSuccessPage({
         </div>
         {error && (
           <p className="mt-4 text-xs text-red-700">
-            Note: couldn't load session details ({error}). This doesn't affect your
-            subscription.
+            Note: couldn't load session details ({error}). This doesn't affect
+            your subscription.
           </p>
         )}
       </div>
