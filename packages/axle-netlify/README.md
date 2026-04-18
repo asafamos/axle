@@ -1,4 +1,4 @@
-# @axle/netlify-plugin
+# axle-netlify-plugin
 
 Netlify Build Plugin that runs the axle accessibility scanner against your deploy-preview URL and fails the build on WCAG regressions.
 
@@ -7,7 +7,7 @@ Netlify Build Plugin that runs the axle accessibility scanner against your deplo
 ```toml
 # netlify.toml
 [[plugins]]
-  package = "@axle/netlify-plugin"
+  package = "axle-netlify-plugin"
   [plugins.inputs]
     failOn = "serious"           # critical | serious | moderate | minor | none
     withAiFixes = false           # set true + ANTHROPIC_API_KEY env to enable AI diffs
@@ -21,7 +21,7 @@ Set `ANTHROPIC_API_KEY` in Netlify site → Environment if you want AI fix sugge
 
 1. Waits for Netlify to finish the build.
 2. Reads the deploy-prime URL from `DEPLOY_PRIME_URL`.
-3. Runs `@axle/cli scan` against it with your threshold.
+3. Runs `axle-cli scan` against it with your threshold.
 4. Writes `axle-report.json` + `axle-report.md` next to your `publish` dir (so you can download them from the deploy).
 5. Fails the build if violations meet or exceed `failOn`.
 

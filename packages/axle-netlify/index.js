@@ -25,7 +25,7 @@ export const onPostBuild = async ({ utils, inputs, constants }) => {
   const mdOut = resolve(constants.PUBLISH_DIR ?? ".", "axle-report.md");
 
   const args = [
-    "@axle/cli",
+    "axle-cli",
     "scan",
     "--url",
     target,
