@@ -48,7 +48,7 @@ function parseArgs(argv: string[]): { command: string | null; args: Args } {
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") help();
   if (argv[0] === "--version" || argv[0] === "-v") {
     // Lazy import to keep cold start fast.
-    console.log("@axle/cli 0.1.0");
+    console.log("axle-cli 0.1.1");
     process.exit(0);
   }
 

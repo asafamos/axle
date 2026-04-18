@@ -36,7 +36,7 @@ function parseArgs(argv) {
         help();
     if (argv[0] === "--version" || argv[0] === "-v") {
         // Lazy import to keep cold start fast.
-        console.log("@axle/cli 0.1.0");
+        console.log("axle-cli 0.1.1");
         process.exit(0);
     }
     const command = argv[0] === "scan" ? "scan" : null;
