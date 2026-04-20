@@ -1,4 +1,4 @@
-name: axle
+name: axle-netlify-plugin
 inputs:
   - name: failOn
     description: Severity threshold to fail the build (critical|serious|moderate|minor|none)

@@ -1,6 +1,6 @@
 {
   "name": "axle-netlify-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Netlify Build Plugin — scan the deploy preview for WCAG 2.1/2.2 AA violations, fail the build on regressions, post summary to the deploy log.",
   "keywords": [
     "netlify",
@@ -13,11 +13,14 @@
   ],
   "license": "MIT",
   "author": "axle",
-  "homepage": "https://github.com/asafamos/axle",
+  "homepage": "https://github.com/asafamos/axle/tree/main/packages/axle-netlify",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asafamos/axle.git",
     "directory": "packages/axle-netlify"
+  },
+  "bugs": {
+    "url": "https://github.com/asafamos/axle/issues"
   },
   "type": "module",
   "main": "./index.js",
