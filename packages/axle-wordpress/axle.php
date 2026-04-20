@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: axle — Accessibility Compliance CI
- * Plugin URI:  https://axle-iota.vercel.app?utm_source=axle-wordpress
+ * Plugin URI:  https://github.com/asafamos/axle/tree/main/packages/axle-wordpress
  * Description: Scan this WordPress site for WCAG 2.1 / 2.2 AA accessibility violations. Built for EAA 2025 / ADA / תקנה 35. No overlay widgets, no tracking. Scans run locally in your browser.
  * Version:     1.1.0
  * Requires at least: 5.8
