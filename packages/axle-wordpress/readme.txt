@@ -48,6 +48,30 @@ Automated tools (including axe-core 4.11, the engine used here) catch roughly 57
 2. Activate through the Plugins menu.
 3. Go to **Tools → axle** and click **Scan now**.
 
+== External services ==
+
+This plugin communicates with one external service: **axle**, hosted at `https://axle-iota.vercel.app`. The plugin only contacts this service in two situations, and **only after an explicit user action**:
+
+1. When an administrator clicks the **Scan now** button in Tools → axle.
+2. When an administrator enables **Auto scan = Daily** in Tools → axle → Settings, a WP-Cron daily scan runs on your schedule.
+
+**Exact data sent in each call:**
+
+* Endpoint: `POST https://axle-iota.vercel.app/api/scan`
+* Body (JSON): `{ "url": "<the public URL you configured — defaults to your site home URL>", "source": "axle-wordpress" }`
+* Headers: `Content-Type: application/json` and (optional) `Authorization: Bearer <your axle API key>` if you entered one in Settings for paid AI fix suggestions.
+
+**No visitor data is sent. No form data is sent. No admin content is sent.** The only URL transmitted is the one you choose to have scanned.
+
+**Data returned and stored:** the axle API replies with an axe-core accessibility report (violations, nodes, severity). This reply is stored in the WordPress `wp_options` table under the key `axle_last_scan` so it can be displayed in the admin dashboard. It is not displayed on your public site and not shared with any other service.
+
+**Terms & privacy:**
+* Service provider: axle ([axle-iota.vercel.app](https://axle-iota.vercel.app))
+* Terms of use: [https://axle-iota.vercel.app/terms](https://axle-iota.vercel.app/terms)
+* Privacy policy: [https://axle-iota.vercel.app/privacy](https://axle-iota.vercel.app/privacy)
+
+You may disable all external communication by deactivating the plugin, or by turning off Auto scan and not clicking the Scan now button.
+
 == Frequently Asked Questions ==
 
 = Does this plugin inject any JavaScript into my public site? =

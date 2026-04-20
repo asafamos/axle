@@ -26,31 +26,50 @@ define('AXLE_OPTION_LAST_SCAN', 'axle_last_scan');
 define('AXLE_CRON_HOOK', 'axle_daily_scan');
 
 /**
- * Activation: seed default settings + schedule the daily cron.
+ * Activation: seed default settings. No cron is scheduled and no external
+ * request is made here — wordpress.org policy requires user action before
+ * calling external services. The user opts in by setting Auto scan = Daily
+ * in Tools → axle → Settings, which triggers axle_reschedule_cron().
  */
 register_activation_hook(__FILE__, function () {
     if (!get_option(AXLE_OPTION_SETTINGS)) {
         add_option(AXLE_OPTION_SETTINGS, [
             'api_key'      => '',
-            'auto_scan'    => 'daily',
+            'auto_scan'    => 'off',
             'target_url'   => home_url('/'),
             'fail_on'      => 'serious',
         ]);
     }
-    if (!wp_next_scheduled(AXLE_CRON_HOOK)) {
-        wp_schedule_event(time() + 3600, 'daily', AXLE_CRON_HOOK);
-    }
 });
 
 /**
- * Deactivation: unschedule the cron. Keep settings so re-activation resumes.
+ * Deactivation / uninstall: unschedule the cron. Settings are preserved so
+ * re-activation resumes the same config.
  */
-register_deactivation_hook(__FILE__, function () {
+register_deactivation_hook(__FILE__, 'axle_unschedule_cron');
+
+function axle_unschedule_cron() {
     $timestamp = wp_next_scheduled(AXLE_CRON_HOOK);
     if ($timestamp) {
         wp_unschedule_event($timestamp, AXLE_CRON_HOOK);
     }
-});
+}
+
+function axle_reschedule_cron($auto_scan) {
+    axle_unschedule_cron();
+    if ($auto_scan === 'daily') {
+        wp_schedule_event(time() + 3600, 'daily', AXLE_CRON_HOOK);
+    }
+}
+
+// Update the cron when the setting changes.
+add_action('update_option_' . AXLE_OPTION_SETTINGS, function ($old, $new) {
+    $old_auto = is_array($old) ? ($old['auto_scan'] ?? 'off') : 'off';
+    $new_auto = is_array($new) ? ($new['auto_scan'] ?? 'off') : 'off';
+    if ($old_auto !== $new_auto) {
+        axle_reschedule_cron($new_auto);
+    }
+}, 10, 2);
 
 /**
  * Admin menu entry under Tools → axle.

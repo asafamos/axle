@@ -870,8 +870,8 @@ function Footer() {
               Legal
             </div>
             <ul className="mt-2 space-y-1 text-sm">
-              <li className="text-slate-700">Privacy policy</li>
-              <li className="text-slate-700">Terms</li>
+              <li><a href="/privacy" className="text-slate-700 hover:underline">Privacy policy</a></li>
+              <li><a href="/terms" className="text-slate-700 hover:underline">Terms</a></li>
               <li className="text-xs text-slate-500">
                 axle provides remediation assistance. It is not a substitute for legal advice or a
                 human accessibility audit, and does not issue compliance certificates.
