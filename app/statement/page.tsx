@@ -33,11 +33,18 @@ function Field({
   );
 }
 
+type PublishState =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "success"; url: string; id: string }
+  | { kind: "error"; message: string };
+
 export default function StatementPage() {
   const [input, setInput] = useState<StatementInput>(() =>
     defaultStatementInput()
   );
   const [copied, setCopied] = useState<null | "md" | "html">(null);
+  const [publish, setPublish] = useState<PublishState>({ kind: "idle" });
 
   const markdown = useMemo(
     () => renderHebrewStatementMarkdown(input),
@@ -59,6 +66,38 @@ export default function StatementPage() {
     await navigator.clipboard.writeText(text);
     setCopied(kind);
     setTimeout(() => setCopied(null), 1500);
+  }
+
+  async function publishVerified() {
+    const keyMatch = /(?:^|;\s*)axle_key=([^;]+)/.exec(document.cookie);
+    const key = keyMatch ? decodeURIComponent(keyMatch[1]) : "";
+    if (!key) {
+      setPublish({
+        kind: "error",
+        message:
+          "Paste your axle API key on /account first. Key ships after you subscribe to Team.",
+      });
+      return;
+    }
+    setPublish({ kind: "loading" });
+    try {
+      const res = await fetch("/api/statement/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({ input }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Publish failed");
+      setPublish({ kind: "success", url: data.url, id: data.id });
+    } catch (err) {
+      setPublish({
+        kind: "error",
+        message: err instanceof Error ? err.message : "Publish failed",
+      });
+    }
   }
 
   function downloadHtml() {
@@ -322,7 +361,43 @@ export default function StatementPage() {
               >
                 {copied === "html" ? "הועתק!" : "העתקה כ-HTML"}
               </button>
+              <button
+                onClick={publishVerified}
+                disabled={publish.kind === "loading"}
+                className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                title="Team plan · requires axle API key saved on /account"
+              >
+                {publish.kind === "loading"
+                  ? "מפרסם…"
+                  : "פרסום מאומת ✓ (Team)"}
+              </button>
             </div>
+
+            {publish.kind === "success" && (
+              <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+                פורסם. <strong>URL ציבורי לאימות:</strong>{" "}
+                <a
+                  href={publish.url}
+                  target="_blank"
+                  rel="noopener"
+                  className="font-mono underline"
+                >
+                  {publish.url}
+                </a>
+                <div className="mt-1 text-xs text-emerald-800">
+                  הוסף קישור לכתובת זו ב-footer של האתר כדי שעורך דין / גורם
+                  אכיפה יוכל לאמת את ההצהרה.
+                </div>
+              </div>
+            )}
+            {publish.kind === "error" && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                {publish.message}{" "}
+                <a className="underline" href="/account">
+                  עבור ל-/account
+                </a>
+              </div>
+            )}
 
             <div
               className="prose prose-slate max-h-[80vh] overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm"

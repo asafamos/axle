@@ -4,19 +4,52 @@ import { useEffect, useState } from "react";
 
 type Status =
   | { kind: "idle" }
-  | { kind: "saved"; masked: string }
+  | { kind: "saved"; masked: string; raw: string }
   | { kind: "error"; message: string };
+
+type Me = {
+  plan: "team" | "business";
+  status: string;
+  email: string;
+  created_at: string;
+  statements: Array<{
+    id: string;
+    url: string;
+    organization_name: string;
+    created_at: string;
+  }>;
+};
 
 export default function AccountPage() {
   const [key, setKey] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [me, setMe] = useState<Me | null>(null);
+  const [meError, setMeError] = useState<string | null>(null);
 
   useEffect(() => {
     const m = /(?:^|;\s*)axle_key=([^;]+)/.exec(document.cookie);
     if (m) {
-      setStatus({ kind: "saved", masked: mask(m[1]) });
+      const raw = decodeURIComponent(m[1]);
+      setStatus({ kind: "saved", masked: mask(raw), raw });
+      loadMe(raw);
     }
   }, []);
+
+  async function loadMe(raw: string) {
+    setMeError(null);
+    setMe(null);
+    try {
+      const res = await fetch("/api/account/me", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${raw}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Lookup failed");
+      setMe(data as Me);
+    } catch (err) {
+      setMeError(err instanceof Error ? err.message : "Lookup failed");
+    }
+  }
 
   function save() {
     const trimmed = key.trim();
@@ -31,13 +64,16 @@ export default function AccountPage() {
     document.cookie = `axle_key=${encodeURIComponent(
       trimmed
     )}; path=/; max-age=${oneYear}; SameSite=Lax`;
-    setStatus({ kind: "saved", masked: mask(trimmed) });
+    setStatus({ kind: "saved", masked: mask(trimmed), raw: trimmed });
     setKey("");
+    loadMe(trimmed);
   }
 
   function clear() {
     document.cookie = "axle_key=; path=/; max-age=0";
     setStatus({ kind: "idle" });
+    setMe(null);
+    setMeError(null);
   }
 
   return (
@@ -107,6 +143,93 @@ export default function AccountPage() {
             </div>
           )}
         </div>
+
+        {status.kind === "saved" && (
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">Plan & activity</h2>
+            {meError && (
+              <p className="mt-2 text-sm text-red-700">
+                Could not load plan: {meError}
+              </p>
+            )}
+            {me && (
+              <>
+                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <div className="text-xs text-slate-500">Plan</div>
+                    <div className="mt-0.5 text-lg font-semibold capitalize">
+                      {me.plan}
+                    </div>
+                  </div>
+                  <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <div className="text-xs text-slate-500">Status</div>
+                    <div
+                      className={`mt-0.5 text-lg font-semibold capitalize ${
+                        me.status === "active"
+                          ? "text-emerald-700"
+                          : "text-amber-700"
+                      }`}
+                    >
+                      {me.status}
+                    </div>
+                  </div>
+                  <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <div className="text-xs text-slate-500">Email</div>
+                    <div
+                      className="mt-0.5 truncate text-sm text-slate-700"
+                      title={me.email}
+                    >
+                      {me.email}
+                    </div>
+                  </div>
+                </div>
+
+                <h3 className="mt-6 text-sm font-semibold text-slate-700">
+                  Published statements
+                </h3>
+                {me.statements.length === 0 ? (
+                  <p className="mt-2 text-sm text-slate-500">
+                    None yet. Generate + publish one at{" "}
+                    <a className="underline" href="/statement">
+                      /statement
+                    </a>
+                    .
+                  </p>
+                ) : (
+                  <table className="mt-2 w-full text-sm">
+                    <thead className="text-left text-xs uppercase text-slate-500">
+                      <tr>
+                        <th className="py-2">Organization</th>
+                        <th>Published</th>
+                        <th>URL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {me.statements.map((s) => (
+                        <tr key={s.id} className="border-t border-slate-100">
+                          <td className="py-2">{s.organization_name}</td>
+                          <td>
+                            {new Date(s.created_at).toLocaleDateString()}
+                          </td>
+                          <td>
+                            <a
+                              href={s.url}
+                              target="_blank"
+                              rel="noopener"
+                              className="text-blue-700 underline"
+                            >
+                              /s/{s.id}
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </>
+            )}
+          </div>
+        )}
 
         <div className="rounded-xl border border-slate-200 bg-slate-100 p-6 text-sm text-slate-700">
           <p className="font-semibold">Using the key elsewhere</p>
