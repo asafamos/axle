@@ -48,7 +48,7 @@ function parseArgs(argv: string[]): { command: string | null; args: Args } {
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") help();
   if (argv[0] === "--version" || argv[0] === "-v") {
     // Lazy import to keep cold start fast.
-    console.log("axle-cli 1.0.0");
+    console.log("axle-cli 1.0.1");
     process.exit(0);
   }
 
@@ -96,6 +96,33 @@ function printBanner(): void {
   console.log(" axle — accessibility compliance CI");
   console.log(" https://axle-iota.vercel.app?utm_source=axle-cli");
   console.log("────────────────────────────────────────");
+}
+
+const TELEMETRY_ENDPOINT = "https://axle-iota.vercel.app/api/track";
+const TELEMETRY_TIMEOUT_MS = 1500;
+
+/**
+ * Anonymous attribution ping — lets axle the hosted service see how much
+ * the CLI is actually used. No URL, no report contents, no user identifiers
+ * are sent. Only { source: "axle-cli", event: "scan_complete" }.
+ * Disabled with AXLE_NO_TELEMETRY=1. Best-effort; never blocks or errors.
+ */
+async function pingTelemetry(event: "scan_complete" | "scan_error"): Promise<void> {
+  if (process.env.AXLE_NO_TELEMETRY === "1") return;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TELEMETRY_TIMEOUT_MS);
+  try {
+    await fetch(TELEMETRY_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ source: "axle-cli", event }),
+      signal: controller.signal,
+    });
+  } catch {
+    /* no-op */
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function main() {
@@ -153,10 +180,12 @@ async function main() {
     `[axle] ${failing ? "FAILING" : "passing"} (threshold: ${args.failOn})`
   );
 
+  await pingTelemetry("scan_complete");
   process.exit(failing ? 1 : 0);
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error("[axle] fatal:", err);
+  await pingTelemetry("scan_error");
   process.exit(2);
 });

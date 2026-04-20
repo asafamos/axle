@@ -36,7 +36,7 @@ function parseArgs(argv) {
         help();
     if (argv[0] === "--version" || argv[0] === "-v") {
         // Lazy import to keep cold start fast.
-        console.log("axle-cli 0.1.1");
+        console.log("axle-cli 1.0.1");
         process.exit(0);
     }
     const command = argv[0] === "scan" ? "scan" : null;
@@ -77,8 +77,36 @@ function shouldFail(result, failOn) {
 function printBanner() {
     console.log("────────────────────────────────────────");
     console.log(" axle — accessibility compliance CI");
-    console.log(" https://axle-iota.vercel.app");
+    console.log(" https://axle-iota.vercel.app?utm_source=axle-cli");
     console.log("────────────────────────────────────────");
+}
+const TELEMETRY_ENDPOINT = "https://axle-iota.vercel.app/api/track";
+const TELEMETRY_TIMEOUT_MS = 1500;
+/**
+ * Anonymous attribution ping — lets axle the hosted service see how much
+ * the CLI is actually used. No URL, no report contents, no user identifiers
+ * are sent. Only { source: "axle-cli", event: "scan_complete" }.
+ * Disabled with AXLE_NO_TELEMETRY=1. Best-effort; never blocks or errors.
+ */
+async function pingTelemetry(event) {
+    if (process.env.AXLE_NO_TELEMETRY === "1")
+        return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TELEMETRY_TIMEOUT_MS);
+    try {
+        await fetch(TELEMETRY_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ source: "axle-cli", event }),
+            signal: controller.signal,
+        });
+    }
+    catch {
+        /* no-op */
+    }
+    finally {
+        clearTimeout(timer);
+    }
 }
 async function main() {
     const { args } = parseArgs(process.argv.slice(2));
@@ -119,9 +147,11 @@ async function main() {
     await writeFile(args.markdownOut, markdown);
     console.log(`[axle] wrote ${args.jsonOut} and ${args.markdownOut}`);
     console.log(`[axle] ${failing ? "FAILING" : "passing"} (threshold: ${args.failOn})`);
+    await pingTelemetry("scan_complete");
     process.exit(failing ? 1 : 0);
 }
-main().catch((err) => {
+main().catch(async (err) => {
     console.error("[axle] fatal:", err);
+    await pingTelemetry("scan_error");
     process.exit(2);
 });

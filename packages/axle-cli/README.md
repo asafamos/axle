@@ -23,6 +23,14 @@ axe-core tells you what's wrong. `axle-cli` also proposes the fix, writes the PR
 
 Remediation assistance only. Automated tools catch ~57% of WCAG issues. Human review recommended for full conformance.
 
+## Telemetry
+
+At the end of each scan, axle-cli sends a single anonymous ping
+(`{ source: "axle-cli", event: "scan_complete" }`) to
+[axle-iota.vercel.app/api/track](https://axle-iota.vercel.app/api/track)
+so we can see how much the CLI is being used. **No URL, no report contents,
+no user identifiers.** Disable with `AXLE_NO_TELEMETRY=1`.
+
 ---
 
 Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-cli) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-cli)
