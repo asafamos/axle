@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: axle — Accessibility Compliance CI
+ * Plugin Name: Axle Accessibility Scanner
  * Plugin URI:  https://github.com/asafamos/axle/tree/main/packages/axle-wordpress
  * Description: Scan this WordPress site for WCAG 2.1 / 2.2 AA accessibility violations. Built for EAA 2025 / ADA / תקנה 35. No overlay widgets, no tracking. Scans run locally in your browser.
  * Version:     1.1.0
@@ -10,7 +10,7 @@
  * Author URI:  https://axle-iota.vercel.app?utm_source=axle-wordpress
  * License:     MIT
  * License URI: https://opensource.org/licenses/MIT
- * Text Domain: axle
+ * Text Domain: axle-accessibility-scanner
  *
  * Architecture: 1.1.0 scans client-side via axe-core loaded in a hidden
  * iframe. This works for any environment — LocalWP, staging with basic auth,
@@ -100,7 +100,8 @@ add_action(AXLE_CRON_HOOK, function () {
     if ($code >= 400) {
         $msg = is_array($body) && !empty($body['error'])
             ? $body['error']
-            : sprintf(__('Scan failed (HTTP %d)', 'axle'), $code);
+            /* translators: %d is the HTTP status code returned by the hosted scanner */
+            : sprintf(__('Scan failed (HTTP %d)', 'axle-accessibility-scanner'), $code);
         update_option(AXLE_OPTION_LAST_SCAN, [
             'error'      => $msg,
             'scanned_at' => time(),
@@ -119,10 +120,10 @@ add_action(AXLE_CRON_HOOK, function () {
 
 add_action('admin_menu', function () {
     add_management_page(
-        __('axle — Accessibility Scanner', 'axle'),
-        'axle',
+        __('axle — Accessibility Scanner', 'axle-accessibility-scanner'),
+        'axle-accessibility-scanner',
         'manage_options',
-        'axle',
+        'axle-accessibility-scanner',
         'axle_render_admin_page'
     );
 });
@@ -152,6 +153,10 @@ add_action('wp_ajax_axle_save_scan', function () {
     }
     check_ajax_referer('axle_save_scan');
 
+    // Payload is a JSON blob. Sanitizing the raw bytes here would corrupt
+    // the structure; every nested field is sanitized individually below
+    // via axle_sanitize_violations before being persisted.
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON decoded and each field sanitized below.
     $raw = isset($_POST['payload']) ? wp_unslash($_POST['payload']) : '';
     $decoded = json_decode($raw, true);
     if (!is_array($decoded) || empty($decoded['url'])) {
@@ -245,24 +250,27 @@ function axle_render_admin_page() {
     $last_scan = get_option(AXLE_OPTION_LAST_SCAN, null);
     ?>
     <div class="wrap">
-        <h1><?php esc_html_e('axle — Accessibility Scanner', 'axle'); ?></h1>
+        <h1><?php esc_html_e('axle — Accessibility Scanner', 'axle-accessibility-scanner'); ?></h1>
         <p>
-            <?php esc_html_e('WCAG 2.1 / 2.2 AA compliance checks for this WordPress site. Built for EAA 2025, ADA, and תקנה 35.', 'axle'); ?>
+            <?php esc_html_e('WCAG 2.1 / 2.2 AA compliance checks for this WordPress site. Built for EAA 2025, ADA, and תקנה 35.', 'axle-accessibility-scanner'); ?>
             <a href="https://axle-iota.vercel.app?utm_source=axle-wordpress" target="_blank" rel="noopener">
-                <?php esc_html_e('Learn more →', 'axle'); ?>
+                <?php esc_html_e('Learn more →', 'axle-accessibility-scanner'); ?>
             </a>
         </p>
 
-        <h2><?php esc_html_e('Run a scan', 'axle'); ?></h2>
+        <h2><?php esc_html_e('Run a scan', 'axle-accessibility-scanner'); ?></h2>
         <p class="description">
-            <?php esc_html_e('Scans run in your browser using axe-core 4.11. The target page is loaded in a hidden iframe. No data leaves your server.', 'axle'); ?>
+            <?php esc_html_e('Scans run in your browser using axe-core 4.11. The target page is loaded in a hidden iframe. No data leaves your server.', 'axle-accessibility-scanner'); ?>
         </p>
         <p>
             <button id="axle-scan-now-btn" class="button button-primary">
-                <?php esc_html_e('Scan now', 'axle'); ?>
+                <?php esc_html_e('Scan now', 'axle-accessibility-scanner'); ?>
             </button>
             <span style="margin-left:10px" class="description">
-                <?php echo esc_html(sprintf(__('Target: %s', 'axle'), !empty($settings['target_url']) ? $settings['target_url'] : home_url('/'))); ?>
+                <?php
+                /* translators: %s is the URL that will be scanned */
+                echo esc_html(sprintf(__('Target: %s', 'axle-accessibility-scanner'), !empty($settings['target_url']) ? $settings['target_url'] : home_url('/')));
+                ?>
             </span>
         </p>
         <p id="axle-scan-status" style="display:none" class="description"></p>
@@ -270,30 +278,30 @@ function axle_render_admin_page() {
 
         <?php axle_render_last_scan($last_scan); ?>
 
-        <h2><?php esc_html_e('Settings', 'axle'); ?></h2>
+        <h2><?php esc_html_e('Settings', 'axle-accessibility-scanner'); ?></h2>
         <form method="post" action="options.php">
             <?php settings_fields('axle_settings_group'); ?>
             <table class="form-table" role="presentation">
                 <tr>
-                    <th scope="row"><label for="axle_target_url"><?php esc_html_e('Target URL', 'axle'); ?></label></th>
+                    <th scope="row"><label for="axle_target_url"><?php esc_html_e('Target URL', 'axle-accessibility-scanner'); ?></label></th>
                     <td>
                         <input type="url" id="axle_target_url" name="axle_settings[target_url]" class="regular-text"
                                value="<?php echo esc_attr($settings['target_url'] ?? home_url('/')); ?>" />
-                        <p class="description"><?php esc_html_e('URL to scan. Defaults to the site home URL.', 'axle'); ?></p>
+                        <p class="description"><?php esc_html_e('URL to scan. Defaults to the site home URL.', 'axle-accessibility-scanner'); ?></p>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="axle_auto_scan"><?php esc_html_e('Auto scan', 'axle'); ?></label></th>
+                    <th scope="row"><label for="axle_auto_scan"><?php esc_html_e('Auto scan', 'axle-accessibility-scanner'); ?></label></th>
                     <td>
                         <select id="axle_auto_scan" name="axle_settings[auto_scan]">
-                            <option value="off"   <?php selected($settings['auto_scan'] ?? 'off', 'off'); ?>><?php esc_html_e('Off', 'axle'); ?></option>
-                            <option value="daily" <?php selected($settings['auto_scan'] ?? 'off', 'daily'); ?>><?php esc_html_e('Daily (via WP-Cron, uses hosted scanner — requires public URL)', 'axle'); ?></option>
+                            <option value="off"   <?php selected($settings['auto_scan'] ?? 'off', 'off'); ?>><?php esc_html_e('Off', 'axle-accessibility-scanner'); ?></option>
+                            <option value="daily" <?php selected($settings['auto_scan'] ?? 'off', 'daily'); ?>><?php esc_html_e('Daily (via WP-Cron, uses hosted scanner — requires public URL)', 'axle-accessibility-scanner'); ?></option>
                         </select>
-                        <p class="description"><?php esc_html_e('Auto scan uses the hosted scanner at axle-iota.vercel.app because WP-Cron runs without a browser. Works for public URLs only — for local/staging use the "Scan now" button.', 'axle'); ?></p>
+                        <p class="description"><?php esc_html_e('Auto scan uses the hosted scanner at axle-iota.vercel.app because WP-Cron runs without a browser. Works for public URLs only — for local/staging use the "Scan now" button.', 'axle-accessibility-scanner'); ?></p>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="axle_fail_on"><?php esc_html_e('Severity threshold', 'axle'); ?></label></th>
+                    <th scope="row"><label for="axle_fail_on"><?php esc_html_e('Severity threshold', 'axle-accessibility-scanner'); ?></label></th>
                     <td>
                         <select id="axle_fail_on" name="axle_settings[fail_on]">
                             <?php foreach (['critical', 'serious', 'moderate', 'minor'] as $level): ?>
@@ -302,17 +310,17 @@ function axle_render_admin_page() {
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <p class="description"><?php esc_html_e('Violations at or above this level are highlighted in red.', 'axle'); ?></p>
+                        <p class="description"><?php esc_html_e('Violations at or above this level are highlighted in red.', 'axle-accessibility-scanner'); ?></p>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="axle_api_key"><?php esc_html_e('axle API key (optional)', 'axle'); ?></label></th>
+                    <th scope="row"><label for="axle_api_key"><?php esc_html_e('axle API key (optional)', 'axle-accessibility-scanner'); ?></label></th>
                     <td>
                         <input type="password" id="axle_api_key" name="axle_settings[api_key]" class="regular-text"
                                value="<?php echo esc_attr($settings['api_key'] ?? ''); ?>" autocomplete="off" />
                         <p class="description">
-                            <?php esc_html_e('Paid plan unlocks AI fix suggestions. Leave empty for the free tier.', 'axle'); ?>
-                            <a href="https://axle-iota.vercel.app/#pricing?utm_source=axle-wordpress" target="_blank" rel="noopener"><?php esc_html_e('Get a key →', 'axle'); ?></a>
+                            <?php esc_html_e('Paid plan unlocks AI fix suggestions. Leave empty for the free tier.', 'axle-accessibility-scanner'); ?>
+                            <a href="https://axle-iota.vercel.app/#pricing?utm_source=axle-wordpress" target="_blank" rel="noopener"><?php esc_html_e('Get a key →', 'axle-accessibility-scanner'); ?></a>
                         </p>
                     </td>
                 </tr>
@@ -325,59 +333,68 @@ function axle_render_admin_page() {
 
 function axle_render_last_scan($last_scan) {
     if (!$last_scan) {
-        echo '<p><em>' . esc_html__('No scans yet.', 'axle') . '</em></p>';
+        echo '<p><em>' . esc_html__('No scans yet.', 'axle-accessibility-scanner') . '</em></p>';
         return;
     }
 
     $when = isset($last_scan['scanned_at'])
-        ? human_time_diff($last_scan['scanned_at']) . ' ' . __('ago', 'axle')
-        : __('just now', 'axle');
+        ? human_time_diff($last_scan['scanned_at']) . ' ' . __('ago', 'axle-accessibility-scanner')
+        : __('just now', 'axle-accessibility-scanner');
     $via = $last_scan['via'] ?? 'unknown';
 
-    echo '<h2>' . esc_html__('Last scan', 'axle') . '</h2>';
-    echo '<p><strong>' . esc_html__('When:', 'axle') . '</strong> ' . esc_html($when);
+    echo '<h2>' . esc_html__('Last scan', 'axle-accessibility-scanner') . '</h2>';
+    echo '<p><strong>' . esc_html__('When:', 'axle-accessibility-scanner') . '</strong> ' . esc_html($when);
     if (!empty($last_scan['target'])) {
-        echo ' &middot; <strong>' . esc_html__('Target:', 'axle') . '</strong> ' . esc_html($last_scan['target']);
+        echo ' &middot; <strong>' . esc_html__('Target:', 'axle-accessibility-scanner') . '</strong> ' . esc_html($last_scan['target']);
     }
-    echo ' &middot; <strong>' . esc_html__('Via:', 'axle') . '</strong> ' . esc_html($via === 'client-axe' ? 'browser (axe-core)' : 'hosted scanner');
+    echo ' &middot; <strong>' . esc_html__('Via:', 'axle-accessibility-scanner') . '</strong> ' . esc_html($via === 'client-axe' ? 'browser (axe-core)' : 'hosted scanner');
     echo '</p>';
 
     if (!empty($last_scan['error'])) {
-        echo '<div class="notice notice-error"><p><strong>' . esc_html__('Error:', 'axle') . '</strong> ' . esc_html($last_scan['error']) . '</p></div>';
+        echo '<div class="notice notice-error"><p><strong>' . esc_html__('Error:', 'axle-accessibility-scanner') . '</strong> ' . esc_html($last_scan['error']) . '</p></div>';
         return;
     }
 
     $result = $last_scan['result'] ?? null;
     if (!is_array($result) || empty($result['violations'])) {
-        echo '<div class="notice notice-success"><p>' . esc_html__('No violations detected in the last scan.', 'axle') . '</p></div>';
+        echo '<div class="notice notice-success"><p>' . esc_html__('No violations detected in the last scan.', 'axle-accessibility-scanner') . '</p></div>';
         return;
     }
 
     $summary = $result['summary'] ?? [];
     $total   = count($result['violations']);
     echo '<table class="widefat striped"><thead><tr>';
-    echo '<th>' . esc_html__('Rule', 'axle') . '</th>';
-    echo '<th>' . esc_html__('Severity', 'axle') . '</th>';
-    echo '<th>' . esc_html__('Nodes', 'axle') . '</th>';
-    echo '<th>' . esc_html__('Help', 'axle') . '</th>';
+    echo '<th>' . esc_html__('Rule', 'axle-accessibility-scanner') . '</th>';
+    echo '<th>' . esc_html__('Severity', 'axle-accessibility-scanner') . '</th>';
+    echo '<th>' . esc_html__('Nodes', 'axle-accessibility-scanner') . '</th>';
+    echo '<th>' . esc_html__('Help', 'axle-accessibility-scanner') . '</th>';
     echo '</tr></thead><tbody>';
     foreach ($result['violations'] as $v) {
-        $impact = isset($v['impact']) ? esc_html($v['impact']) : 'unknown';
-        $nodes  = isset($v['nodes']) && is_array($v['nodes']) ? count($v['nodes']) : 0;
-        $id     = isset($v['id']) ? esc_html($v['id']) : '';
-        $helpUrl= isset($v['helpUrl']) ? esc_url($v['helpUrl']) : '';
-        $help   = isset($v['help']) ? esc_html($v['help']) : '';
+        $impact  = isset($v['impact']) ? (string) $v['impact'] : 'unknown';
+        $nodes   = isset($v['nodes']) && is_array($v['nodes']) ? count($v['nodes']) : 0;
+        $id      = isset($v['id']) ? (string) $v['id'] : '';
+        $helpUrl = isset($v['helpUrl']) ? (string) $v['helpUrl'] : '';
+        $help    = isset($v['help']) ? (string) $v['help'] : '';
         echo '<tr>';
-        echo '<td><code>' . $id . '</code><br><small>' . $help . '</small></td>';
-        echo '<td>' . $impact . '</td>';
+        echo '<td><code>' . esc_html($id) . '</code><br><small>' . esc_html($help) . '</small></td>';
+        echo '<td>' . esc_html($impact) . '</td>';
         echo '<td>' . (int) $nodes . '</td>';
-        echo '<td>' . ($helpUrl ? '<a href="' . $helpUrl . '" target="_blank" rel="noopener">axe-core docs →</a>' : '—') . '</td>';
+        echo '<td>';
+        if ($helpUrl) {
+            echo '<a href="' . esc_url($helpUrl) . '" target="_blank" rel="noopener">';
+            esc_html_e('axe-core docs →', 'axle-accessibility-scanner');
+            echo '</a>';
+        } else {
+            echo '—';
+        }
+        echo '</td>';
         echo '</tr>';
     }
     echo '</tbody></table>';
 
     echo '<p class="description">' . esc_html(sprintf(
-        __('Total: %d rule(s). Critical: %d · Serious: %d · Moderate: %d · Minor: %d', 'axle'),
+        /* translators: 1: total rule count, 2: critical-impact node count, 3: serious-impact node count, 4: moderate-impact node count, 5: minor-impact node count */
+        __('Total: %1$d rule(s). Critical: %2$d · Serious: %3$d · Moderate: %4$d · Minor: %5$d', 'axle-accessibility-scanner'),
         $total,
         isset($summary['critical']) ? (int) $summary['critical'] : 0,
         isset($summary['serious'])  ? (int) $summary['serious']  : 0,

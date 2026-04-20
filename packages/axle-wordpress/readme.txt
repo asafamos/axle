@@ -1,18 +1,18 @@
-=== axle — Accessibility Compliance CI ===
+=== Axle Accessibility Scanner ===
 Contributors: axleteam
-Tags: accessibility, a11y, wcag, ada, compliance, axe-core, eaa, eu-accessibility-act
+Tags: accessibility, a11y, wcag, compliance, eaa
 Requires at least: 5.8
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.1.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Continuous WCAG 2.1 / 2.2 AA scanning for WordPress. Built for EAA 2025, ADA, and Israeli תקנה 35. No overlay widget. No tracking. No runtime JS injected.
+WCAG 2.1 / 2.2 AA scanner for WordPress. Built for EAA 2025, ADA, תקנה 35. No overlay widget, no tracking — scans run in your admin browser.
 
 == Description ==
 
-**axle** scans your live site for WCAG 2.1 / 2.2 AA accessibility violations using axe-core 4.11 in a hosted headless browser. Results appear in the admin dashboard — no JavaScript is injected into your public pages, and nothing is tracked about your visitors.
+**Axle Accessibility Scanner** scans your site for WCAG 2.1 / 2.2 AA accessibility violations using axe-core 4.11 running in your admin browser. Results appear in the admin dashboard — no JavaScript is injected into your public pages, nothing leaves your server, and nothing is tracked about your visitors.
 
 **What it does**
 
