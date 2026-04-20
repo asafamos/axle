@@ -1,6 +1,6 @@
 {
   "name": "axle-cloudflare-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cloudflare Pages / Workers plugin — scan your preview URL for WCAG 2.1/2.2 AA violations on every build, fail the deploy on regressions.",
   "keywords": [
     "cloudflare",
@@ -14,11 +14,14 @@
   ],
   "license": "MIT",
   "author": "axle",
-  "homepage": "https://axle-iota.vercel.app",
+  "homepage": "https://github.com/asafamos/axle/tree/main/packages/axle-cloudflare",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asafamos/axle.git",
     "directory": "packages/axle-cloudflare"
+  },
+  "bugs": {
+    "url": "https://github.com/asafamos/axle/issues"
   },
   "type": "module",
   "main": "./index.js",

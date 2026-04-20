@@ -1,6 +1,6 @@
 {
   "name": "axle-vercel-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vercel build step — scan your deploy preview for WCAG 2.1/2.2 AA violations on every build, fail the deploy on regressions.",
   "keywords": [
     "vercel",
@@ -15,11 +15,14 @@
   ],
   "license": "MIT",
   "author": "axle",
-  "homepage": "https://axle-iota.vercel.app",
+  "homepage": "https://github.com/asafamos/axle/tree/main/packages/axle-vercel",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asafamos/axle.git",
     "directory": "packages/axle-vercel"
+  },
+  "bugs": {
+    "url": "https://github.com/asafamos/axle/issues"
   },
   "bin": {
     "axle-vercel-plugin": "./index.js"
