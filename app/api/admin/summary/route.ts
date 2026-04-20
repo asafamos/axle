@@ -144,9 +144,49 @@ export async function GET(req: Request) {
     };
   }
 
+  const NPM_PACKAGES = [
+    "axle-cli",
+    "axle-netlify-plugin",
+    "axle-cloudflare-plugin",
+    "axle-vercel-plugin",
+  ];
+  const npmData = await Promise.all(
+    NPM_PACKAGES.map(async (pkg) => {
+      try {
+        const [weekRes, monthRes] = await Promise.all([
+          fetch(
+            `https://api.npmjs.org/downloads/point/last-week/${pkg}`,
+            { cache: "no-store" }
+          ),
+          fetch(
+            `https://api.npmjs.org/downloads/point/last-month/${pkg}`,
+            { cache: "no-store" }
+          ),
+        ]);
+        const weekJson = (await weekRes.json()) as { downloads?: number };
+        const monthJson = (await monthRes.json()) as { downloads?: number };
+        return {
+          package: pkg,
+          last_week: Number(weekJson.downloads ?? 0),
+          last_month: Number(monthJson.downloads ?? 0),
+        };
+      } catch {
+        return { package: pkg, last_week: 0, last_month: 0 };
+      }
+    })
+  );
+  const npmTotals = npmData.reduce(
+    (acc, row) => ({
+      last_week: acc.last_week + row.last_week,
+      last_month: acc.last_month + row.last_month,
+    }),
+    { last_week: 0, last_month: 0 }
+  );
+
   return NextResponse.json({
     stats: kvData,
     polar: polarData,
+    npm: { packages: npmData, totals: npmTotals },
     generated_at: new Date().toISOString(),
   });
 }

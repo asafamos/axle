@@ -40,6 +40,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState(false);
   const [result, setResult] = useState<ScanResult | null>(null);
   const [fixes, setFixes] = useState<Record<string, FixState>>({});
 
@@ -69,6 +70,7 @@ export default function Home() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setRateLimited(false);
     setResult(null);
     setLoading(true);
     try {
@@ -78,6 +80,10 @@ export default function Home() {
         body: JSON.stringify({ url, source: getStoredUtmSource() || "web" }),
       });
       const data = await res.json();
+      if (res.status === 402 && data.code === "rate_limited") {
+        setRateLimited(true);
+        throw new Error(data.error || "Daily limit reached");
+      }
       if (!res.ok) throw new Error(data.error || "Scan failed");
       setResult(data);
       if (typeof window !== "undefined") {
@@ -109,8 +115,25 @@ export default function Home() {
 
       {error && (
         <div className="mx-auto max-w-3xl px-6">
-          <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-red-800">
-            <strong>Error:</strong> {error}
+          <div
+            className={`rounded-lg border p-4 ${
+              rateLimited
+                ? "border-amber-300 bg-amber-50 text-amber-900"
+                : "border-red-300 bg-red-50 text-red-800"
+            }`}
+          >
+            {rateLimited ? (
+              <>
+                <strong>Daily limit reached.</strong> {error}{" "}
+                <a href="#pricing" className="font-semibold underline">
+                  See plans →
+                </a>
+              </>
+            ) : (
+              <>
+                <strong>Error:</strong> {error}
+              </>
+            )}
           </div>
         </div>
       )}
@@ -333,7 +356,7 @@ function Hero({
               </button>
             </form>
             <p className="mt-3 text-xs text-slate-500">
-              No signup. Real headless browser + axe-core 4.11. ~15s.
+              No signup. Real headless browser + axe-core 4.11. ~15s. 3 free scans/day · <a href="#pricing" className="underline hover:text-slate-700">unlimited with Team</a>.
             </p>
             <ScanCounter />
             <div className="mt-6 flex flex-wrap gap-3 text-sm">

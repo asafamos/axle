@@ -29,6 +29,14 @@ type Summary = {
         }>;
       }
     | { error: string };
+  npm?: {
+    packages: Array<{
+      package: string;
+      last_week: number;
+      last_month: number;
+    }>;
+    totals: { last_week: number; last_month: number };
+  };
   generated_at: string;
 };
 
@@ -103,6 +111,39 @@ export default function AdminPage() {
 
       {data && (
         <div className="mt-8 space-y-8">
+          {data.npm && (
+            <section>
+              <h2 className="text-lg font-semibold">npm downloads</h2>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-2">
+                <Stat
+                  label="Total · last 7 days"
+                  value={fmt(data.npm.totals.last_week)}
+                />
+                <Stat
+                  label="Total · last 30 days"
+                  value={fmt(data.npm.totals.last_month)}
+                />
+              </div>
+              <table className="mt-4 w-full text-sm">
+                <thead className="text-left text-xs uppercase text-slate-500">
+                  <tr>
+                    <th className="py-2">Package</th>
+                    <th className="text-right">Last week</th>
+                    <th className="text-right">Last month</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.npm.packages.map((p) => (
+                    <tr key={p.package} className="border-t border-slate-100">
+                      <td className="py-2 font-mono text-xs">{p.package}</td>
+                      <td className="text-right">{fmt(p.last_week)}</td>
+                      <td className="text-right">{fmt(p.last_month)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
           <section>
             <h2 className="text-lg font-semibold">Revenue (Polar)</h2>
             {polarError && (
