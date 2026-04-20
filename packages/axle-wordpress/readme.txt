@@ -4,7 +4,7 @@ Tags: accessibility, a11y, wcag, ada, compliance, axe-core, eaa, eu-accessibilit
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -50,20 +50,16 @@ Automated tools (including axe-core 4.11, the engine used here) catch roughly 57
 
 == External services ==
 
-This plugin communicates with one external service: **axle**, hosted at `https://axle-iota.vercel.app`. The plugin only contacts this service in two situations, and **only after an explicit user action**:
+Scans run **locally in your admin browser** using axe-core 4.11 bundled with the plugin. The target URL is loaded in a hidden iframe inside the admin page and scanned there. **No URL, no HTML, and no scan contents are sent to any external service when you use the "Scan now" button.**
 
-1. When an administrator clicks the **Scan now** button in Tools → axle.
-2. When an administrator enables **Auto scan = Daily** in Tools → axle → Settings, a WP-Cron daily scan runs on your schedule.
+The plugin may contact the `axle-iota.vercel.app` service in two optional situations:
 
-**Exact data sent in each call:**
+1. **Anonymous usage ping** — after a successful scan, an anonymous ping is sent to `https://axle-iota.vercel.app/api/track` with body `{ "source": "axle-wordpress", "event": "scan_complete" }` and no other data. This lets us see rough plugin usage on our analytics dashboard. Disable with the browser setting for sendBeacon/fetch, or by blocking the domain.
+2. **Auto scan = Daily** — only if you explicitly enable this in Tools → axle → Settings. Because WP-Cron runs without a browser, the daily cron uses the hosted scanner at `POST https://axle-iota.vercel.app/api/scan` with body `{ "url": "<your target URL>", "source": "axle-wordpress" }` (and, if you entered an axle API key, `Authorization: Bearer <key>`). **Requires your target URL to be publicly reachable.** Default is Off.
 
-* Endpoint: `POST https://axle-iota.vercel.app/api/scan`
-* Body (JSON): `{ "url": "<the public URL you configured — defaults to your site home URL>", "source": "axle-wordpress" }`
-* Headers: `Content-Type: application/json` and (optional) `Authorization: Bearer <your axle API key>` if you entered one in Settings for paid AI fix suggestions.
+**No visitor data is sent. No form data is sent. No admin content is sent.** The only URL transmitted by the Auto scan cron is the one you configured in Settings.
 
-**No visitor data is sent. No form data is sent. No admin content is sent.** The only URL transmitted is the one you choose to have scanned.
-
-**Data returned and stored:** the axle API replies with an axe-core accessibility report (violations, nodes, severity). This reply is stored in the WordPress `wp_options` table under the key `axle_last_scan` so it can be displayed in the admin dashboard. It is not displayed on your public site and not shared with any other service.
+**Data stored locally:** scan results are stored in the WordPress `wp_options` table under the key `axle_last_scan` so the admin dashboard can render the summary. Not displayed on your public site, not shared with any service.
 
 **Terms & privacy:**
 * Service provider: axle ([axle-iota.vercel.app](https://axle-iota.vercel.app))
@@ -102,14 +98,21 @@ axle does not track your visitors. The plugin makes one outbound HTTP request pe
 
 == Changelog ==
 
+= 1.1.0 =
+* Scans now run **client-side in the admin browser** using bundled axe-core 4.11. Works for LocalWP, staging behind basic auth / VPN, and any other private environment the previous hosted scanner could not reach.
+* No external network calls during a "Scan now" — only an optional anonymous telemetry ping after a successful scan.
+* Auto scan cron still uses the hosted scanner (it has no browser available). Disabled by default; opt in via Settings.
+
 = 1.0.0 =
 * First public release.
 * WCAG 2.1 / 2.2 AA scanning via axe-core 4.11.
-* Daily WP-Cron scheduled scans.
 * Admin dashboard under Tools → axle.
 * Settings for target URL, severity threshold, optional API key.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Scans now run locally in your browser and work on LocalWP / staging / VPN-restricted sites. No external call required for the free tier. Update recommended.
 
 = 1.0.0 =
 Initial release. Install and click "Scan now" in Tools → axle to see your first accessibility report.

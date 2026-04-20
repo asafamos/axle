@@ -2,8 +2,8 @@
 /**
  * Plugin Name: axle — Accessibility Compliance CI
  * Plugin URI:  https://axle-iota.vercel.app?utm_source=axle-wordpress
- * Description: Scan this WordPress site for WCAG 2.1 / 2.2 AA accessibility violations. Built for EAA 2025 / ADA / תקנה 35. No overlay widgets, no tracking.
- * Version:     1.0.0
+ * Description: Scan this WordPress site for WCAG 2.1 / 2.2 AA accessibility violations. Built for EAA 2025 / ADA / תקנה 35. No overlay widgets, no tracking. Scans run locally in your browser.
+ * Version:     1.1.0
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      axle
@@ -12,24 +12,24 @@
  * License URI: https://opensource.org/licenses/MIT
  * Text Domain: axle
  *
- * axle scans your site via a hosted headless browser running axe-core 4.11,
- * then stores the results. You review violations in Tools → axle. Optional
- * daily cron re-scans. Nothing is injected into your public pages.
+ * Architecture: 1.1.0 scans client-side via axe-core loaded in a hidden
+ * iframe. This works for any environment — LocalWP, staging with basic auth,
+ * VPN-only production — without relying on a hosted scanner that can't
+ * resolve private hostnames. See axle-scan.js for the runner.
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-define('AXLE_VERSION', '1.0.0');
+define('AXLE_VERSION', '1.1.0');
 define('AXLE_API_BASE', 'https://axle-iota.vercel.app');
 define('AXLE_OPTION_SETTINGS', 'axle_settings');
 define('AXLE_OPTION_LAST_SCAN', 'axle_last_scan');
 define('AXLE_CRON_HOOK', 'axle_daily_scan');
 
 /**
- * Activation: seed default settings. No cron is scheduled and no external
- * request is made here — wordpress.org policy requires user action before
- * calling external services. The user opts in by setting Auto scan = Daily
- * in Tools → axle → Settings, which triggers axle_reschedule_cron().
+ * Activation: seed default settings. No cron, no external call — policy
+ * requires user action before anything phones home. The cron only runs
+ * after the user opts in via Settings.
  */
 register_activation_hook(__FILE__, function () {
     if (!get_option(AXLE_OPTION_SETTINGS)) {
@@ -42,10 +42,6 @@ register_activation_hook(__FILE__, function () {
     }
 });
 
-/**
- * Deactivation / uninstall: unschedule the cron. Settings are preserved so
- * re-activation resumes the same config.
- */
 register_deactivation_hook(__FILE__, 'axle_unschedule_cron');
 
 function axle_unschedule_cron() {
@@ -62,7 +58,6 @@ function axle_reschedule_cron($auto_scan) {
     }
 }
 
-// Update the cron when the setting changes.
 add_action('update_option_' . AXLE_OPTION_SETTINGS, function ($old, $new) {
     $old_auto = is_array($old) ? ($old['auto_scan'] ?? 'off') : 'off';
     $new_auto = is_array($new) ? ($new['auto_scan'] ?? 'off') : 'off';
@@ -72,8 +67,56 @@ add_action('update_option_' . AXLE_OPTION_SETTINGS, function ($old, $new) {
 }, 10, 2);
 
 /**
- * Admin menu entry under Tools → axle.
+ * Cron fires just a client-side scan trigger isn't possible (no browser),
+ * so daily cron uses the hosted fallback scanner. Users who are on private
+ * networks and want daily scans should point target_url at a public staging
+ * URL. The admin-page "Scan now" button uses the client-side scanner.
  */
+add_action(AXLE_CRON_HOOK, function () {
+    $settings = get_option(AXLE_OPTION_SETTINGS, []);
+    if (($settings['auto_scan'] ?? 'off') !== 'daily') return;
+    $target   = !empty($settings['target_url']) ? $settings['target_url'] : home_url('/');
+    $api_key  = $settings['api_key'] ?? '';
+    $headers = ['Content-Type' => 'application/json'];
+    if ($api_key) {
+        $headers['Authorization'] = 'Bearer ' . $api_key;
+    }
+    $response = wp_remote_post(AXLE_API_BASE . '/api/scan', [
+        'timeout' => 60,
+        'headers' => $headers,
+        'body'    => wp_json_encode(['url' => $target, 'source' => 'axle-wordpress']),
+    ]);
+    if (is_wp_error($response)) {
+        update_option(AXLE_OPTION_LAST_SCAN, [
+            'error'      => $response->get_error_message(),
+            'scanned_at' => time(),
+            'target'     => $target,
+            'via'        => 'cron-hosted',
+        ]);
+        return;
+    }
+    $code = wp_remote_retrieve_response_code($response);
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+    if ($code >= 400) {
+        $msg = is_array($body) && !empty($body['error'])
+            ? $body['error']
+            : sprintf(__('Scan failed (HTTP %d)', 'axle'), $code);
+        update_option(AXLE_OPTION_LAST_SCAN, [
+            'error'      => $msg,
+            'scanned_at' => time(),
+            'target'     => $target,
+            'via'        => 'cron-hosted',
+        ]);
+        return;
+    }
+    update_option(AXLE_OPTION_LAST_SCAN, [
+        'result'     => $body,
+        'scanned_at' => time(),
+        'target'     => $target,
+        'via'        => 'cron-hosted',
+    ]);
+});
+
 add_action('admin_menu', function () {
     add_management_page(
         __('axle — Accessibility Scanner', 'axle'),
@@ -94,98 +137,112 @@ function axle_sanitize_settings($input) {
     $out = [];
     $out['api_key']    = isset($input['api_key'])    ? sanitize_text_field($input['api_key'])    : '';
     $out['target_url'] = isset($input['target_url']) ? esc_url_raw($input['target_url'])         : home_url('/');
-    $out['auto_scan']  = in_array($input['auto_scan'] ?? 'daily', ['off', 'daily'], true) ? $input['auto_scan'] : 'daily';
+    $out['auto_scan']  = in_array($input['auto_scan'] ?? 'off', ['off', 'daily'], true) ? $input['auto_scan'] : 'off';
     $out['fail_on']    = in_array($input['fail_on']   ?? 'serious', ['critical', 'serious', 'moderate', 'minor'], true) ? $input['fail_on'] : 'serious';
     return $out;
 }
 
 /**
- * Handle the "Scan now" POST, then redirect back to the admin page.
+ * AJAX: client-side scanner POSTs its axe-core output here to persist.
+ * Requires nonce + manage_options capability.
  */
-add_action('admin_post_axle_scan_now', function () {
-    if (!current_user_can('manage_options')) { wp_die(__('Unauthorized', 'axle'), 403); }
-    check_admin_referer('axle_scan_now');
-    $result = axle_run_scan();
-    $status = is_wp_error($result) ? 'error' : 'ok';
-    wp_redirect(add_query_arg(['page' => 'axle', 'axle_status' => $status], admin_url('tools.php')));
-    exit;
-});
+add_action('wp_ajax_axle_save_scan', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Unauthorized', 403);
+    }
+    check_ajax_referer('axle_save_scan');
 
-/**
- * Daily cron handler. Fire-and-forget — errors are stored for later review.
- */
-add_action(AXLE_CRON_HOOK, function () {
-    $settings = get_option(AXLE_OPTION_SETTINGS, []);
-    if (($settings['auto_scan'] ?? 'daily') !== 'daily') return;
-    axle_run_scan();
-});
-
-/**
- * Core scan call. Posts to axle's hosted scanner with source=axle-wordpress
- * so usage shows up in our analytics. Stores the latest result in wp_options.
- * Returns WP_Error on network failure or API error; scan data otherwise.
- */
-function axle_run_scan() {
-    $settings = get_option(AXLE_OPTION_SETTINGS, []);
-    $target   = !empty($settings['target_url']) ? $settings['target_url'] : home_url('/');
-    $api_key  = $settings['api_key'] ?? '';
-
-    $headers = ['Content-Type' => 'application/json'];
-    if ($api_key) {
-        $headers['Authorization'] = 'Bearer ' . $api_key;
+    $raw = isset($_POST['payload']) ? wp_unslash($_POST['payload']) : '';
+    $decoded = json_decode($raw, true);
+    if (!is_array($decoded) || empty($decoded['url'])) {
+        wp_send_json_error('Invalid payload', 400);
     }
 
-    $response = wp_remote_post(AXLE_API_BASE . '/api/scan', [
-        'timeout' => 60,
-        'headers' => $headers,
-        'body'    => wp_json_encode([
-            'url'    => $target,
-            'source' => 'axle-wordpress',
-        ]),
-    ]);
+    $target = esc_url_raw($decoded['url']);
+    $violations = is_array($decoded['violations'] ?? null) ? $decoded['violations'] : [];
+    $summary = is_array($decoded['summary'] ?? null) ? $decoded['summary'] : [
+        'critical' => 0, 'serious' => 0, 'moderate' => 0, 'minor' => 0,
+    ];
 
-    if (is_wp_error($response)) {
-        update_option(AXLE_OPTION_LAST_SCAN, [
-            'error'      => $response->get_error_message(),
-            'scanned_at' => time(),
-            'target'     => $target,
-        ]);
-        return $response;
-    }
-
-    $code = wp_remote_retrieve_response_code($response);
-    $body = json_decode(wp_remote_retrieve_body($response), true);
-
-    if ($code >= 400) {
-        $message = is_array($body) && !empty($body['error'])
-            ? $body['error']
-            : sprintf(__('Scan failed (HTTP %d)', 'axle'), $code);
-        update_option(AXLE_OPTION_LAST_SCAN, [
-            'error'      => $message,
-            'http_code'  => $code,
-            'scanned_at' => time(),
-            'target'     => $target,
-        ]);
-        return new WP_Error('axle_api_error', $message);
-    }
-
+    // Reshape into the same structure the server-side scanner produced so
+    // axle_render_last_scan works without branching.
     update_option(AXLE_OPTION_LAST_SCAN, [
-        'result'     => $body,
+        'result' => [
+            'violations' => axle_sanitize_violations($violations),
+            'summary'    => array_map('intval', $summary),
+        ],
         'scanned_at' => time(),
         'target'     => $target,
+        'via'        => 'client-axe',
     ]);
-    return $body;
+
+    wp_send_json_success(['saved' => true]);
+});
+
+function axle_sanitize_violations($violations) {
+    $allowed_impact = ['critical', 'serious', 'moderate', 'minor'];
+    $out = [];
+    foreach ($violations as $v) {
+        if (!is_array($v)) continue;
+        $impact = in_array($v['impact'] ?? null, $allowed_impact, true) ? $v['impact'] : null;
+        $nodes = [];
+        foreach ((array) ($v['nodes'] ?? []) as $n) {
+            if (!is_array($n)) continue;
+            $nodes[] = [
+                'html'           => isset($n['html']) ? wp_kses_post(substr((string) $n['html'], 0, 500)) : '',
+                'target'         => array_map('sanitize_text_field', (array) ($n['target'] ?? [])),
+                'failureSummary' => isset($n['failureSummary']) ? sanitize_textarea_field((string) $n['failureSummary']) : '',
+            ];
+        }
+        $out[] = [
+            'id'          => sanitize_key($v['id'] ?? ''),
+            'impact'      => $impact,
+            'help'        => sanitize_text_field((string) ($v['help'] ?? '')),
+            'helpUrl'     => esc_url_raw((string) ($v['helpUrl'] ?? '')),
+            'description' => sanitize_text_field((string) ($v['description'] ?? '')),
+            'nodes'       => $nodes,
+        ];
+    }
+    return $out;
 }
 
 /**
- * Render the admin page: settings form, "scan now" button, last scan summary.
+ * Enqueue axe-core + the scanner glue script, only on our admin page.
  */
+add_action('admin_enqueue_scripts', function ($hook) {
+    // 'tools_page_axle' is the hook ID for the Tools → axle page.
+    if ($hook !== 'tools_page_axle') return;
+
+    $plugin_url = plugins_url('', __FILE__);
+    wp_enqueue_script(
+        'axle-axe-core',
+        $plugin_url . '/axe.min.js',
+        [],
+        AXLE_VERSION,
+        true
+    );
+    wp_enqueue_script(
+        'axle-scan',
+        $plugin_url . '/axle-scan.js',
+        ['axle-axe-core'],
+        AXLE_VERSION,
+        true
+    );
+    $settings = get_option(AXLE_OPTION_SETTINGS, []);
+    $target   = !empty($settings['target_url']) ? $settings['target_url'] : home_url('/');
+    wp_localize_script('axle-scan', 'axleScanConfig', [
+        'ajaxUrl'      => admin_url('admin-ajax.php'),
+        'nonce'        => wp_create_nonce('axle_save_scan'),
+        'targetUrl'    => $target,
+        'telemetryUrl' => AXLE_API_BASE . '/api/track',
+    ]);
+});
+
 function axle_render_admin_page() {
     if (!current_user_can('manage_options')) return;
 
     $settings  = get_option(AXLE_OPTION_SETTINGS, []);
     $last_scan = get_option(AXLE_OPTION_LAST_SCAN, null);
-    $status    = isset($_GET['axle_status']) ? sanitize_key($_GET['axle_status']) : null;
     ?>
     <div class="wrap">
         <h1><?php esc_html_e('axle — Accessibility Scanner', 'axle'); ?></h1>
@@ -196,21 +253,20 @@ function axle_render_admin_page() {
             </a>
         </p>
 
-        <?php if ($status === 'ok'): ?>
-            <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Scan completed.', 'axle'); ?></p></div>
-        <?php elseif ($status === 'error'): ?>
-            <div class="notice notice-error is-dismissible"><p><?php esc_html_e('Scan failed. See details below.', 'axle'); ?></p></div>
-        <?php endif; ?>
-
         <h2><?php esc_html_e('Run a scan', 'axle'); ?></h2>
-        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-            <?php wp_nonce_field('axle_scan_now'); ?>
-            <input type="hidden" name="action" value="axle_scan_now" />
-            <?php submit_button(__('Scan now', 'axle'), 'primary', 'submit', false); ?>
-            <span class="description" style="margin-left:10px">
-                <?php echo esc_html(sprintf(__('Target: %s', 'axle'), $settings['target_url'] ?? home_url('/'))); ?>
+        <p class="description">
+            <?php esc_html_e('Scans run in your browser using axe-core 4.11. The target page is loaded in a hidden iframe. No data leaves your server.', 'axle'); ?>
+        </p>
+        <p>
+            <button id="axle-scan-now-btn" class="button button-primary">
+                <?php esc_html_e('Scan now', 'axle'); ?>
+            </button>
+            <span style="margin-left:10px" class="description">
+                <?php echo esc_html(sprintf(__('Target: %s', 'axle'), !empty($settings['target_url']) ? $settings['target_url'] : home_url('/'))); ?>
             </span>
-        </form>
+        </p>
+        <p id="axle-scan-status" style="display:none" class="description"></p>
+        <div id="axle-scan-frame-wrap" aria-hidden="true"></div>
 
         <?php axle_render_last_scan($last_scan); ?>
 
@@ -230,9 +286,10 @@ function axle_render_admin_page() {
                     <th scope="row"><label for="axle_auto_scan"><?php esc_html_e('Auto scan', 'axle'); ?></label></th>
                     <td>
                         <select id="axle_auto_scan" name="axle_settings[auto_scan]">
-                            <option value="daily" <?php selected($settings['auto_scan'] ?? 'daily', 'daily'); ?>><?php esc_html_e('Daily (via WP-Cron)', 'axle'); ?></option>
-                            <option value="off"   <?php selected($settings['auto_scan'] ?? 'daily', 'off'); ?>><?php esc_html_e('Off', 'axle'); ?></option>
+                            <option value="off"   <?php selected($settings['auto_scan'] ?? 'off', 'off'); ?>><?php esc_html_e('Off', 'axle'); ?></option>
+                            <option value="daily" <?php selected($settings['auto_scan'] ?? 'off', 'daily'); ?>><?php esc_html_e('Daily (via WP-Cron, uses hosted scanner — requires public URL)', 'axle'); ?></option>
                         </select>
+                        <p class="description"><?php esc_html_e('Auto scan uses the hosted scanner at axle-iota.vercel.app because WP-Cron runs without a browser. Works for public URLs only — for local/staging use the "Scan now" button.', 'axle'); ?></p>
                     </td>
                 </tr>
                 <tr>
@@ -275,12 +332,14 @@ function axle_render_last_scan($last_scan) {
     $when = isset($last_scan['scanned_at'])
         ? human_time_diff($last_scan['scanned_at']) . ' ' . __('ago', 'axle')
         : __('just now', 'axle');
+    $via = $last_scan['via'] ?? 'unknown';
 
     echo '<h2>' . esc_html__('Last scan', 'axle') . '</h2>';
     echo '<p><strong>' . esc_html__('When:', 'axle') . '</strong> ' . esc_html($when);
     if (!empty($last_scan['target'])) {
         echo ' &middot; <strong>' . esc_html__('Target:', 'axle') . '</strong> ' . esc_html($last_scan['target']);
     }
+    echo ' &middot; <strong>' . esc_html__('Via:', 'axle') . '</strong> ' . esc_html($via === 'client-axe' ? 'browser (axe-core)' : 'hosted scanner');
     echo '</p>';
 
     if (!empty($last_scan['error'])) {
@@ -320,9 +379,9 @@ function axle_render_last_scan($last_scan) {
     echo '<p class="description">' . esc_html(sprintf(
         __('Total: %d rule(s). Critical: %d · Serious: %d · Moderate: %d · Minor: %d', 'axle'),
         $total,
-        $summary['critical'] ?? 0,
-        $summary['serious']  ?? 0,
-        $summary['moderate'] ?? 0,
-        $summary['minor']    ?? 0
+        isset($summary['critical']) ? (int) $summary['critical'] : 0,
+        isset($summary['serious'])  ? (int) $summary['serious']  : 0,
+        isset($summary['moderate']) ? (int) $summary['moderate'] : 0,
+        isset($summary['minor'])    ? (int) $summary['minor']    : 0
     )) . '</p>';
 }
