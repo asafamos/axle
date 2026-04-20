@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "axle — Accessibility Scanner",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Scan the current tab for WCAG 2.1 / 2.2 AA violations with axe-core. Free, no signup, results in 2 seconds.",
   "author": "axle",
   "homepage_url": "https://axle-iota.vercel.app",

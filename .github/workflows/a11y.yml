@@ -1,147 +1,29 @@
+# Dogfood: axle scans its own marketing site on every PR.
+# If axle regresses accessibility on its own homepage, the PR fails.
 name: Accessibility
 
 on:
   pull_request:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      url:
-        description: "URL to scan (leave empty to build + start the app in-runner)"
-        required: false
-        type: string
-      with-ai-fixes:
-        description: "Generate AI fix suggestions (uses ANTHROPIC_API_KEY secret, costs tokens)"
-        required: false
-        type: boolean
-        default: false
-      fail-on:
-        description: "Fail the check at this severity or worse"
-        required: false
-        type: choice
-        default: serious
-        options: [critical, serious, moderate, minor, none]
 
 permissions:
   contents: read
   pull-requests: write
 
-concurrency:
-  group: a11y-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  scan:
-    name: axe + ai
+  axle:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
-
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: asafamos/axle-action@v1
         with:
-          node-version: "22"
-          cache: npm
-
-      - run: npm ci
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Chromium (cache miss)
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium --with-deps
-
-      - name: Install Chromium system deps (cache hit)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
-
-      - name: Resolve scan target
-        id: target
-        env:
-          INPUT_URL: ${{ inputs.url }}
-        run: |
-          if [ -n "$INPUT_URL" ]; then
-            echo "url=$INPUT_URL" >> "$GITHUB_OUTPUT"
-            echo "needs-server=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "url=http://localhost:3000" >> "$GITHUB_OUTPUT"
-            echo "needs-server=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build app
-        if: steps.target.outputs.needs-server == 'true'
-        run: npm run build
-
-      - name: Start app in background
-        if: steps.target.outputs.needs-server == 'true'
-        run: |
-          npm start > server.log 2>&1 &
-          echo $! > server.pid
-          npx --yes wait-on http://localhost:3000 --timeout 60000
-
-      - name: Run a11y scan
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-sonnet-4-6' }}
-        run: |
-          npm run a11y:ci -- \
-            --url "${{ steps.target.outputs.url }}" \
-            --fail-on "${{ inputs.fail-on || 'serious' }}" \
-            --with-ai-fixes "${{ inputs.with-ai-fixes || 'false' }}" \
-            --json-out a11y-report.json \
-            --markdown-out a11y-report.md
-
-      - name: Stop background app
-        if: always() && steps.target.outputs.needs-server == 'true'
-        run: |
-          if [ -f server.pid ]; then kill "$(cat server.pid)" 2>/dev/null || true; fi
-
-      - name: Upload report artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: a11y-report
-          path: |
-            a11y-report.json
-            a11y-report.md
-            server.log
-
-      - name: Comment on PR
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require("fs");
-            if (!fs.existsSync("a11y-report.md")) {
-              core.warning("No a11y-report.md produced; skipping comment.");
-              return;
-            }
-            const body = fs.readFileSync("a11y-report.md", "utf8");
-            const marker = "<!-- a11y-fixer-report -->";
-            const fullBody = `${marker}\n${body}`;
-
-            const { data: comments } = await github.rest.issues.listComments({
-              ...context.repo,
-              issue_number: context.issue.number,
-              per_page: 100,
-            });
-            const existing = comments.find((c) => c.body?.includes(marker));
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                ...context.repo,
-                comment_id: existing.id,
-                body: fullBody,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                ...context.repo,
-                issue_number: context.issue.number,
-                body: fullBody,
-              });
-            }
+          # Build + start the Next.js app locally and scan http://localhost:3000
+          install-command: npm ci
+          build-command: npm run build
+          start-command: npm start
+          wait-on-port: "3000"
+          fail-on: serious
+          with-ai-fixes: "true"
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          comment-on-pr: "true"

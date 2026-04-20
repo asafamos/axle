@@ -1,11 +1,14 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "axle",
-  "title": "axle — Accessibility Scanner",
+  "title": "Axle — Accessibility Scanner",
   "description": "Scan any URL for WCAG 2.1 / 2.2 AA accessibility violations without leaving Raycast. Results appear as a list; pick any violation to see the offending element and suggested fix.",
   "icon": "command-icon.png",
   "author": "asafamos",
-  "categories": ["Developer Tools", "Web"],
+  "categories": [
+    "Developer Tools",
+    "Web"
+  ],
   "license": "MIT",
   "commands": [
     {
@@ -32,6 +35,21 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.78.0"
+    "@raycast/api": "^1.104.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
   }
 }
