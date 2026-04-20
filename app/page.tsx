@@ -588,7 +588,7 @@ function IntegrationsStrip() {
     { name: "Netlify Plugin", status: "live", href: "https://www.npmjs.com/package/axle-netlify-plugin" },
     { name: "Cloudflare Pages", status: "live", href: "https://www.npmjs.com/package/axle-cloudflare-plugin" },
     { name: "Vercel", status: "live", href: "https://www.npmjs.com/package/axle-vercel-plugin" },
-    { name: "WordPress Plugin", status: "planned", href: "#" },
+    { name: "WordPress Plugin", status: "beta", href: "https://github.com/asafamos/axle/tree/main/packages/axle-wordpress" },
     { name: "Shopify App", status: "planned", href: "#" },
   ];
   const badge: Record<string, string> = {
