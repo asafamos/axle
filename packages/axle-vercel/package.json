@@ -1,16 +1,17 @@
 {
-  "name": "axle-cloudflare-plugin",
+  "name": "axle-vercel-plugin",
   "version": "1.0.0",
-  "description": "Cloudflare Pages / Workers plugin — scan your preview URL for WCAG 2.1/2.2 AA violations on every build, fail the deploy on regressions.",
+  "description": "Vercel build step — scan your deploy preview for WCAG 2.1/2.2 AA violations on every build, fail the deploy on regressions.",
   "keywords": [
-    "cloudflare",
-    "cloudflare-pages",
-    "cloudflare-workers",
+    "vercel",
+    "nextjs",
     "accessibility",
     "a11y",
     "wcag",
     "axe-core",
-    "ci"
+    "ci",
+    "compliance",
+    "eaa"
   ],
   "license": "MIT",
   "author": "axle",
@@ -18,13 +19,15 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asafamos/axle.git",
-    "directory": "packages/axle-cloudflare"
+    "directory": "packages/axle-vercel"
+  },
+  "bin": {
+    "axle-vercel-plugin": "./index.js"
   },
   "type": "module",
   "main": "./index.js",
   "files": [
     "index.js",
-    "wrangler.toml.example",
     "README.md"
   ],
   "engines": {

@@ -42,3 +42,7 @@ Set these in Cloudflare Pages → Settings → Environment Variables.
 ## Not a compliance certificate
 
 Remediation assistance only. Automated tools catch ~57% of WCAG issues — manual human review is still recommended.
+
+---
+
+Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-cloudflare) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-cloudflare)

@@ -28,3 +28,7 @@ Set `ANTHROPIC_API_KEY` in Netlify site → Environment if you want AI fix sugge
 ## Not a compliance certificate
 
 Remediation assistance only. Manual human review still recommended for full WCAG conformance.
+
+---
+
+Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-netlify) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-netlify)

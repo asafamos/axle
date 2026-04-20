@@ -48,7 +48,7 @@ function parseArgs(argv: string[]): { command: string | null; args: Args } {
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") help();
   if (argv[0] === "--version" || argv[0] === "-v") {
     // Lazy import to keep cold start fast.
-    console.log("axle-cli 0.1.1");
+    console.log("axle-cli 1.0.0");
     process.exit(0);
   }
 
@@ -94,7 +94,7 @@ function shouldFail(result: ScanResult, failOn: Args["failOn"]): boolean {
 function printBanner(): void {
   console.log("────────────────────────────────────────");
   console.log(" axle — accessibility compliance CI");
-  console.log(" https://axle-iota.vercel.app");
+  console.log(" https://axle-iota.vercel.app?utm_source=axle-cli");
   console.log("────────────────────────────────────────");
 }
 

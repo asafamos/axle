@@ -22,3 +22,7 @@ axe-core tells you what's wrong. `axle-cli` also proposes the fix, writes the PR
 ## Not a compliance certificate
 
 Remediation assistance only. Automated tools catch ~57% of WCAG issues. Human review recommended for full conformance.
+
+---
+
+Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-cli) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-cli)

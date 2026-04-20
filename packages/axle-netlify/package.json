@@ -1,6 +1,6 @@
 {
   "name": "axle-netlify-plugin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Netlify Build Plugin — scan the deploy preview for WCAG 2.1/2.2 AA violations, fail the build on regressions, post summary to the deploy log.",
   "keywords": [
     "netlify",
@@ -30,6 +30,6 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "axle-cli": "^0.1.0"
+    "axle-cli": "^1.0.0"
   }
 }
