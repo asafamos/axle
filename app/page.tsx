@@ -361,7 +361,7 @@ function Hero({
             <ScanCounter />
             <div className="mt-6 flex flex-wrap gap-3 text-sm">
               <a
-                href="https://github.com/asafamos/axle-action"
+                href="https://github.com/marketplace/actions/axle-accessibility-compliance-ci"
                 className="rounded-md border border-slate-300 bg-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-100"
               >
                 ▸ Install GitHub Action

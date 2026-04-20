@@ -53,7 +53,7 @@ export default function AccessibeAlternativePage() {
               Start free
             </Link>
             <a
-              href="https://github.com/asafamos/axle-action"
+              href="https://github.com/marketplace/actions/axle-accessibility-compliance-ci"
               className="rounded-md border border-slate-300 bg-white px-5 py-2 text-sm font-medium text-slate-800 hover:bg-slate-100"
             >
               Install the GitHub Action
