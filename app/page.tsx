@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { ScanResult, AxeViolation } from "@/lib/scanner";
 import { getStoredUtmSource } from "./utm-tracker";
+import { ScanLeadCapture } from "./scan-lead-capture";
 
 type FixResult = {
   explanation: string;
@@ -155,6 +156,12 @@ export default function Home() {
             totalViolations={totalViolations}
             totalNodes={totalNodes}
             onFix={handleFix}
+          />
+          <ScanLeadCapture
+            scanUrl={result.url}
+            totalViolations={totalViolations}
+            critical={result.summary.critical}
+            serious={result.summary.serious}
           />
         </section>
       )}

@@ -48,6 +48,8 @@ export async function GET(req: Request) {
           redis.get<number>("axle:stats:fixes:all"),
           redis.get<number>("axle:stats:views:all"),
           redis.get<number>(`axle:stats:views:${day}`),
+          redis.get<number>("axle:stats:leads:all"),
+          redis.get<number>(`axle:stats:leads:${day}`),
           ...SOURCES.map((s) =>
             redis.get<number>(`axle:stats:scans:src:${s}`)
           ),
@@ -56,8 +58,16 @@ export async function GET(req: Request) {
           ),
         ];
         const results = await Promise.all(keys.map((p) => p.catch(() => 0)));
-        const [scansAll, scansToday, fixesAll, viewsAll, viewsToday] = results;
-        const srcStart = 5;
+        const [
+          scansAll,
+          scansToday,
+          fixesAll,
+          viewsAll,
+          viewsToday,
+          leadsAll,
+          leadsToday,
+        ] = results;
+        const srcStart = 7;
         const views_by_source: Record<string, number> = {};
         const scans_by_source: Record<string, number> = {};
         SOURCES.forEach((s, i) => {
@@ -66,14 +76,53 @@ export async function GET(req: Request) {
             results[srcStart + SOURCES.length + i] ?? 0
           );
         });
+
+        // Recent lead emails (keep it to 20 — enough to eyeball, not so much
+        // that the admin response bloats).
+        type LeadRecord = {
+          email: string;
+          url: string;
+          violations: number;
+          critical: number;
+          serious: number;
+          source: string;
+          created_at: number;
+          created_at_iso?: string;
+        };
+        let leads_recent: LeadRecord[] = [];
+        try {
+          const emails = await redis.lrange<string>("axle:leads:list", 0, 19);
+          const records = await Promise.all(
+            emails.map((e) =>
+              redis.get<string | LeadRecord>(`axle:lead:${e}`).catch(() => null)
+            )
+          );
+          leads_recent = records
+            .map((r) => {
+              if (!r) return null;
+              if (typeof r === "object") return r as LeadRecord;
+              try {
+                return JSON.parse(r as string) as LeadRecord;
+              } catch {
+                return null;
+              }
+            })
+            .filter((r): r is LeadRecord => r !== null);
+        } catch {
+          /* no-op */
+        }
+
         return {
           scans_all_time: Number(scansAll ?? 0),
           scans_today: Number(scansToday ?? 0),
           fixes_all_time: Number(fixesAll ?? 0),
           views_all_time: Number(viewsAll ?? 0),
           views_today: Number(viewsToday ?? 0),
+          leads_all_time: Number(leadsAll ?? 0),
+          leads_today: Number(leadsToday ?? 0),
           scans_by_source,
           views_by_source,
+          leads_recent,
         };
       })()
     : { note: "KV not configured" };

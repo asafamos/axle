@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+type LeadRecord = {
+  email: string;
+  url: string;
+  violations: number;
+  critical: number;
+  serious: number;
+  source: string;
+  created_at: number;
+  created_at_iso?: string;
+};
+
 type Summary = {
   stats?:
     | {
@@ -10,8 +21,11 @@ type Summary = {
         fixes_all_time: number;
         views_all_time: number;
         views_today: number;
+        leads_all_time: number;
+        leads_today: number;
         scans_by_source: Record<string, number>;
         views_by_source: Record<string, number>;
+        leads_recent: LeadRecord[];
       }
     | { note: string };
   polar?:
@@ -208,11 +222,13 @@ export default function AdminPage() {
             <h2 className="text-lg font-semibold">Usage</h2>
             {stats ? (
               <>
-                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
                   <Stat label="Scans (all time)" value={fmt(stats.scans_all_time)} />
                   <Stat label="Scans (today)" value={fmt(stats.scans_today)} />
                   <Stat label="AI fixes" value={fmt(stats.fixes_all_time)} />
                   <Stat label="Views (all time)" value={fmt(stats.views_all_time)} />
+                  <Stat label="Leads (all time)" value={fmt(stats.leads_all_time ?? 0)} />
+                  <Stat label="Leads (today)" value={fmt(stats.leads_today ?? 0)} />
                 </div>
                 <h3 className="mt-6 text-sm font-semibold text-slate-700">
                   Scans by source
@@ -222,6 +238,43 @@ export default function AdminPage() {
                   Page views by source
                 </h3>
                 <SourceTable data={stats.views_by_source} />
+
+                <h3 className="mt-6 text-sm font-semibold text-slate-700">
+                  Recent leads (scan-result subscribers)
+                </h3>
+                {stats.leads_recent && stats.leads_recent.length > 0 ? (
+                  <table className="mt-2 w-full text-sm">
+                    <thead className="text-left text-xs uppercase text-slate-500">
+                      <tr>
+                        <th className="py-2">When</th>
+                        <th>Email</th>
+                        <th>URL</th>
+                        <th className="text-right">Critical</th>
+                        <th className="text-right">Serious</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.leads_recent.map((l) => (
+                        <tr key={l.email + l.created_at} className="border-t border-slate-100">
+                          <td className="py-1 text-xs text-slate-600">
+                            {new Date(l.created_at).toLocaleString()}
+                          </td>
+                          <td className="font-mono text-xs">{l.email}</td>
+                          <td className="truncate text-xs text-slate-600" title={l.url}>
+                            {l.url.length > 40 ? l.url.slice(0, 40) + "…" : l.url}
+                          </td>
+                          <td className="text-right text-xs">{l.critical}</td>
+                          <td className="text-right text-xs">{l.serious}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="mt-2 text-sm text-slate-500">
+                    No leads captured yet. The prompt appears under a scan
+                    result when the scan finds at least one violation.
+                  </p>
+                )}
               </>
             ) : (
               <p className="mt-2 text-sm text-slate-600">
