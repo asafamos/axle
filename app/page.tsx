@@ -849,7 +849,7 @@ function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-slate-50 py-12">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-8 sm:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2 font-bold">
               <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-900 text-white">
@@ -870,6 +870,19 @@ function Footer() {
               <li><a href="#integrations" className="text-slate-700 hover:underline">Integrations</a></li>
               <li><a href="#pricing" className="text-slate-700 hover:underline">Pricing</a></li>
               <li><a href="/statement" className="text-slate-700 hover:underline">Hebrew statement</a></li>
+              <li><a href="/changelog" className="text-slate-700 hover:underline">Changelog</a></li>
+            </ul>
+          </div>
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Resources
+            </div>
+            <ul className="mt-2 space-y-1 text-sm">
+              <li><a href="/guides" className="text-slate-700 hover:underline">Guides (EAA / stacks)</a></li>
+              <li><a href="/faq" className="text-slate-700 hover:underline">FAQ</a></li>
+              <li><a href="/why-not-overlay" className="text-slate-700 hover:underline">Why not overlays</a></li>
+              <li><a href="/checklist/wcag-2-2-aa" className="text-slate-700 hover:underline">WCAG 2.2 checklist</a></li>
+              <li><a href="/alternatives/accessibe" className="text-slate-700 hover:underline">accessiBe alternative</a></li>
             </ul>
           </div>
           <div>

@@ -23,6 +23,8 @@ export function GET() {
 - [Homepage](https://axle-iota.vercel.app/): what axle is, live scan form, pricing tiers (Open / Team / Business)
 - [Pricing](https://axle-iota.vercel.app/#pricing): Open (free), Team ($49/mo), Business ($299/mo)
 - [Hebrew statement generator](https://axle-iota.vercel.app/statement): free, runs locally in the browser, aligned with Israeli תקנה 35
+- [FAQ](https://axle-iota.vercel.app/faq): compliance scope, pricing, deployment, privacy, AI fixes
+- [Guides hub](https://axle-iota.vercel.app/guides): all regional + stack guides in one index
 - [Changelog](https://axle-iota.vercel.app/changelog): release notes
 
 ## Regional compliance guides
@@ -32,11 +34,16 @@ export function GET() {
 - [RGAA (France, French)](https://axle-iota.vercel.app/guides/eaa-france): French transposition, 25 000 € per breach, DINUM
 - [Legge Stanca (Italy, Italian)](https://axle-iota.vercel.app/guides/eaa-italy): Italian transposition, fines to 5% of turnover, AgID
 - [Ley 11/2023 (Spain, Spanish)](https://axle-iota.vercel.app/guides/eaa-spain): Spanish transposition, three-tier fines to €1M, Observatorio
+- [S.I. 636/2023 (Ireland)](https://axle-iota.vercel.app/guides/eaa-ireland): Irish transposition, €60K per offence, NDA, director liability
+- [Implementatiewet (Netherlands)](https://axle-iota.vercel.app/guides/eaa-netherlands): Dutch transposition, ACM enforcement, toegankelijkheidsverklaring
+- [Loi/Wet 28 Nov 2022 (Belgium)](https://axle-iota.vercel.app/guides/eaa-belgium): Belgian transposition, €80K per violation, FR/NL/DE statements
 - [תקנה 35 (Israel, Hebrew)](https://axle-iota.vercel.app/he/takana-35): Israeli regulation 35, statement requirements, enforcement
 
 ## Stack-specific guides
 
 - [Next.js accessibility](https://axle-iota.vercel.app/guides/nextjs-accessibility): App Router patterns, Image alt, focus management, CI setup
+- [React accessibility](https://axle-iota.vercel.app/guides/react-accessibility): component semantics, useId, focus management, jest-axe + Playwright
+- [Shopify accessibility](https://axle-iota.vercel.app/guides/shopify-accessibility): theme audit, Checkout Extensibility, catalog-scale scanning
 - [WordPress accessibility](https://axle-iota.vercel.app/guides/wordpress-accessibility): themes, Gutenberg, plugins, local scanning
 
 ## Tool comparisons
@@ -44,6 +51,7 @@ export function GET() {
 - [axle vs accessiBe](https://axle-iota.vercel.app/alternatives/accessibe): the $1M FTC settlement, overlay vs source-level fixes
 - [axle vs UserWay](https://axle-iota.vercel.app/alternatives/userway): widget alternative
 - [axle vs AudioEye](https://axle-iota.vercel.app/alternatives/audioeye): source-first instead of hybrid overlay
+- [Why accessibility overlays don't work](https://axle-iota.vercel.app/why-not-overlay): FTC settlement, Princeton study, regulator methodology
 
 ## Reference
 
