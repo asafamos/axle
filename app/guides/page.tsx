@@ -88,6 +88,27 @@ const regional: Guide[] = [
       "SPF Économie / FOD Economie enforcement across three language regions, €80k per violation.",
   },
   {
+    href: "/guides/eaa-austria",
+    eyebrow: "EAA · Austria",
+    title: "Austria — Barrierefreiheitsgesetz (BaFG)",
+    blurb:
+      "Sozialministeriumservice enforcement, VStG fines to €80k, BGStG civil-claim double exposure.",
+  },
+  {
+    href: "/guides/eaa-sweden",
+    eyebrow: "EAA · Sweden",
+    title: "Sweden — Tillgänglighetslagen",
+    blurb:
+      "DIGG enforcement, sanktionsavgift up to 10 MSEK, parallel DO discrimination pathway.",
+  },
+  {
+    href: "/guides/eaa-portugal",
+    eyebrow: "EAA · Portugal",
+    title: "Portugal — Decreto-Lei 82/2022",
+    blurb:
+      "AMA / ASAE enforcement, RGCE contraordenações up to €44,891, complementary AccessMonitor.",
+  },
+  {
     href: "/he/takana-35",
     eyebrow: "ישראל · תקנה 35",
     title: "תקנה 35 — שירות נגיש באינטרנט",
@@ -110,6 +131,13 @@ const stack: Guide[] = [
     title: "React accessibility — the practical guide",
     blurb:
       "Component semantics, useId forms, focus management, jest-axe + Playwright, and a CI pipeline.",
+  },
+  {
+    href: "/guides/vue-accessibility",
+    eyebrow: "Stack · Vue / Nuxt",
+    title: "Vue accessibility — the practical guide",
+    blurb:
+      "Vue 3.5 useId, route focus, vitest-axe + Playwright, Nuxt specifics, CI pipeline.",
   },
   {
     href: "/guides/shopify-accessibility",
@@ -140,6 +168,13 @@ const reference: Guide[] = [
     title: "Why accessibility overlays don't work",
     blurb:
       "FTC $1M accessiBe settlement, Princeton 2023 study, regulator methodology, what to do instead.",
+  },
+  {
+    href: "/ada-demand-letter",
+    eyebrow: "Emergency",
+    title: "I got an ADA demand letter — the first 48 hours",
+    blurb:
+      "Engineering-side playbook: preserve evidence, scan and inventory, engage counsel, publish a dated plan.",
   },
   {
     href: "/alternatives/accessibe",
