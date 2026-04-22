@@ -109,6 +109,20 @@ const regional: Guide[] = [
       "AMA / ASAE enforcement, RGCE contraordenações up to €44,891, complementary AccessMonitor.",
   },
   {
+    href: "/guides/eaa-poland",
+    eyebrow: "EAA · Poland",
+    title: "Poland — Ustawa o dostępności",
+    blurb:
+      "UOKiK turnover-linked fines, 38M consumers, fastest-growing EU e-commerce market.",
+  },
+  {
+    href: "/guides/eaa-denmark",
+    eyebrow: "EAA · Denmark",
+    title: "Denmark — Lov om tilgængelighedskrav",
+    blurb:
+      "Digitaliseringsstyrelsen + Forbrugerombudsmanden, parallel Ligebehandlingsnævnet complaint pathway.",
+  },
+  {
     href: "/he/takana-35",
     eyebrow: "ישראל · תקנה 35",
     title: "תקנה 35 — שירות נגיש באינטרנט",
@@ -140,6 +154,13 @@ const stack: Guide[] = [
       "Vue 3.5 useId, route focus, vitest-axe + Playwright, Nuxt specifics, CI pipeline.",
   },
   {
+    href: "/guides/angular-accessibility",
+    eyebrow: "Stack · Angular",
+    title: "Angular accessibility — CDK a11y, Material, cypress-axe",
+    blurb:
+      "FocusTrap / LiveAnnouncer primitives, Material patterns, reactive forms, router focus, CI.",
+  },
+  {
     href: "/guides/shopify-accessibility",
     eyebrow: "Stack · Shopify",
     title: "Shopify accessibility — theme, checkout, catalog",
@@ -168,6 +189,13 @@ const reference: Guide[] = [
     title: "Why accessibility overlays don't work",
     blurb:
       "FTC $1M accessiBe settlement, Princeton 2023 study, regulator methodology, what to do instead.",
+  },
+  {
+    href: "/web-accessibility-audit",
+    eyebrow: "Reference",
+    title: "Web accessibility audit — scope, cost, template",
+    blurb:
+      "How to commission a real audit, cost ranges, VPAT, and how pre-scans cut billable hours by 40-60%.",
   },
   {
     href: "/ada-demand-letter",
