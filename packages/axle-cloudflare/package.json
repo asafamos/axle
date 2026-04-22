@@ -1,7 +1,7 @@
 {
   "name": "axle-cloudflare-plugin",
-  "version": "1.0.1",
-  "description": "Cloudflare Pages / Workers plugin — scan your preview URL for WCAG 2.1/2.2 AA violations on every build, fail the deploy on regressions.",
+  "version": "1.0.2",
+  "description": "Cloudflare Pages a11y / WCAG 2.2 AA accessibility plugin — scan your preview URL for accessibility violations on every build, fail the deploy on regressions. Built for EAA 2025, ADA, Section 508.",
   "keywords": [
     "cloudflare",
     "cloudflare-pages",
@@ -9,7 +9,15 @@
     "accessibility",
     "a11y",
     "wcag",
+    "wcag-2-2",
+    "axe",
     "axe-core",
+    "accessibility-ci",
+    "a11y-testing",
+    "eaa",
+    "eaa-2025",
+    "ada",
+    "section-508",
     "ci"
   ],
   "license": "MIT",
