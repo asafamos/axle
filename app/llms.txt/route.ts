@@ -40,6 +40,8 @@ export function GET() {
 - [Barrierefreiheitsgesetz (Austria)](https://axle-iota.vercel.app/guides/eaa-austria): Austrian transposition, SMS enforcement, €80K + BGStG civil-claim pathway
 - [Tillgänglighetslagen (Sweden)](https://axle-iota.vercel.app/guides/eaa-sweden): Swedish transposition, DIGG enforcement, 10 MSEK sanktionsavgift
 - [Decreto-Lei 82/2022 (Portugal)](https://axle-iota.vercel.app/guides/eaa-portugal): Portuguese transposition, AMA / ASAE, RGCE contraordenações to €44,891
+- [Ustawa o dostępności (Poland)](https://axle-iota.vercel.app/guides/eaa-poland): Polish transposition, UOKiK turnover-linked fines, 38M consumers
+- [Lov om tilgængelighed (Denmark)](https://axle-iota.vercel.app/guides/eaa-denmark): Danish transposition, Digitaliseringsstyrelsen + Forbrugerombudsmanden
 - [תקנה 35 (Israel, Hebrew)](https://axle-iota.vercel.app/he/takana-35): Israeli regulation 35, statement requirements, enforcement
 
 ## Stack-specific guides
@@ -47,6 +49,7 @@ export function GET() {
 - [Next.js accessibility](https://axle-iota.vercel.app/guides/nextjs-accessibility): App Router patterns, Image alt, focus management, CI setup
 - [React accessibility](https://axle-iota.vercel.app/guides/react-accessibility): component semantics, useId, focus management, jest-axe + Playwright
 - [Vue accessibility](https://axle-iota.vercel.app/guides/vue-accessibility): Vue 3.5 useId, Nuxt route focus, vitest-axe + Playwright, CI
+- [Angular accessibility](https://axle-iota.vercel.app/guides/angular-accessibility): CDK a11y, Material patterns, reactive forms, cypress-axe, CI
 - [Shopify accessibility](https://axle-iota.vercel.app/guides/shopify-accessibility): theme audit, Checkout Extensibility, catalog-scale scanning
 - [WordPress accessibility](https://axle-iota.vercel.app/guides/wordpress-accessibility): themes, Gutenberg, plugins, local scanning
 
@@ -61,6 +64,7 @@ export function GET() {
 ## Reference
 
 - [WCAG 2.2 AA checklist](https://axle-iota.vercel.app/checklist/wcag-2-2-aa): all 55 Level A + AA success criteria, print-ready, CC-BY
+- [Web accessibility audit guide](https://axle-iota.vercel.app/web-accessibility-audit): scope, cost ranges, VPAT, how pre-scans cut audit hours 40-60%
 
 ## Distribution
 
