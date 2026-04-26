@@ -869,7 +869,9 @@ function Footer() {
               <li><a href="#features" className="text-slate-700 hover:underline">Features</a></li>
               <li><a href="#integrations" className="text-slate-700 hover:underline">Integrations</a></li>
               <li><a href="#pricing" className="text-slate-700 hover:underline">Pricing</a></li>
+              <li><a href="/free-scan" className="text-slate-700 hover:underline">Free scan</a></li>
               <li><a href="/statement" className="text-slate-700 hover:underline">Hebrew statement</a></li>
+              <li><a href="/partners" className="text-slate-700 hover:underline">Partners (30% recurring)</a></li>
               <li><a href="/changelog" className="text-slate-700 hover:underline">Changelog</a></li>
             </ul>
           </div>
@@ -880,9 +882,12 @@ function Footer() {
             <ul className="mt-2 space-y-1 text-sm">
               <li><a href="/guides" className="text-slate-700 hover:underline">Guides (EAA / stacks)</a></li>
               <li><a href="/faq" className="text-slate-700 hover:underline">FAQ</a></li>
+              <li><a href="/wcag-checker" className="text-slate-700 hover:underline">WCAG checker</a></li>
+              <li><a href="/accessibility-checker" className="text-slate-700 hover:underline">Accessibility checker</a></li>
+              <li><a href="/web-accessibility-audit" className="text-slate-700 hover:underline">Audit guide</a></li>
+              <li><a href="/ada-demand-letter" className="text-slate-700 hover:underline">Got an ADA letter?</a></li>
               <li><a href="/why-not-overlay" className="text-slate-700 hover:underline">Why not overlays</a></li>
               <li><a href="/checklist/wcag-2-2-aa" className="text-slate-700 hover:underline">WCAG 2.2 checklist</a></li>
-              <li><a href="/alternatives/accessibe" className="text-slate-700 hover:underline">accessiBe alternative</a></li>
             </ul>
           </div>
           <div>
