@@ -9,26 +9,32 @@ const STATES = [
   { key: "pending", label: "pending scan", color: "blue" },
 ] as const;
 
+// Site URL is exposed at build time via NEXT_PUBLIC_SITE_URL — same value
+// used for canonical / sitemap. Hardcoding axle.dev (which doesn't resolve)
+// in badge embed snippets sent users to a dead page when they clicked the
+// shield. Strip trailing slash so the snippets compose cleanly.
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app").replace(/\/$/, "");
+
 export default function BadgePage() {
   const [url, setUrl] = useState("https://example.com");
   const [standard, setStandard] = useState("WCAG 2.1 AA");
 
   const markdown = useMemo(() => {
-    const src = `/api/badge?url=${encodeURIComponent(url)}&standard=${encodeURIComponent(
+    const src = `${SITE}/api/badge?url=${encodeURIComponent(url)}&standard=${encodeURIComponent(
       standard
     )}`;
-    return `[![${standard}](${src})](https://axle.dev/?utm_source=badge)`;
+    return `[![${standard}](${src})](${SITE}/?utm_source=badge)`;
   }, [url, standard]);
 
   const html = useMemo(() => {
-    const src = `/api/badge?url=${encodeURIComponent(url)}&standard=${encodeURIComponent(
+    const src = `${SITE}/api/badge?url=${encodeURIComponent(url)}&standard=${encodeURIComponent(
       standard
     )}`;
-    return `<a href="https://axle.dev/?utm_source=badge"><img src="${src}" alt="${standard}" /></a>`;
+    return `<a href="${SITE}/?utm_source=badge"><img src="${src}" alt="${standard}" /></a>`;
   }, [url, standard]);
 
   const shieldsEndpoint = useMemo(() => {
-    const base = `https://axle.dev/api/badge?url=${encodeURIComponent(
+    const base = `${SITE}/api/badge?url=${encodeURIComponent(
       url
     )}&format=json&standard=${encodeURIComponent(standard)}`;
     return `https://img.shields.io/endpoint?url=${encodeURIComponent(base)}`;
