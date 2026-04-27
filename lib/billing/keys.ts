@@ -43,6 +43,30 @@ export async function storeKey(
     `axle:customer:${record.customerId}`,
     JSON.stringify({ hash, plan: record.plan, status: record.status })
   );
+  // Plaintext key is also stashed under the customer ID with a 30-minute
+  // TTL so the /checkout/success page can display it inline if the welcome
+  // email failed to deliver. After 30 minutes the customer must have either
+  // copied it or use /account with the key they (in theory) received by
+  // email. This is an explicit safety net for the case where Resend rejects
+  // delivery or the user has email-deliverability issues.
+  await redis.set(
+    `axle:checkout-key:${record.customerId}`,
+    plaintext,
+    { ex: 60 * 30 }
+  );
+}
+
+/**
+ * Returns the plaintext API key generated for the given customerId IF the
+ * 30-minute display window is still open. Used by /checkout/success only.
+ * Returns null after the TTL expires; the customer must then rely on the
+ * welcome email or paste a key they already have at /account.
+ */
+export async function lookupRecentKey(customerId: string): Promise<string | null> {
+  const redis = kv();
+  if (!redis) return null;
+  const raw = await redis.get<string>(`axle:checkout-key:${customerId}`);
+  return typeof raw === "string" ? raw : null;
 }
 
 export async function lookupKey(plaintext: string): Promise<KeyRecord | null> {
