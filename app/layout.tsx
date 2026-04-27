@@ -13,7 +13,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axle.dev";
+// axle.dev was the originally-planned brand domain but was never registered
+// (DNS doesn't resolve as of 2026-04-27). Fall back to the live deployment so
+// canonical / OG / sitemap still produce valid URLs even if NEXT_PUBLIC_SITE_URL
+// is somehow unset at build time.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
