@@ -364,6 +364,7 @@ function Hero({
             </form>
             <p className="mt-3 text-xs text-slate-500">
               No signup. Real headless browser + axe-core 4.11. ~15s. 3 free scans/day · <a href="#pricing" className="underline hover:text-slate-700">unlimited with Team</a>.
+              {" "}Each scan gets a shareable <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px]">/r/&lt;id&gt;</code> URL with a custom OG image.
             </p>
             <ScanCounter />
             <div className="mt-6 flex flex-wrap gap-3 text-sm">
@@ -505,6 +506,11 @@ function FeatureGrid() {
       title: "Public compliance badge",
       desc: "Embed a shield on your site showing live WCAG 2.1 AA status — updated on every scan. Free, even on the free tier.",
       icon: "🛡️",
+    },
+    {
+      title: "Shareable scan results",
+      desc: "Every scan auto-generates a public URL like axle-iota.vercel.app/r/<id> with a custom OG image. Send to a stakeholder, drop in Slack, link from your accessibility statement. 30-day TTL.",
+      icon: "🔗",
     },
   ];
   return (
