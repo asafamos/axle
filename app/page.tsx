@@ -954,6 +954,7 @@ function ScanResultPanel({
         <div className="mt-4 text-sm text-slate-500">
           {result.passes} checks passed · {result.incomplete} need manual review · {totalNodes} elements
         </div>
+        {result.permalink ? <ShareResultRow permalink={result.permalink} /> : null}
       </div>
 
       {result.violations.map((v) => (
@@ -1113,6 +1114,56 @@ function SummaryCard({
       <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
         {label}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Public-result share row. Rendered only when the API returned a permalink
+ * (i.e. the URL was publicly resolvable so we persisted a /r/<id> page).
+ * The shareable URL is stored 30 days. We surface it explicitly so the user
+ * actively decides to share — internal/staging URLs that we don't persist
+ * never get this row.
+ */
+function ShareResultRow({ permalink }: { permalink: string }) {
+  const [copied, setCopied] = useState(false);
+  const fullUrl =
+    typeof window !== "undefined" ? `${window.location.origin}${permalink}` : permalink;
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(fullUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard API may be blocked — fall through and let the user select.
+    }
+  }
+
+  return (
+    <div className="mt-5 flex flex-col gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm sm:flex-row sm:items-center">
+      <span className="font-semibold text-emerald-900">Share this result:</span>
+      <code
+        className="flex-1 select-all overflow-x-auto rounded border border-emerald-200 bg-white px-2 py-1 text-xs text-emerald-900"
+        data-testid="result-permalink"
+      >
+        {fullUrl}
+      </code>
+      <button
+        type="button"
+        onClick={copy}
+        className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+      >
+        {copied ? "Copied ✓" : "Copy link"}
+      </button>
+      <a
+        href={permalink}
+        target="_blank"
+        rel="noopener"
+        className="rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium text-emerald-900 hover:bg-emerald-100"
+      >
+        Open page →
+      </a>
     </div>
   );
 }

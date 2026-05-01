@@ -1,9 +1,37 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "node:crypto";
 import { scanUrl } from "@/lib/scanner";
 import { kv } from "@/lib/billing/kv";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+
+// Public-result URL: every scan is persisted under axle:result:<id> with a
+// 30-day TTL and the response includes a permalink the user can share. The
+// ID is 12 random bytes (96 bits) base64url-encoded — unguessable, no PII.
+// Sharing is opt-in: we just include the permalink in the response, the UI
+// only shows it after the user clicks "share". Internal-hostname scans
+// (localhost, private ranges) are not persisted to avoid accidentally
+// exposing staging URLs through link-sharing.
+const RESULT_TTL_SECONDS = 60 * 60 * 24 * 30;
+
+function newResultId(): string {
+  return randomBytes(12).toString("base64url");
+}
+
+function isInternalHostname(hostname: string): boolean {
+  return (
+    hostname === "localhost" ||
+    hostname.endsWith(".local") ||
+    hostname.endsWith(".test") ||
+    hostname.endsWith(".invalid") ||
+    hostname.endsWith(".internal") ||
+    /^127\./.test(hostname) ||
+    /^10\./.test(hostname) ||
+    /^192\.168\./.test(hostname) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname)
+  );
+}
 
 const SOURCE_ALLOWLIST = new Set([
   "web",
@@ -119,7 +147,53 @@ export async function POST(req: Request) {
 
     const result = await scanUrl(normalized);
     await bumpScanStats(source);
-    return NextResponse.json(result);
+
+    // Persist the scan for 30 days under an unguessable ID so the user can
+    // share the result via /r/<id>. Skip for internal hostnames so we don't
+    // create shareable URLs of someone's localhost / staging by accident.
+    let resultId: string | null = null;
+    let permalink: string | null = null;
+    try {
+      const hostname = new URL(normalized).hostname.toLowerCase();
+      if (!isInternalHostname(hostname)) {
+        const redis = kv();
+        if (redis) {
+          const id = newResultId();
+          // Persisted record uses snake_case keys for the public /r/<id>
+          // page schema; the in-flight ScanResult uses camelCase. We
+          // explicitly map between them here so the two schemas can evolve
+          // independently.
+          const totalViolations = (result.violations || []).length;
+          const record = {
+            id,
+            url: result.url || normalized,
+            scanned_at: result.scannedAt || new Date().toISOString(),
+            engine: "axe-core 4.11",
+            summary: {
+              violations: totalViolations,
+              critical: result.summary?.critical ?? 0,
+              serious: result.summary?.serious ?? 0,
+              moderate: result.summary?.moderate ?? 0,
+              minor: result.summary?.minor ?? 0,
+              passes: result.passes ?? 0,
+            },
+            violations: result.violations || [],
+            source,
+          };
+          await redis.set(`axle:result:${id}`, JSON.stringify(record), {
+            ex: RESULT_TTL_SECONDS,
+          });
+          resultId = id;
+          permalink = `/r/${id}`;
+        }
+      }
+    } catch {
+      // Persisting is best-effort. A failure here must not break the scan
+      // response — the user still gets their results, just without a
+      // shareable URL.
+    }
+
+    return NextResponse.json({ ...result, result_id: resultId, permalink });
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "Unknown error during scan";

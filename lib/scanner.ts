@@ -29,6 +29,14 @@ export type ScanResult = {
     moderate: number;
     minor: number;
   };
+  /**
+   * Public-result fields populated by the /api/scan endpoint when the URL
+   * is publicly resolvable. Not produced by the CLI / direct scanner calls
+   * — those don't persist results to KV. Optional so existing callers
+   * (CLI, tests) keep type-checking.
+   */
+  result_id?: string | null;
+  permalink?: string | null;
 };
 
 const AXE_SCRIPT_PATH = join(
