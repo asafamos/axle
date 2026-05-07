@@ -1,0 +1,94 @@
+{
+  "name": "axle-a11y",
+  "displayName": "axle — a11y / WCAG scanner",
+  "description": "Scan any URL for WCAG 2.2 AA accessibility violations from inside VS Code. Powered by axe-core 4.11. Optional Claude-generated fix suggestions.",
+  "version": "0.1.0",
+  "publisher": "asafamos",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "homepage": "https://axle-iota.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asafamos/axle.git",
+    "directory": "packages/axle-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/asafamos/axle/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Testing",
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "wcag2",
+    "wcag-aa",
+    "axe-core",
+    "scanner",
+    "linter",
+    "ada",
+    "eaa",
+    "section-508"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "axle.scanUrl",
+        "title": "axle: Scan a URL for WCAG violations",
+        "category": "axle"
+      },
+      {
+        "command": "axle.scanLocalhost",
+        "title": "axle: Scan localhost dev server",
+        "category": "axle"
+      },
+      {
+        "command": "axle.openLastResult",
+        "title": "axle: Open last scan result",
+        "category": "axle"
+      }
+    ],
+    "configuration": {
+      "title": "axle",
+      "properties": {
+        "axle.defaultUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "URL to scan when running 'axle: Scan localhost dev server'."
+        },
+        "axle.failOn": {
+          "type": "string",
+          "enum": ["critical", "serious", "moderate", "minor", "none"],
+          "default": "serious",
+          "description": "Severity threshold below which violations are not flagged in the panel."
+        },
+        "axle.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Optional axle API key (Team / Business plans). Without it, the extension uses the public free-scan endpoint with daily limits."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5"
+  }
+}
