@@ -127,27 +127,20 @@ async function runAxleScan(url: string) {
             MCP server (Model Context Protocol)
           </h2>
           <p className="mt-3 text-slate-700">
-            The Anthropic MCP spec is the emerging standard for tool servers
-            that work across Claude, ChatGPT, and Cursor. Until we ship a
-            dedicated MCP server, you can wrap the OpenAPI endpoint above
-            using any of the OpenAPI→MCP bridges (e.g.{" "}
-            <a
-              className="underline"
-              href="https://github.com/modelcontextprotocol/servers"
-              target="_blank"
-              rel="noopener"
-            >
-              modelcontextprotocol/servers
-            </a>
-            ).
+            Native MCP server shipped — install in Claude Desktop, Cursor,
+            Cline, or Continue.dev with one line. Full configs and example
+            prompts at <Link className="underline hover:text-slate-900" href="/mcp">/mcp</Link>.
           </p>
-          <p className="mt-3 text-slate-700">
-            Native MCP server is on the roadmap — email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
-            </a>{" "}
-            if you want a heads-up when it ships.
-          </p>
+          <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+{`{
+  "mcpServers": {
+    "axle": {
+      "command": "npx",
+      "args": ["-y", "axle-mcp"]
+    }
+  }
+}`}
+          </pre>
         </section>
 
         <section className="mt-10">
