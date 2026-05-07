@@ -362,9 +362,16 @@ function Hero({
                 {loading ? "Scanning…" : "Scan for free"}
               </button>
             </form>
-            <p className="mt-3 text-xs text-slate-500">
-              No signup. Real headless browser + axe-core 4.11. ~15s. 3 free scans/day · <a href="#pricing" className="underline hover:text-slate-700">unlimited with Team</a>.
-              {" "}Each scan gets a shareable <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px]">/r/&lt;id&gt;</code> URL with a custom OG image.
+            {/*
+              text-slate-500 on white was 4.34:1 — barely below the 4.5:1
+              WCAG AA minimum at this small size. Bumped to slate-600 (5.04:1)
+              and the inline <code> uses slate-900 on slate-200 (16.7:1) to
+              clear the bar with margin. axle's own dogfood scan caught this
+              within 6 days; fixed in PR #16.
+            */}
+            <p className="mt-3 text-xs text-slate-600">
+              No signup. Real headless browser + axe-core 4.11. ~15s. 3 free scans/day · <a href="#pricing" className="underline hover:text-slate-900">unlimited with Team</a>.
+              {" "}Each scan gets a shareable <code className="rounded bg-slate-200 px-1 py-0.5 font-mono text-xs text-slate-900">/r/&lt;id&gt;</code> URL with a custom OG image.
             </p>
             <ScanCounter />
             <div className="mt-6 flex flex-wrap gap-3 text-sm">
