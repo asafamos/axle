@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 export const runtime = "edge";
 
 /**
- * /openapi.yaml — OpenAPI 3.0 spec for the public axle scan endpoint.
+ * /openapi.yaml — OpenAPI 3.1 spec for the public axle scan endpoint.
+ * (Pinned to 3.1.0 because ChatGPT GPT builder rejects 3.0.x —
+ * the validator hard-codes "must be 3.1.0 or 3.1.1".)
  * Discovered automatically by:
  *   - LLM agent frameworks that probe /.well-known/ai-plugin.json
  *     and follow the api.url pointer.
@@ -17,7 +19,7 @@ export const runtime = "edge";
  * /openapi.json if anyone needs it (TODO: add when first ask).
  */
 export function GET() {
-  const yaml = `openapi: 3.0.1
+  const yaml = `openapi: 3.1.0
 info:
   title: axle a11y / WCAG scanner
   description: |
@@ -42,12 +44,10 @@ paths:
       operationId: scanUrlForAccessibility
       summary: Scan a URL for WCAG 2.2 AA accessibility violations
       description: |
-        Renders the URL in headless Chromium, runs axe-core 4.11 against the
-        rendered DOM, and returns the full violation report. The scan also
-        produces a public shareable URL at /r/<result_id> with a custom OG image.
-
-        Free tier: 5 scans per day per IP. With an axle API key (Bearer token)
-        the rate limit is removed.
+        Runs axe-core 4.11 on the URL in headless Chromium and returns the
+        violation report. Each scan produces a public shareable URL at
+        /r/<result_id>. Free tier: 5 scans/day per IP; an axle API key
+        (Bearer) removes the rate limit.
       requestBody:
         required: true
         content:
