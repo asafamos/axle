@@ -12,10 +12,10 @@ import type { ScanResult } from "./types";
 
 addons.register(ADDON_ID, () => {
   addons.add(PANEL_ID, {
-    title: ({ active }) => <PanelTitle active={!!active} />,
+    title: ({ active }: { active?: boolean }) => <PanelTitle active={!!active} />,
     type: types.PANEL,
     paramKey: "axle",
-    render: ({ active }) => (active ? <Panel /> : null),
+    render: ({ active }: { active?: boolean }) => (active ? <Panel /> : null),
   });
 });
 

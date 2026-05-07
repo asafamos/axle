@@ -48,8 +48,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/preview.ts src/manager.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts src/preview.ts src/manager.ts --format esm,cjs --dts --watch",
+    "build": "tsup src/index.ts src/preview.ts src/manager.tsx --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts src/preview.ts src/manager.tsx --format esm,cjs --dts --watch",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
