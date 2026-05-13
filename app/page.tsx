@@ -605,6 +605,11 @@ function IntegrationsStrip() {
   const rows = [
     { name: "GitHub Action", status: "live", href: "https://github.com/asafamos/axle-action" },
     { name: "npm CLI", status: "live", href: "https://www.npmjs.com/package/axle-cli" },
+    { name: "VS Code Extension", status: "live", href: "https://marketplace.visualstudio.com/items?itemName=asafamos.axle-a11y" },
+    { name: "MCP Server (Claude / Cursor / Cline)", status: "live", href: "/mcp" },
+    { name: "Storybook Addon", status: "live", href: "https://www.npmjs.com/package/axle-storybook" },
+    { name: "ChatGPT GPT / OpenAPI", status: "live", href: "/gpt" },
+    { name: "Slack / Linear / Jira / GitLab", status: "live", href: "/integrations" },
     { name: "Netlify Plugin", status: "live", href: "https://www.npmjs.com/package/axle-netlify-plugin" },
     { name: "Cloudflare Pages", status: "live", href: "https://www.npmjs.com/package/axle-cloudflare-plugin" },
     { name: "Vercel", status: "live", href: "https://www.npmjs.com/package/axle-vercel-plugin" },
