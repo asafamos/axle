@@ -1,0 +1,54 @@
+{
+  "name": "axle-mcp",
+  "version": "0.1.0",
+  "description": "MCP (Model Context Protocol) server — exposes the axle WCAG 2.2 AA scanner as a tool for Claude Desktop, Cursor, Cline, and any MCP-compatible agent.",
+  "license": "MIT",
+  "author": "AsafAmos",
+  "homepage": "https://axle-iota.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asafamos/axle.git",
+    "directory": "packages/axle-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/asafamos/axle/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude-desktop",
+    "cursor",
+    "cline",
+    "accessibility",
+    "a11y",
+    "wcag",
+    "wcag-aa",
+    "axe-core",
+    "ada",
+    "eaa"
+  ],
+  "type": "module",
+  "bin": {
+    "axle-mcp": "./dist/server.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/server.js",
+    "dev": "tsx src/server.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}
