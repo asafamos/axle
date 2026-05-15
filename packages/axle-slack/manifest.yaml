@@ -1,0 +1,57 @@
+# axle — Slack App manifest
+#
+# Upload this at https://api.slack.com/apps -> Create New App -> From manifest
+# Then in "Install App" tab, install to your workspace.
+#
+# After install, in any channel:
+#   /axle scan https://example.com
+#
+# Replace the placeholder URLs below with your deployment domain if you're
+# self-hosting the OAuth + command handlers. The defaults point at the axle
+# hosted endpoints (axle-iota.vercel.app).
+
+display_information:
+  name: axle
+  description: WCAG 2.1 / 2.2 AA accessibility scanner. Runs axe-core 4.11 on any URL and posts the result inline.
+  background_color: "#0f766e"
+  long_description: |
+    axle scans any public URL for WCAG 2.1 / 2.2 AA accessibility violations
+    using axe-core 4.11 — the same engine plaintiff firms run against ADA
+    Title III defendants and the same engine the European Accessibility Act
+    conformance bundles cite. Drop a /axle scan https://example.com command
+    into any channel and get the severity-grouped report posted inline,
+    with a public shareable certificate URL at /r/<id>.
+
+    Free tier: 5 scans per day per workspace. axle Team ($49/mo) removes
+    the rate limit; axle Business ($299/mo) adds the EU multilingual
+    accessibility-statement pack covering DE, FR, IT, ES, NL, PT, SE, PL,
+    and Hebrew (Israeli תקנה 35).
+
+    Source: https://github.com/asafamos/axle
+    Privacy: https://axle-iota.vercel.app/privacy
+    Terms:   https://axle-iota.vercel.app/terms
+
+features:
+  bot_user:
+    display_name: axle
+    always_online: true
+  slash_commands:
+    - command: /axle
+      url: https://axle-iota.vercel.app/api/slack/command
+      description: Scan a URL for WCAG 2.1 / 2.2 AA violations (axe-core 4.11)
+      usage_hint: "scan https://example.com"
+      should_escape: false
+
+oauth_config:
+  redirect_urls:
+    - https://axle-iota.vercel.app/api/slack/oauth
+  scopes:
+    bot:
+      - commands
+      - chat:write
+      - chat:write.public
+
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
