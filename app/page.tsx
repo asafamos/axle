@@ -728,11 +728,11 @@ function PricingPreview() {
       price: "$49",
       sub: "per month",
       bullets: [
+        "Hosted Claude fix suggestions per violation",
+        "Auto-managed GitHub Issues (Renovate-style)",
+        "MCP server unlimited rate-limit",
         "Up to 10 repos / domains",
-        "Hosted AI fixes — no BYO key",
-        "Nightly production monitoring",
-        "Audit trail PDF exports",
-        "Slack + email alerts",
+        "Nightly production monitoring + Slack alerts",
       ],
       cta: "Subscribe",
       highlight: true,
@@ -764,10 +764,18 @@ function PricingPreview() {
             Pricing
           </p>
           <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
-            Cheaper than an hour with a compliance lawyer
+            $49 buys you back ~12 hours of remediation work per scan
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-slate-600">
-            Self-serve. No seat counts. No procurement call.
+            See the{" "}
+            <a href="/why-axle" className="underline hover:text-slate-900">
+              ROI math
+            </a>
+            . Self-serve, no seat counts, no procurement call.{" "}
+            <a href="/demo" className="underline hover:text-slate-900">
+              Book a 15-min call
+            </a>{" "}
+            if your team needs the long version.
           </p>
         </div>
         <div className="mt-10 grid gap-5 lg:grid-cols-3">

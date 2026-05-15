@@ -176,12 +176,23 @@ export default function CaseStudiesPage() {
           <p className="mt-3 text-slate-700">
             We&apos;re actively looking for early adopters who&apos;ll let us
             tell their story honestly — including the parts where axle
-            wasn&apos;t the right fit. Email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
-            </a>{" "}
-            with your CI setup and we&apos;ll respond within 24h.
+            wasn&apos;t the right fit. Easiest path: book a 15-min demo on
+            your actual codebase.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Link
+              href="/demo"
+              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white hover:bg-slate-800"
+            >
+              📅 Book a 15-min demo
+            </Link>
+            <a
+              href="mailto:asaf@amoss.co.il?subject=axle%20early%20adopter%20%E2%80%94%20list%20us"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+            >
+              Email instead
+            </a>
+          </div>
           <p className="mt-4 text-sm text-slate-600">
             Comparison-shopping?{" "}
             <Link className="underline" href="/why-axle">
@@ -194,6 +205,10 @@ export default function CaseStudiesPage() {
             ·{" "}
             <Link className="underline" href="/pricing">
               /pricing
+            </Link>{" "}
+            ·{" "}
+            <Link className="underline" href="/roadmap">
+              /roadmap
             </Link>
           </p>
         </div>
