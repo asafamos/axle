@@ -59,14 +59,36 @@ export default function WhyAxlePage() {
           Average dev time per fix in our internal benchmark: <strong>22 minutes</strong>. At 47 violations and $100/hr loaded engineering rate, that&apos;s <strong>$1,720 of engineering work</strong> per scan. The first scan on most apps surfaces 30-120 violations. The math gets ugly fast.
         </p>
         <p className="mt-3 text-slate-700">
-          axle Team ($49/mo) opens a PR per violation with a Claude-generated source-code diff. About 70% merge cleanly with one round of review. The remaining 30% need real human judgment — which is exactly the part of a remediation sprint that&apos;s worth a human&apos;s time.
+          axle Team ($49/mo) ships hosted Claude fix suggestions on every PR
+          comment, plus the <Link className="underline hover:text-slate-900" href="https://github.com/asafamos/axle/blob/main/packages/axle-action/action.yml" target="_blank"><code>create-issues</code> mode</Link>{" "}
+          that opens / updates / closes a GitHub Issue per violation with the
+          AI-suggested diff in the body. Teams triage in their existing board
+          (Linear / Jira sync via GitHub mirroring) instead of in ephemeral
+          PR threads.
         </p>
         <p className="mt-3 text-sm text-slate-600">
-          <strong>ROI calc:</strong> One scan, 47 violations, 70% auto-mergeable = 33 fixes you don&apos;t touch = ~12 hours of engineering saved = <strong>$1,200 on a $49/mo plan</strong>. Pays back month one.
+          <strong>ROI calc:</strong> Average remediation time per violation is
+          ~22 minutes. A 47-violation scan is ~17 hours of engineering at
+          $100/hr = $1,700. Even if Claude&apos;s suggestion saves 30% of
+          that, it&apos;s ~$500 in eng cost recovered per scan — and the
+          team triages in their actual issue board instead of from a
+          one-off PR comment. The Team plan pays back in month one.
+        </p>
+        <p className="mt-3 text-sm text-slate-600">
+          <em>Honest scope:</em> auto-opening real fix <em>PRs</em> (not just
+          Issues) — mapping the AI diff back to the source file — is in
+          development. See{" "}
+          <Link className="underline hover:text-slate-900" href="/roadmap">
+            /roadmap
+          </Link>{" "}
+          for status.
         </p>
 
         <h3 className="mt-10 text-xl font-bold text-slate-900">
-          2. EU multilingual statement pack (EAA 2025)
+          2. EU multilingual statement pack (EAA 2025){" "}
+          <span className="ml-2 align-middle rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
+            partial
+          </span>
         </h3>
         <p className="mt-2 text-slate-700">
           If you ship a consumer-facing service into the EU and you employ 10+ people, EAA 2025 has been enforceable since 28 June 2025. Penalties are state-by-state:
@@ -76,10 +98,23 @@ export default function WhyAxlePage() {
           Each member state requires the accessibility statement <strong>in its own language</strong>, with the local conformance authority, escalation procedure, and named contact. One English statement doesn&apos;t satisfy the rules.
         </p>
         <p className="mt-3 text-slate-700">
-          axle Business ($299/mo) ships a statement pack covering German, French, Italian, Spanish, Dutch, Portuguese, Swedish, Polish, and Hebrew (Israeli תקנה 35) with per-country authority + escalation pre-filled. Generated per service, kept fresh as your scan history updates.
+          axle Business ($299/mo) is being built out as a statement pack
+          covering German, French, Italian, Spanish, Dutch, Portuguese,
+          Swedish, Polish, and Hebrew (Israeli תקנה 35) with per-country
+          authority + escalation pre-filled. Hebrew ships today; the EU
+          languages are in the rollout pipeline — see{" "}
+          <Link className="underline hover:text-slate-900" href="/roadmap">
+            /roadmap
+          </Link>
+          .
         </p>
         <p className="mt-3 text-sm text-slate-600">
-          <strong>ROI calc:</strong> One legal-team hour to draft a multilingual statement set = $400+. axle Business covers an entire year of regenerated statements for $3,588 — typically less than what one accessibility lawyer charges to review a single English statement.
+          <strong>ROI calc:</strong> One legal-team hour to draft a single
+          jurisdiction&apos;s statement = $400+. A Business-tier customer
+          ships into 6+ EU markets typically. axle Business covers an entire
+          year of regenerated multi-jurisdiction statements for $3,588 —
+          typically less than what one accessibility lawyer charges to
+          review a single statement.
         </p>
 
         <h3 className="mt-10 text-xl font-bold text-slate-900">
@@ -156,6 +191,20 @@ export default function WhyAxlePage() {
             </Link>
             . Upgrade only when the value math actually shows up in your situation.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Link
+              href="/demo"
+              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white hover:bg-slate-800"
+            >
+              📅 Book a 15-min demo
+            </Link>
+            <Link
+              href="/case-studies"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
+            >
+              See real adopter signals
+            </Link>
+          </div>
           <p className="mt-4 text-sm text-slate-600">
             Questions? <a className="underline" href="mailto:asaf@amoss.co.il">asaf@amoss.co.il</a>{" "}— or comparison-shop at <Link className="underline" href="/compare">/compare</Link>.
           </p>
