@@ -43,7 +43,7 @@ export default function WhyAxlePage() {
         <hr className="my-10 border-slate-300" />
 
         <h2 className="text-2xl font-semibold text-slate-900">
-          The three reasons people actually upgrade
+          The four reasons people actually upgrade
         </h2>
 
         <h3 className="mt-8 text-xl font-bold text-slate-900">
@@ -83,7 +83,35 @@ export default function WhyAxlePage() {
         </p>
 
         <h3 className="mt-10 text-xl font-bold text-slate-900">
-          3. MCP server for Claude Desktop / Cursor / Cline
+          3. Auto-managed GitHub Issues per violation
+        </h3>
+        <p className="mt-2 text-slate-700">
+          Most scanners stop at a PR comment that disappears once the PR
+          merges. With{" "}
+          <code className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-sm text-slate-900">
+            create-issues: true
+          </code>
+          , axle opens a deduplicated GitHub Issue per WCAG violation —
+          impact-labelled, AI-fix in the body, target selector + first
+          failing element preserved. When the next scan no longer sees the
+          violation, axle auto-closes the issue with a comment linking to the
+          fixing commit.
+        </p>
+        <p className="mt-3 text-slate-700">
+          Net effect: your team triages accessibility in the same board as
+          everything else (Linear / Jira / Notion sync via GitHub&apos;s native
+          mirroring) instead of in an ephemeral PR thread. Treat it like
+          Renovate but for WCAG.
+        </p>
+        <p className="mt-3 text-sm text-slate-600">
+          <strong>ROI calc:</strong> One agency we talked to was paying a
+          contractor 4 hr/month to copy violations from PR comments into
+          their Linear board. axle Team ($49/mo) replaces that workflow
+          entirely — about $400 of manual ops eliminated per month per repo.
+        </p>
+
+        <h3 className="mt-10 text-xl font-bold text-slate-900">
+          4. MCP server for Claude Desktop / Cursor / Cline
         </h3>
         <p className="mt-2 text-slate-700">
           New surface, shipped May 2026. <Link className="underline hover:text-slate-900" href="/mcp">axle-mcp</Link> is the only Model Context Protocol server for WCAG scanning. Wire it into any MCP-compatible agent in two lines:

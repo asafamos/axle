@@ -37,6 +37,18 @@ inputs:
     description: "Whether to post / update the axle comment on the triggering PR."
     required: false
     default: "true"
+  create-issues:
+    description: "When true, axle opens / updates / closes a GitHub Issue per WCAG violation. Issues are deduped by axe-core rule ID + first failing-node target hash. Useful when teams want a11y findings in their issue tracker (Linear / Jira mirror, Notion sync, board triage) rather than only as PR comments. Defaults to false. Requires github-token with `issues: write`."
+    required: false
+    default: "false"
+  issue-labels:
+    description: "Comma-separated labels applied to every axle-opened issue. axle adds the impact tier (`critical` / `serious` / `moderate` / `minor`) automatically."
+    required: false
+    default: "axle,accessibility,wcag"
+  issue-fail-on:
+    description: "Severity threshold for issue creation: critical | serious | moderate | minor. Lower-severity violations are not turned into issues. Defaults to mirror fail-on."
+    required: false
+    default: ""
   install-command:
     description: "Command used to install your project's dependencies (used only when url is empty)."
     required: false
@@ -197,3 +209,157 @@ runs:
               body: fullBody,
             });
           }
+
+    - name: Open / update / close axle issues
+      if: always() && inputs.create-issues == 'true'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require("fs");
+          const crypto = require("crypto");
+          const p = `${process.env.GITHUB_WORKSPACE}/axle-report.json`;
+          if (!fs.existsSync(p)) {
+            core.warning("axle: no JSON report — skipping issue management");
+            return;
+          }
+          const report = JSON.parse(fs.readFileSync(p, "utf8"));
+          // CI script writes `{ result: ScanResult, fixes: Record<key, FixResult> }`.
+          // The legacy callers may flatten this — accept both shapes.
+          const violations = Array.isArray(report?.result?.violations)
+            ? report.result.violations
+            : Array.isArray(report?.violations)
+            ? report.violations
+            : [];
+          const fixesByKey = (report?.fixes ?? {});
+
+          // Filter by severity threshold (default to fail-on if not set)
+          const rank = { critical: 0, serious: 1, moderate: 2, minor: 3 };
+          const issueFailOn = "${{ inputs.issue-fail-on }}" || "${{ inputs.fail-on }}";
+          const threshold = rank[issueFailOn] ?? 1;
+          const eligible = violations.filter(
+            (v) => (rank[v.impact] ?? 4) <= threshold
+          );
+
+          // Build a stable key per violation: rule + first-node-target hash.
+          // Same violation across runs maps to same key -> same issue updated.
+          const keyFor = (v) => {
+            const target = (v.nodes?.[0]?.target ?? []).join(">");
+            const h = crypto
+              .createHash("sha1")
+              .update(`${v.id}::${target}`)
+              .digest("hex")
+              .slice(0, 8);
+            return `axle:${v.id}:${h}`;
+          };
+
+          const labels = "${{ inputs.issue-labels }}"
+            .split(",")
+            .map((l) => l.trim())
+            .filter(Boolean);
+
+          // Fetch all issues with the marker label so we can close ones
+          // that no longer correspond to a current violation.
+          const { data: openIssues } = await github.rest.issues.listForRepo({
+            ...context.repo,
+            state: "open",
+            labels: labels[0] || "axle",
+            per_page: 100,
+          });
+          const existingByKey = new Map();
+          for (const issue of openIssues) {
+            const m = /<!--\s*(axle:[^\s]+)\s*-->/.exec(issue.body || "");
+            if (m) existingByKey.set(m[1], issue);
+          }
+
+          let opened = 0,
+            updated = 0,
+            closed = 0;
+
+          // Open or update issues for eligible current violations
+          for (const v of eligible) {
+            const key = keyFor(v);
+            const title = `[a11y] ${v.id}: ${(v.help || "").slice(0, 100)}`;
+            const wcagTags = (v.tags || []).filter((t) =>
+              t.startsWith("wcag")
+            );
+            const firstNode = v.nodes?.[0] ?? {};
+            // Look up the AI fix for the first node of this violation.
+            // FixResult shape: { explanation, fix_strategy, confidence, manual_review_needed, patches:[{before,after,notes}] }
+            const fixRecord = fixesByKey[`${v.id}-0`];
+            let fix = null;
+            if (fixRecord?.patches?.length) {
+              fix = fixRecord.patches
+                .map((p) => `- ${p.before}\n+ ${p.after}${p.notes ? `\n# ${p.notes}` : ""}`)
+                .join("\n\n");
+            }
+            const body =
+              `<!-- ${key} -->\n` +
+              `**Rule:** \`${v.id}\` · **Impact:** ${v.impact || "minor"}\n` +
+              `**WCAG:** ${wcagTags.join(" · ") || "—"}\n` +
+              `**Affects:** ${v.nodes?.length ?? 0} element(s)\n\n` +
+              `${v.help || v.description || ""}\n\n` +
+              `<details><summary>First failing element</summary>\n\n` +
+              "```html\n" +
+              `${(firstNode.html || "").slice(0, 800)}\n` +
+              "```\n\n" +
+              `Target: \`${(firstNode.target || []).join(" > ")}\`\n` +
+              `</details>\n\n` +
+              (fix
+                ? `<details open><summary>Suggested fix (Claude)</summary>\n\n\`\`\`diff\n${fix}\n\`\`\`\n</details>\n\n`
+                : "") +
+              `Docs: ${v.helpUrl || "—"}\n\n` +
+              `---\n` +
+              `<sub>Managed by [axle](https://axle-iota.vercel.app). Auto-closed when this violation no longer appears in scans. Edit the title to take over — the marker comment is what axle keys on.</sub>`;
+
+            const issueLabels = [
+              ...labels,
+              ...(v.impact ? [v.impact] : []),
+            ];
+
+            const existing = existingByKey.get(key);
+            if (existing) {
+              existingByKey.delete(key);
+              if (existing.body !== body) {
+                await github.rest.issues.update({
+                  ...context.repo,
+                  issue_number: existing.number,
+                  body,
+                  labels: issueLabels,
+                });
+                updated++;
+              }
+            } else {
+              await github.rest.issues.create({
+                ...context.repo,
+                title,
+                body,
+                labels: issueLabels,
+              });
+              opened++;
+            }
+          }
+
+          // Anything left in existingByKey is no longer a current violation
+          // → close it as resolved
+          for (const [key, issue] of existingByKey.entries()) {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: issue.number,
+              body:
+                "axle: this violation no longer appears in the latest scan " +
+                `(${process.env.GITHUB_SHA?.slice(0, 7) || "?"}). ` +
+                "Auto-closing. Reopen if you believe this is wrong.",
+            });
+            await github.rest.issues.update({
+              ...context.repo,
+              issue_number: issue.number,
+              state: "closed",
+              state_reason: "completed",
+            });
+            closed++;
+          }
+
+          core.notice(
+            `axle issues: opened ${opened}, updated ${updated}, closed ${closed}`
+          );
