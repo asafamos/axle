@@ -44,6 +44,12 @@ const SOURCE_ALLOWLIST = new Set([
   "axle-chrome",
   "axle-wordpress",
   "axle-shopify",
+  "axle-mcp",
+  "axle-vscode",
+  "axle-storybook",
+  "axle-slack",
+  "openai-gpt",
+  "claude-tool",
 ]);
 
 function normalizeSource(raw: unknown): string {

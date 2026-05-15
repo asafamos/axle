@@ -337,9 +337,14 @@ function Hero({
               </span>
             </h1>
             <p className="mt-5 text-lg text-slate-600">
-              axle is the compliance CI for modern websites. One GitHub Action scans every PR for
-              WCAG 2.1 / 2.2 AA violations, proposes real code fixes with Claude, and generates the
-              legal artifacts your lawyer asks for. No overlay widgets.
+              axle is the compliance CI for modern websites. GitHub Action scans every PR for
+              WCAG 2.1 / 2.2 AA, Claude opens auto-fix PRs, deduped issues land in your tracker,
+              and EU multilingual statements regenerate from your scan history.
+              Also wired into Claude / Cursor / Cline via{" "}
+              <a href="/mcp" className="underline hover:text-slate-900">MCP</a>{" "}
+              and Slack via{" "}
+              <a href="/slack" className="underline hover:text-slate-900">/axle scan</a>.
+              No overlay widgets.
             </p>
             <form
               onSubmit={onSubmit}
@@ -380,6 +385,12 @@ function Hero({
                 className="rounded-md border border-slate-300 bg-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-100"
               >
                 ▸ Install GitHub Action
+              </a>
+              <a
+                href="/why-axle"
+                className="rounded-md border border-slate-300 bg-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-100"
+              >
+                Why axle?
               </a>
               <a
                 href="/statement"
@@ -609,7 +620,8 @@ function IntegrationsStrip() {
     { name: "MCP Server (Claude / Cursor / Cline)", status: "live", href: "/mcp" },
     { name: "Storybook Addon", status: "live", href: "https://www.npmjs.com/package/axle-storybook" },
     { name: "ChatGPT GPT / OpenAPI", status: "live", href: "/gpt" },
-    { name: "Slack / Linear / Jira / GitLab", status: "live", href: "/integrations" },
+    { name: "Slack slash command (/axle scan)", status: "beta", href: "/slack" },
+    { name: "Linear / Jira / GitLab recipes", status: "live", href: "/integrations" },
     { name: "Netlify Plugin", status: "live", href: "https://www.npmjs.com/package/axle-netlify-plugin" },
     { name: "Cloudflare Pages", status: "live", href: "https://www.npmjs.com/package/axle-cloudflare-plugin" },
     { name: "Vercel", status: "live", href: "https://www.npmjs.com/package/axle-vercel-plugin" },
