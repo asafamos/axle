@@ -11,6 +11,7 @@ type LeadRecord = {
   source: string;
   created_at: number;
   created_at_iso?: string;
+  is_internal?: boolean;
 };
 
 type Summary = {
@@ -22,6 +23,8 @@ type Summary = {
         views_all_time: number;
         views_today: number;
         leads_all_time: number;
+        leads_external_count?: number;
+        leads_internal_count?: number;
         leads_today: number;
         scans_by_source: Record<string, number>;
         views_by_source: Record<string, number>;
@@ -31,7 +34,10 @@ type Summary = {
   polar?:
     | {
         order_count: number;
+        order_count_external?: number;
+        order_count_internal?: number;
         revenue_total_minor: number;
+        revenue_external_minor?: number;
         revenue_currency: string;
         recent: Array<{
           id: string;
@@ -40,6 +46,8 @@ type Summary = {
           created_at: string;
           status: string;
           product_id: string;
+          customer_email?: string;
+          is_internal?: boolean;
         }>;
       }
     | { error: string };
@@ -168,10 +176,27 @@ export default function AdminPage() {
             {polar && (
               <>
                 <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  <Stat label="Orders" value={polar.order_count.toString()} />
                   <Stat
-                    label={`Revenue (${polar.revenue_currency})`}
-                    value={(polar.revenue_total_minor / 100).toFixed(2)}
+                    label="Orders · external"
+                    value={(polar.order_count_external ?? polar.order_count).toString()}
+                    sub={
+                      polar.order_count_internal
+                        ? `+ ${polar.order_count_internal} internal/test`
+                        : undefined
+                    }
+                  />
+                  <Stat
+                    label={`Revenue · external (${polar.revenue_currency})`}
+                    value={(
+                      (polar.revenue_external_minor ?? polar.revenue_total_minor) /
+                      100
+                    ).toFixed(2)}
+                    sub={
+                      polar.revenue_external_minor !== undefined &&
+                      polar.revenue_external_minor !== polar.revenue_total_minor
+                        ? `gross all orders: ${(polar.revenue_total_minor / 100).toFixed(2)}`
+                        : undefined
+                    }
                   />
                   <Stat
                     label="Avg order"
@@ -186,6 +211,14 @@ export default function AdminPage() {
                     }
                   />
                 </div>
+                {(polar.order_count_external ?? polar.order_count) === 0 ? (
+                  <div className="mt-3 rounded-md border border-rose-300 bg-rose-50 p-3 text-sm text-rose-900">
+                    <strong>No external paid orders yet.</strong> All Polar
+                    activity above is founder self-tests or production health
+                    probes. The day the first non-internal email shows up here,
+                    something real shipped.
+                  </div>
+                ) : null}
                 {polar.recent.length > 0 && (
                   <table className="mt-4 w-full text-sm">
                     <thead className="text-left text-xs uppercase text-slate-500">
@@ -198,12 +231,22 @@ export default function AdminPage() {
                     </thead>
                     <tbody>
                       {polar.recent.map((o) => (
-                        <tr key={o.id} className="border-t border-slate-100">
+                        <tr
+                          key={o.id}
+                          className={`border-t border-slate-100 ${
+                            o.is_internal ? "opacity-50" : ""
+                          }`}
+                        >
                           <td className="py-2">
                             {new Date(o.created_at).toLocaleDateString()}
                           </td>
                           <td className="font-mono text-xs">
                             {o.id.slice(0, 16)}…
+                            {o.is_internal ? (
+                              <span className="ml-2 rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-700">
+                                internal
+                              </span>
+                            ) : null}
                           </td>
                           <td>
                             {(o.amount_minor / 100).toFixed(2)} {o.currency}
@@ -227,9 +270,27 @@ export default function AdminPage() {
                   <Stat label="Scans (today)" value={fmt(stats.scans_today)} />
                   <Stat label="AI fixes" value={fmt(stats.fixes_all_time)} />
                   <Stat label="Views (all time)" value={fmt(stats.views_all_time)} />
-                  <Stat label="Leads (all time)" value={fmt(stats.leads_all_time ?? 0)} />
+                  <Stat
+                    label="Leads · external"
+                    value={fmt(stats.leads_external_count ?? 0)}
+                    sub={
+                      (stats.leads_internal_count ?? 0) > 0
+                        ? `+ ${fmt(stats.leads_internal_count ?? 0)} internal/test`
+                        : undefined
+                    }
+                  />
                   <Stat label="Leads (today)" value={fmt(stats.leads_today ?? 0)} />
                 </div>
+                {(stats.leads_external_count ?? 0) === 0 ? (
+                  <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+                    <strong>No external leads yet.</strong> The leads count
+                    above is internal/test traffic (founder self-tests,
+                    production health probes). Real lead funnel starts when
+                    a stranger fills in the email prompt under a scan result
+                    — drive traffic to /free-scan via cold email / Bluesky /
+                    GH Marketplace and watch this number move.
+                  </div>
+                ) : null}
                 <h3 className="mt-6 text-sm font-semibold text-slate-700">
                   Scans by source
                 </h3>
@@ -255,11 +316,23 @@ export default function AdminPage() {
                     </thead>
                     <tbody>
                       {stats.leads_recent.map((l) => (
-                        <tr key={l.email + l.created_at} className="border-t border-slate-100">
+                        <tr
+                          key={l.email + l.created_at}
+                          className={`border-t border-slate-100 ${
+                            l.is_internal ? "opacity-50" : ""
+                          }`}
+                        >
                           <td className="py-1 text-xs text-slate-600">
                             {new Date(l.created_at).toLocaleString()}
                           </td>
-                          <td className="font-mono text-xs">{l.email}</td>
+                          <td className="font-mono text-xs">
+                            {l.email}
+                            {l.is_internal ? (
+                              <span className="ml-2 rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-700">
+                                internal
+                              </span>
+                            ) : null}
+                          </td>
                           <td className="truncate text-xs text-slate-600" title={l.url}>
                             {l.url.length > 40 ? l.url.slice(0, 40) + "…" : l.url}
                           </td>
@@ -291,11 +364,20 @@ export default function AdminPage() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+}) {
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-3">
       <div className="text-xs text-slate-500">{label}</div>
       <div className="mt-1 text-2xl font-bold">{value}</div>
+      {sub ? <div className="mt-1 text-[11px] text-slate-500">{sub}</div> : null}
     </div>
   );
 }
