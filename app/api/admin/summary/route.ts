@@ -18,6 +18,64 @@ const SOURCES = [
   "unknown",
 ];
 
+/**
+ * Internal traffic detection — keeps "look at this dashboard and decide
+ * what to do next" from being polluted by founder self-tests and
+ * production health probes. Two channels:
+ *
+ *   ADMIN_INTERNAL_EMAILS   comma-separated exact-match list, e.g.
+ *                           "asaf@paprikadjs.com,oncall@axle.dev"
+ *   ADMIN_INTERNAL_PATTERNS comma-separated glob-style fragments matched
+ *                           as substrings or local/domain suffixes:
+ *                             "@axle-test.local"   -> matches any
+ *                                                     foo@axle-test.local
+ *                             "verify-prod-check"  -> matches any address
+ *                                                     containing that token
+ *
+ * Defaults below cover the obvious cases we already saw in prod KV; the
+ * env vars are additive (don't override the defaults).
+ */
+const DEFAULT_INTERNAL_EMAILS = new Set<string>([
+  "asaf@paprikadjs.com",
+  "asaf@amoss.co.il",
+]);
+const DEFAULT_INTERNAL_PATTERNS = [
+  "@axle-test.local",
+  "verify-prod-check",
+  "@example.com",
+  "@example.org",
+];
+
+function loadInternalConfig(): { emails: Set<string>; patterns: string[] } {
+  const emails = new Set(DEFAULT_INTERNAL_EMAILS);
+  const patterns = [...DEFAULT_INTERNAL_PATTERNS];
+
+  const extraEmails = process.env.ADMIN_INTERNAL_EMAILS || "";
+  for (const e of extraEmails.split(",")) {
+    const trimmed = e.trim().toLowerCase();
+    if (trimmed) emails.add(trimmed);
+  }
+  const extraPatterns = process.env.ADMIN_INTERNAL_PATTERNS || "";
+  for (const p of extraPatterns.split(",")) {
+    const trimmed = p.trim().toLowerCase();
+    if (trimmed) patterns.push(trimmed);
+  }
+  return { emails, patterns };
+}
+
+function isInternalEmail(
+  email: string,
+  cfg: { emails: Set<string>; patterns: string[] },
+): boolean {
+  const e = (email || "").toLowerCase();
+  if (!e) return true; // empty email = test / synthetic
+  if (cfg.emails.has(e)) return true;
+  for (const p of cfg.patterns) {
+    if (e.includes(p)) return true;
+  }
+  return false;
+}
+
 function checkAuth(req: Request): boolean {
   const token = process.env.ADMIN_TOKEN;
   if (!token) return false;
@@ -88,10 +146,12 @@ export async function GET(req: Request) {
           source: string;
           created_at: number;
           created_at_iso?: string;
+          is_internal?: boolean;
         };
+        const internalCfg = loadInternalConfig();
         let leads_recent: LeadRecord[] = [];
         try {
-          const emails = await redis.lrange<string>("axle:leads:list", 0, 19);
+          const emails = await redis.lrange<string>("axle:leads:list", 0, 49);
           const records = await Promise.all(
             emails.map((e) =>
               redis.get<string | LeadRecord>(`axle:lead:${e}`).catch(() => null)
@@ -100,17 +160,29 @@ export async function GET(req: Request) {
           leads_recent = records
             .map((r) => {
               if (!r) return null;
-              if (typeof r === "object") return r as LeadRecord;
-              try {
-                return JSON.parse(r as string) as LeadRecord;
-              } catch {
-                return null;
-              }
+              const parsed =
+                typeof r === "object"
+                  ? (r as LeadRecord)
+                  : (() => {
+                      try {
+                        return JSON.parse(r as string) as LeadRecord;
+                      } catch {
+                        return null;
+                      }
+                    })();
+              if (!parsed) return null;
+              parsed.is_internal = isInternalEmail(parsed.email, internalCfg);
+              return parsed;
             })
             .filter((r): r is LeadRecord => r !== null);
         } catch {
           /* no-op */
         }
+
+        // Honest counters: separate the "axle's own founder testing the
+        // signup flow" from the "real human gave us their email" signal.
+        const leads_external = leads_recent.filter((l) => !l.is_internal);
+        const leads_internal = leads_recent.filter((l) => l.is_internal);
 
         return {
           scans_all_time: Number(scansAll ?? 0),
@@ -120,6 +192,8 @@ export async function GET(req: Request) {
           views_today: Number(viewsToday ?? 0),
           leads_all_time: Number(leadsAll ?? 0),
           leads_today: Number(leadsToday ?? 0),
+          leads_external_count: leads_external.length,
+          leads_internal_count: leads_internal.length,
           scans_by_source,
           views_by_source,
           leads_recent,
@@ -130,7 +204,10 @@ export async function GET(req: Request) {
   let polarData:
     | {
         order_count: number;
+        order_count_external: number;
+        order_count_internal: number;
         revenue_total_minor: number;
+        revenue_external_minor: number;
         revenue_currency: string;
         recent: Array<{
           id: string;
@@ -139,6 +216,8 @@ export async function GET(req: Request) {
           created_at: string;
           status: string;
           product_id: string;
+          customer_email: string;
+          is_internal: boolean;
         }>;
       }
     | { error: string };
@@ -153,6 +232,8 @@ export async function GET(req: Request) {
       createdAt: string | Date;
       productId: string | null;
       product?: { id: string } | null;
+      customer?: { email?: string } | null;
+      customerEmail?: string | null;
     };
     const iter = await p.orders.list({ limit: 100 });
     const orders: PolarOrder[] = [];
@@ -163,26 +244,50 @@ export async function GET(req: Request) {
       if (Array.isArray(items)) orders.push(...items);
       if (orders.length >= 100) break;
     }
-    const revenue = orders.reduce(
-      (sum, o) => sum + (Number(o.totalAmount) || 0),
-      0
+
+    const internalCfg = loadInternalConfig();
+    const orderEmail = (o: PolarOrder) =>
+      (o.customer?.email || o.customerEmail || "").toLowerCase();
+    const ordersInternal = orders.filter((o) =>
+      isInternalEmail(orderEmail(o), internalCfg),
     );
+    const ordersExternal = orders.filter(
+      (o) => !isInternalEmail(orderEmail(o), internalCfg),
+    );
+    // Net non-refunded counts the customer paid for. Refunds reduce
+    // both the gross and the external/internal slices proportionally.
+    const isPaid = (o: PolarOrder) =>
+      o.status === "paid" || o.status === "completed";
+    const revenue = orders
+      .filter(isPaid)
+      .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+    const revenueExternal = ordersExternal
+      .filter(isPaid)
+      .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
     const currency = orders[0]?.currency || "USD";
     polarData = {
       order_count: orders.length,
+      order_count_external: ordersExternal.length,
+      order_count_internal: ordersInternal.length,
       revenue_total_minor: revenue,
+      revenue_external_minor: revenueExternal,
       revenue_currency: currency,
-      recent: orders.slice(0, 10).map((o) => ({
-        id: o.id,
-        amount_minor: Number(o.totalAmount) || 0,
-        currency: o.currency,
-        created_at:
-          o.createdAt instanceof Date
-            ? o.createdAt.toISOString()
-            : String(o.createdAt),
-        status: o.status,
-        product_id: o.productId || o.product?.id || "",
-      })),
+      recent: orders.slice(0, 10).map((o) => {
+        const email = orderEmail(o);
+        return {
+          id: o.id,
+          amount_minor: Number(o.totalAmount) || 0,
+          currency: o.currency,
+          created_at:
+            o.createdAt instanceof Date
+              ? o.createdAt.toISOString()
+              : String(o.createdAt),
+          status: o.status,
+          product_id: o.productId || o.product?.id || "",
+          customer_email: email,
+          is_internal: isInternalEmail(email, internalCfg),
+        };
+      }),
     };
   } catch (err) {
     polarData = {
