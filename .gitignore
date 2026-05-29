@@ -49,3 +49,5 @@ a11y-report.json
 a11y-report.md
 packages/*/node_modules
 packages/*/dist
+packages/*/out
+*.vsix

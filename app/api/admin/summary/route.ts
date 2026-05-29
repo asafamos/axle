@@ -42,6 +42,7 @@ const DEFAULT_INTERNAL_EMAILS = new Set<string>([
 const DEFAULT_INTERNAL_PATTERNS = [
   "@axle-test.local",
   "verify-prod-check",
+  "test+verify", // founder plus-addressed verify self-tests, e.g. test+verify-2026-05-24@gmail.com
   "@example.com",
   "@example.org",
 ];
@@ -303,6 +304,8 @@ export async function GET(req: Request) {
     "axle-netlify-plugin",
     "axle-cloudflare-plugin",
     "axle-vercel-plugin",
+    "axle-mcp",
+    "axle-storybook",
   ];
   const npmData = await Promise.all(
     NPM_PACKAGES.map(async (pkg) => {
