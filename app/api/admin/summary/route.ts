@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { kv } from "@/lib/billing/kv";
 import { polar } from "@/lib/billing/polar";
+import { loadInternalConfig, isInternalEmail } from "@/lib/internal";
 
 export const runtime = "nodejs";
 
@@ -17,65 +18,6 @@ const SOURCES = [
   "axle-shopify",
   "unknown",
 ];
-
-/**
- * Internal traffic detection — keeps "look at this dashboard and decide
- * what to do next" from being polluted by founder self-tests and
- * production health probes. Two channels:
- *
- *   ADMIN_INTERNAL_EMAILS   comma-separated exact-match list, e.g.
- *                           "asaf@paprikadjs.com,oncall@axle.dev"
- *   ADMIN_INTERNAL_PATTERNS comma-separated glob-style fragments matched
- *                           as substrings or local/domain suffixes:
- *                             "@axle-test.local"   -> matches any
- *                                                     foo@axle-test.local
- *                             "verify-prod-check"  -> matches any address
- *                                                     containing that token
- *
- * Defaults below cover the obvious cases we already saw in prod KV; the
- * env vars are additive (don't override the defaults).
- */
-const DEFAULT_INTERNAL_EMAILS = new Set<string>([
-  "asaf@paprikadjs.com",
-  "asaf@amoss.co.il",
-]);
-const DEFAULT_INTERNAL_PATTERNS = [
-  "@axle-test.local",
-  "verify-prod-check",
-  "test+verify", // founder plus-addressed verify self-tests, e.g. test+verify-2026-05-24@gmail.com
-  "@example.com",
-  "@example.org",
-];
-
-function loadInternalConfig(): { emails: Set<string>; patterns: string[] } {
-  const emails = new Set(DEFAULT_INTERNAL_EMAILS);
-  const patterns = [...DEFAULT_INTERNAL_PATTERNS];
-
-  const extraEmails = process.env.ADMIN_INTERNAL_EMAILS || "";
-  for (const e of extraEmails.split(",")) {
-    const trimmed = e.trim().toLowerCase();
-    if (trimmed) emails.add(trimmed);
-  }
-  const extraPatterns = process.env.ADMIN_INTERNAL_PATTERNS || "";
-  for (const p of extraPatterns.split(",")) {
-    const trimmed = p.trim().toLowerCase();
-    if (trimmed) patterns.push(trimmed);
-  }
-  return { emails, patterns };
-}
-
-function isInternalEmail(
-  email: string,
-  cfg: { emails: Set<string>; patterns: string[] },
-): boolean {
-  const e = (email || "").toLowerCase();
-  if (!e) return true; // empty email = test / synthetic
-  if (cfg.emails.has(e)) return true;
-  for (const p of cfg.patterns) {
-    if (e.includes(p)) return true;
-  }
-  return false;
-}
 
 function checkAuth(req: Request): boolean {
   const token = process.env.ADMIN_TOKEN;

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { kv } from "@/lib/billing/kv";
+import { isInternalEmail } from "@/lib/internal";
+import { sendLeadNotificationEmail } from "@/lib/billing/email";
 
 export const runtime = "nodejs";
 
@@ -94,6 +96,10 @@ export async function POST(req: Request) {
     ua: req.headers.get("user-agent")?.slice(0, 200) || "",
   };
 
+  // New email vs idempotent re-submit — so the founder is pinged once per lead.
+  // Fail-closed: a lookup error is treated as not-new (skip notification).
+  const isNew = !(await redis.get(`axle:lead:${email}`).catch(() => "x"));
+
   try {
     // The job ID is the queued_at timestamp prefixed by the email — unique enough.
     const id = `${record.queued_at}-${email}`;
@@ -120,6 +126,15 @@ export async function POST(req: Request) {
     await redis.expire(`axle:stats:leads:${day}`, 60 * 60 * 48);
   } catch {
     return NextResponse.json({ ok: true, queued: false });
+  }
+
+  // Brand-new *external* lead → ping the founder. Best-effort, never blocks.
+  if (isNew && !isInternalEmail(email)) {
+    await sendLeadNotificationEmail({
+      email,
+      url: record.url,
+      source: `free-scan:${record.source}`,
+    });
   }
 
   return NextResponse.json({ ok: true, queued: true });
