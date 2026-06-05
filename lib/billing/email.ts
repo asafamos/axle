@@ -48,6 +48,76 @@ function fromAddress(): string {
   return SANDBOX_FROM;
 }
 
+/**
+ * Notify the founder when a *genuinely external* lead is captured (a stranger
+ * leaves their email under a scan result — not a self-test or health probe).
+ * Best-effort: this must NEVER throw or block a lead capture. Without it, the
+ * first real lead sat undiscovered for 3 days (found only on a manual /admin
+ * refresh). Recipient defaults to the human reply-to; override with
+ * LEAD_NOTIFY_TO. Requires RESEND_API_KEY + RESEND_FROM (already set in prod
+ * for welcome emails); silently no-ops if email isn't configured.
+ */
+export async function sendLeadNotificationEmail(lead: {
+  email: string;
+  url?: string;
+  critical?: number;
+  serious?: number;
+  violations?: number;
+  source?: string;
+}): Promise<void> {
+  try {
+    const r = resend();
+    if (!r) return; // no RESEND_API_KEY — nothing to do
+    const to = process.env.LEAD_NOTIFY_TO?.trim() || "asaf@amoss.co.il";
+    const site = siteUrl();
+    const host = (() => {
+      try {
+        return lead.url ? new URL(lead.url).hostname : "";
+      } catch {
+        return "";
+      }
+    })();
+    const sev =
+      lead.critical != null || lead.serious != null
+        ? `${lead.critical ?? 0} critical · ${lead.serious ?? 0} serious`
+        : lead.violations != null
+          ? `${lead.violations} violations`
+          : "";
+    const subject = `🎯 New external lead: ${lead.email}${host ? ` (${host})` : ""}`;
+    const lines = [
+      "A non-internal email just landed under a scan result.",
+      "",
+      `Email:  ${lead.email}`,
+      lead.url ? `Site:   ${lead.url}` : "",
+      sev ? `Found:  ${sev}` : "",
+      lead.source ? `Source: ${lead.source}` : "",
+      "",
+      `Full dashboard: ${site}/admin`,
+    ].filter(Boolean);
+    const { error } = await r.emails.send({
+      from: fromAddress(),
+      to,
+      subject,
+      text: lines.join("\n"),
+    });
+    if (error) {
+      console.warn(
+        `[email] lead notification failed for ${lead.email}: ${
+          typeof error === "object" ? JSON.stringify(error) : String(error)
+        }`,
+      );
+    }
+  } catch (err) {
+    // Swallow everything — a lead capture must never fail because the
+    // founder-notification email errored (e.g. RESEND_FROM unset in prod).
+    console.warn(
+      `[email] lead notification threw for ${lead.email}: ${
+        err instanceof Error ? err.message : String(err)
+      }`,
+    );
+  }
+}
+
 export async function sendApiKeyEmail(opts: {
   to: string;
   apiKey: string;

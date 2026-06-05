@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { kv } from "@/lib/billing/kv";
+import { isInternalEmail } from "@/lib/internal";
+import { sendLeadNotificationEmail } from "@/lib/billing/email";
 
 export const runtime = "nodejs";
 
@@ -44,6 +46,11 @@ export async function POST(req: Request) {
     ua: req.headers.get("user-agent")?.slice(0, 200) || "",
   };
 
+  // Is this a brand-new email (vs an idempotent re-subscribe)? Checked before
+  // the set so we only ping the founder once per lead. Fail-closed: if the
+  // lookup errors, treat as not-new and skip the notification.
+  const isNew = !(await redis.get(`axle:lead:${email}`).catch(() => "x"));
+
   try {
     // Store as the latest record keyed by email (idempotent — re-subscribe updates).
     await redis.set(`axle:lead:${email}`, JSON.stringify(record));
@@ -56,6 +63,12 @@ export async function POST(req: Request) {
     await redis.expire(`axle:stats:leads:${day}`, 60 * 60 * 48);
   } catch {
     return NextResponse.json({ ok: true, stored: false });
+  }
+
+  // Brand-new *external* lead → notify the founder so it isn't discovered days
+  // late on a manual /admin refresh. Internal self-tests are skipped.
+  if (isNew && !isInternalEmail(email)) {
+    await sendLeadNotificationEmail(record);
   }
 
   return NextResponse.json({ ok: true, stored: true });
