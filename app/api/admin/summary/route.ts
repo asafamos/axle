@@ -282,10 +282,68 @@ export async function GET(req: Request) {
     { last_week: 0, last_month: 0 }
   );
 
+  // VS Code Marketplace — the one distribution channel npm can't see. Public
+  // gallery API; resilient (any failure yields zeros, never breaks the page).
+  const VSCODE_EXTENSIONS = ["asafamos.axle-a11y"];
+  const marketplaceData = await Promise.all(
+    VSCODE_EXTENSIONS.map(async (ext) => {
+      try {
+        const res = await fetch(
+          "https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery",
+          {
+            method: "POST",
+            cache: "no-store",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json;api-version=3.0-preview.1",
+            },
+            body: JSON.stringify({
+              filters: [{ criteria: [{ filterType: 7, value: ext }] }],
+              flags: 914,
+            }),
+          }
+        );
+        const json = (await res.json()) as {
+          results?: Array<{
+            extensions?: Array<{
+              statistics?: Array<{ statisticName: string; value: number }>;
+            }>;
+          }>;
+        };
+        const stats = json?.results?.[0]?.extensions?.[0]?.statistics ?? [];
+        const stat = (name: string) =>
+          Number(stats.find((s) => s.statisticName === name)?.value ?? 0);
+        return {
+          extension: ext,
+          installs: stat("install"),
+          downloads: stat("downloadCount"),
+          rating: stat("averagerating"),
+          rating_count: stat("ratingcount"),
+        };
+      } catch {
+        return {
+          extension: ext,
+          installs: 0,
+          downloads: 0,
+          rating: 0,
+          rating_count: 0,
+        };
+      }
+    })
+  );
+  const marketplaceTotals = marketplaceData.reduce(
+    (acc, row) => ({
+      installs: acc.installs + row.installs,
+      downloads: acc.downloads + row.downloads,
+    }),
+    { installs: 0, downloads: 0 }
+  );
+
   return NextResponse.json({
     stats: kvData,
     polar: polarData,
     npm: { packages: npmData, totals: npmTotals },
+    marketplace: { extensions: marketplaceData, totals: marketplaceTotals },
     generated_at: new Date().toISOString(),
   });
 }

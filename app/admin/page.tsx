@@ -59,6 +59,16 @@ type Summary = {
     }>;
     totals: { last_week: number; last_month: number };
   };
+  marketplace?: {
+    extensions: Array<{
+      extension: string;
+      installs: number;
+      downloads: number;
+      rating: number;
+      rating_count: number;
+    }>;
+    totals: { installs: number; downloads: number };
+  };
   generated_at: string;
 };
 
@@ -71,7 +81,12 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Read the saved admin token AFTER mount (not via a lazy useState
+    // initializer) so the server and initial client render match — reading
+    // localStorage during render would cause a hydration mismatch on the
+    // controlled password input below.
     const saved = window.localStorage.getItem(TOKEN_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved) setToken(saved);
   }, []);
 
@@ -160,6 +175,45 @@ export default function AdminPage() {
                       <td className="py-2 font-mono text-xs">{p.package}</td>
                       <td className="text-right">{fmt(p.last_week)}</td>
                       <td className="text-right">{fmt(p.last_month)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
+          {data.marketplace && data.marketplace.extensions.length > 0 && (
+            <section>
+              <h2 className="text-lg font-semibold">VS Code Marketplace</h2>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-2">
+                <Stat
+                  label="Total installs"
+                  value={fmt(data.marketplace.totals.installs)}
+                />
+                <Stat
+                  label="Total downloads"
+                  value={fmt(data.marketplace.totals.downloads)}
+                />
+              </div>
+              <table className="mt-4 w-full text-sm">
+                <thead className="text-left text-xs uppercase text-slate-500">
+                  <tr>
+                    <th className="py-2">Extension</th>
+                    <th className="text-right">Installs</th>
+                    <th className="text-right">Downloads</th>
+                    <th className="text-right">Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.marketplace.extensions.map((e) => (
+                    <tr key={e.extension} className="border-t border-slate-100">
+                      <td className="py-2 font-mono text-xs">{e.extension}</td>
+                      <td className="text-right">{fmt(e.installs)}</td>
+                      <td className="text-right">{fmt(e.downloads)}</td>
+                      <td className="text-right">
+                        {e.rating_count > 0
+                          ? `${e.rating.toFixed(1)}★ (${e.rating_count})`
+                          : "—"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
