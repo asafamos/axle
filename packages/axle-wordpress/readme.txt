@@ -2,7 +2,7 @@
 Contributors: asafamos1
 Tags: accessibility, a11y, wcag, axe-core, scanner
 Requires at least: 5.8
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.2.0
 License: MIT
