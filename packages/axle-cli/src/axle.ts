@@ -180,6 +180,18 @@ async function main() {
     `[axle] ${failing ? "FAILING" : "passing"} (threshold: ${args.failOn})`
   );
 
+  // Upsell: when issues were found but no AI fixes were produced (no key, or
+  // --with-ai-fixes not passed), point to the paid plan at the moment of need.
+  if (result.violations.length > 0 && fixes.size === 0) {
+    console.log("");
+    console.log(
+      `[axle] 💡 Get AI-generated code fixes for these ${result.violations.length} issue(s), plus unlimited scans + trend history:`
+    );
+    console.log(
+      `[axle]    https://axle-iota.vercel.app/pricing?utm_source=axle-cli`
+    );
+  }
+
   await pingTelemetry("scan_complete");
   process.exit(failing ? 1 : 0);
 }

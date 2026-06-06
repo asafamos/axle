@@ -78,6 +78,9 @@ function renderResult(axeResult, pageUrl) {
 
   const encoded = encodeURIComponent(pageUrl || "");
   const openFullUrl = `https://axle-iota.vercel.app/?url=${encoded}`;
+  const upsellHtml = violations.length
+    ? `<div class="loading"><a href="https://axle-iota.vercel.app/pricing?utm_source=axle-chrome" target="_blank">💡 Get AI-generated code fixes + unlimited scans →</a></div>`
+    : "";
 
   result.innerHTML = `
     ${summaryHtml}
@@ -85,6 +88,7 @@ function renderResult(axeResult, pageUrl) {
     <div class="loading">
       <a href="${openFullUrl}" target="_blank">Open full report on axle →</a>
     </div>
+    ${upsellHtml}
   `;
 }
 
