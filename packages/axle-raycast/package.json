@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "axle",
-  "title": "Axle — Accessibility Scanner",
+  "name": "asafamos-accessibility-scanner",
+  "title": "AsafAmos — Accessibility Scanner",
   "description": "Scan any URL for WCAG 2.1 / 2.2 AA accessibility violations without leaving Raycast. Results appear as a list; pick any violation to see the offending element and suggested fix.",
   "icon": "command-icon.png",
   "author": "asafamos",
@@ -14,7 +14,7 @@
     {
       "name": "scan",
       "title": "Scan URL for Accessibility",
-      "subtitle": "axle",
+      "subtitle": "AsafAmos",
       "description": "Run an axe-core scan against any public URL and show violations.",
       "mode": "view",
       "arguments": [
@@ -29,7 +29,7 @@
     {
       "name": "statement",
       "title": "Open Hebrew Accessibility Statement Generator",
-      "subtitle": "axle",
+      "subtitle": "AsafAmos",
       "description": "Opens the free Hebrew statement generator — aligned with Israeli תקנה 35.",
       "mode": "no-view"
     }
