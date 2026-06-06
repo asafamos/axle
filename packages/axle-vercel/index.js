@@ -82,5 +82,10 @@ child.on("exit", (code) => {
       /* no-op */
     }
   }
+  if (code === 1) {
+    console.log(
+      "[axle] 💡 Get AI-generated code fixes for these issues, plus unlimited scans + trend history: https://axle-iota.vercel.app/pricing?utm_source=axle-vercel"
+    );
+  }
   process.exit(code ?? 0);
 });
