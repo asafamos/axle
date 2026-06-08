@@ -3,7 +3,7 @@
  * Plugin Name: AsafAmos Accessibility Scanner
  * Plugin URI:  https://github.com/asafamos/axle/tree/main/packages/axle-wordpress
  * Description: Scan this WordPress site for WCAG 2.1 / 2.2 AA accessibility violations. axe-core 4.11 runs in your admin browser via a hidden iframe — nothing transmitted by default. Built for EAA 2025 / ADA / תקנה 35.
- * Version:     1.2.0
+ * Version:     1.2.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      AsafAmos
@@ -24,7 +24,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('AXLE_VERSION', '1.2.0');
+define('AXLE_VERSION', '1.2.1');
 define('AXLE_API_BASE', 'https://axle-iota.vercel.app');
 define('AXLE_OPTION_SETTINGS', 'axle_settings');
 define('AXLE_OPTION_LAST_SCAN', 'axle_last_scan');
@@ -251,7 +251,6 @@ add_action('admin_enqueue_scripts', function ($hook) {
         'ajaxUrl'      => admin_url('admin-ajax.php'),
         'nonce'        => wp_create_nonce('axle_save_scan'),
         'targetUrl'    => $target,
-        'telemetryUrl' => AXLE_API_BASE . '/api/track',
     ]);
 });
 
