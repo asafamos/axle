@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks";
+import { deliverKey } from "@/lib/billing/deliver";
 import {
-  generatePlaintextKey,
-  storeKey,
   updateStatusByCustomerId,
   type KeyRecord,
 } from "@/lib/billing/keys";
-import { sendApiKeyEmail } from "@/lib/billing/email";
 
 export const runtime = "nodejs";
 
@@ -102,7 +100,6 @@ async function provisionFromSubscription(sub: PolarSubscription): Promise<void> 
   const planMeta = typeof sub.metadata?.plan === "string" ? sub.metadata.plan : "team";
   const plan = planMeta === "business" ? "business" : "team";
 
-  const plaintextKey = generatePlaintextKey();
   const record: KeyRecord = {
     email,
     customerId,
@@ -112,8 +109,9 @@ async function provisionFromSubscription(sub: PolarSubscription): Promise<void> 
     createdAt: Date.now(),
   };
 
-  await storeKey(plaintextKey, record);
-  await sendApiKeyEmail({ to: email, apiKey: plaintextKey, plan });
+  // deliverKey is idempotent across webhook redeliveries and decides for itself
+  // whether a delivery failure is worth retrying. See lib/billing/deliver.ts.
+  await deliverKey(record);
 }
 
 function mapPolarStatus(status: string): KeyRecord["status"] {
