@@ -4,7 +4,7 @@ Tags: accessibility, a11y, wcag, axe-core, scanner
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -59,14 +59,7 @@ This is the full and accurate transmission story for every feature. The default 
 * **Does not transmit anything to any external service.**
 * Scan results are written to your WordPress `wp_options` table under the key `axle_last_scan` so the admin dashboard can render the summary.
 
-**2. Anonymous usage ping (after a successful Scan now)**
-
-* If your browser allows `navigator.sendBeacon` / `fetch`, after a scan completes a single anonymous ping is sent to `https://axle-iota.vercel.app/api/track` with body `{ "source": "axle-wordpress", "event": "scan_complete" }`.
-* No URL, no domain, no scan contents, no admin user info is included.
-* Used to track rough plugin adoption on our analytics dashboard.
-* Blocked automatically if the browser disables third-party requests, or if you block the host.
-
-**3. Auto scan = Daily (opt in only — Off by default)**
+**2. Auto scan = Daily (opt in only — Off by default)**
 
 * Only relevant if you explicitly enable this in Tools → AsafAmos Accessibility Scanner → Settings.
 * WP-Cron runs without a browser, so the daily cron cannot use the in-browser iframe scanner. Instead it uses the hosted scanner at `POST https://axle-iota.vercel.app/api/scan` with body `{ "url": "<your configured target URL>", "source": "axle-wordpress" }` (and `Authorization: Bearer <key>` if you've entered an axle API key).
@@ -74,7 +67,7 @@ This is the full and accurate transmission story for every feature. The default 
 * No visitor data, form data, or admin content is sent. Only the configured target URL.
 * Disabled by default. Setting can be turned off again at any time.
 
-**Service provider for #2 and #3:** axle (https://axle-iota.vercel.app)
+**Service provider for #2 (the opt-in daily cron only):** axle (https://axle-iota.vercel.app)
 **Terms of use:** https://axle-iota.vercel.app/terms
 **Privacy policy:** https://axle-iota.vercel.app/privacy
 
@@ -88,7 +81,7 @@ No. The bundled axe-core engine is loaded only inside your WordPress admin pages
 
 = What data leaves my site by default? =
 
-By default, **nothing**. The Scan now button runs entirely client-side in your admin browser via a hidden iframe. Optional features (anonymous usage ping; opt-in daily cron) are described in detail in the &ldquo;Optional features&rdquo; section.
+By default, **nothing**. The Scan now button runs entirely client-side in your admin browser via a hidden iframe — no analytics, no tracking, no calls to any external server. The only optional feature that contacts a server is the opt-in daily cron (Off by default), described in the &ldquo;Optional features&rdquo; section.
 
 = Do I need an account? =
 
@@ -100,7 +93,7 @@ No. Automated scanning catches roughly 57% of WCAG issues. For full compliance, 
 
 = What about GDPR / privacy? =
 
-The plugin does not track your visitors. The default scan flow makes no outbound HTTP requests to any external service. Optional features (anonymous usage ping; opt-in daily cron) are documented under &ldquo;Optional features&rdquo; with the exact request body.
+The plugin does not track you or your visitors and includes no analytics. The default scan flow makes no outbound HTTP requests to any external service. The only optional feature that contacts a server is the opt-in daily cron (Off by default), documented under &ldquo;Optional features&rdquo; with the exact request body.
 
 = I'm on LocalWP / staging behind basic auth / a VPN-only host. Will this still work? =
 
@@ -118,6 +111,9 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 
 == Changelog ==
 
+= 1.2.1 =
+* Removed the anonymous usage ping entirely per WordPress.org Plugin Review Team feedback — no tracking, no phoning home. The plugin now makes zero outbound requests by default. The only optional network feature is the opt-in daily cron (Off by default), which contacts the hosted scanner as a service you explicitly enable.
+
 = 1.2.0 =
 * Renamed plugin display name and slug from &ldquo;Axle Accessibility Scanner&rdquo; / `axle-accessibility-scanner` to &ldquo;AsafAmos Accessibility Scanner&rdquo; / `asafamos-accessibility-scanner` per WordPress.org Plugin Review Team feedback (avoid the &ldquo;Axle&rdquo; trademark concern).
 * Rewrote readme to remove inconsistencies between the original 1.0.0 (hosted-scan) and current 1.1.0+ (in-admin-iframe) architectures. The default scan flow now described accurately as fully client-side; optional hosted features moved to a clearly-labelled section.
@@ -125,7 +121,7 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 
 = 1.1.0 =
 * Scans now run **client-side in the admin browser** using bundled axe-core 4.11. Works for LocalWP, staging behind basic auth / VPN, and any other private environment the previous hosted scanner could not reach.
-* No external network calls during a normal Scan now — only an optional anonymous telemetry ping after a successful scan.
+* No external network calls during a normal Scan now.
 * Auto scan cron still uses the hosted scanner (it has no browser available). Disabled by default; opt in via Settings.
 
 = 1.0.0 =
