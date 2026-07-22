@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "a11y:ci": "tsx scripts/ci-scan.ts"
+    "a11y:ci": "tsx scripts/ci-scan.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
@@ -34,6 +36,7 @@
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }

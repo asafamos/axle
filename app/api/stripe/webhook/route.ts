@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/billing/stripe";
+import { deliverKey } from "@/lib/billing/deliver";
 import {
-  generatePlaintextKey,
-  storeKey,
   updateStatusByCustomerId,
   type KeyRecord,
 } from "@/lib/billing/keys";
-import { sendApiKeyEmail } from "@/lib/billing/email";
 
 export const runtime = "nodejs";
 
@@ -99,7 +97,6 @@ async function handleCheckoutComplete(
     ? "business"
     : "team") as "team" | "business";
 
-  const plaintextKey = generatePlaintextKey();
   const record: KeyRecord = {
     email,
     customerId,
@@ -109,8 +106,9 @@ async function handleCheckoutComplete(
     createdAt: Date.now(),
   };
 
-  await storeKey(plaintextKey, record);
-  await sendApiKeyEmail({ to: email, apiKey: plaintextKey, plan });
+  // deliverKey is idempotent across webhook redeliveries and decides for itself
+  // whether a delivery failure is worth retrying. See lib/billing/deliver.ts.
+  await deliverKey(record);
 }
 
 function mapStatus(status: Stripe.Subscription.Status): KeyRecord["status"] {

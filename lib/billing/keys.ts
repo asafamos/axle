@@ -54,6 +54,37 @@ export async function storeKey(
     plaintext,
     { ex: 60 * 30 }
   );
+  // A second, longer-lived copy of the same plaintext, used only to make
+  // webhook redelivery idempotent (see lib/billing/deliver.ts). It is kept
+  // separate from the checkout key on purpose: that one's 30 minutes is a
+  // *display* window tuned for a human reading the success page, and someone
+  // shortening it must not silently start minting a fresh key on every
+  // provider retry. Tradeoff, stated plainly: this widens the window in which
+  // a leaked KV exposes raw keys from 30 minutes to DELIVERY_KEY_TTL.
+  await redis.set(
+    `axle:delivery-key:${record.customerId}`,
+    plaintext,
+    { ex: DELIVERY_KEY_TTL_SECONDS }
+  );
+}
+
+/**
+ * Must comfortably exceed the webhook retry window of every billing provider
+ * we use, otherwise a late retry finds nothing and mints a duplicate key.
+ * Stripe retries for up to 3 days with widening backoff; Polar is shorter.
+ */
+const DELIVERY_KEY_TTL_SECONDS = 60 * 60 * 78; // 3 days + 6h of headroom
+
+/**
+ * Returns the plaintext key already minted for this customer, if we are still
+ * inside the webhook retry window. This is what makes a redelivery of the same
+ * checkout reuse the customer's key instead of issuing a second one.
+ */
+export async function lookupDeliveryKey(customerId: string): Promise<string | null> {
+  const redis = kv();
+  if (!redis) return null;
+  const raw = await redis.get<string>(`axle:delivery-key:${customerId}`);
+  return typeof raw === "string" ? raw : null;
 }
 
 /**

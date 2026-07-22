@@ -24,6 +24,71 @@ function siteUrl(): string {
 const SANDBOX_FROM = "axle <onboarding@resend.dev>";
 
 /**
+ * Is e-mail delivery configured well enough to reach a real customer?
+ *
+ * Returns a human-readable reason when it is not. Callers use this to tell a
+ * permanent misconfiguration (never worth retrying) apart from a transient send
+ * failure (worth retrying).
+ */
+export function emailConfigProblem(): string | null {
+  if (!process.env.RESEND_API_KEY) return "RESEND_API_KEY is not set";
+  const configured = process.env.RESEND_FROM?.trim();
+  if (!configured || configured === SANDBOX_FROM) {
+    return (
+      "RESEND_FROM is not set to a verified domain — Resend's sandbox sender only " +
+      "delivers to addresses verified in the dashboard, so customers get nothing"
+    );
+  }
+  return null;
+}
+
+/**
+ * Sender for internal alerts to ourselves. Unlike {@link fromAddress} this must
+ * never throw and never give up: the alert it carries is often *about*
+ * RESEND_FROM being unset, so refusing to send without RESEND_FROM would
+ * suppress exactly the message a human needs. The sandbox sender is legitimate
+ * here because the recipient is our own dashboard-verified address.
+ */
+function internalAlertFrom(): string {
+  return process.env.RESEND_FROM?.trim() || SANDBOX_FROM;
+}
+
+/**
+ * A Resend rejection, tagged with whether retrying could ever help.
+ *
+ * `permanent` means the request will be rejected identically forever — an
+ * unverified sending domain, a malformed address, a restricted API key. Retrying
+ * those just spins the provider's webhook queue for three days while the
+ * customer sits there having paid, so callers should escalate to a human
+ * instead. Everything else (rate limits, 5xx, network) is transient.
+ */
+export class EmailSendError extends Error {
+  readonly permanent: boolean;
+  constructor(message: string, permanent: boolean) {
+    super(message);
+    this.name = "EmailSendError";
+    this.permanent = permanent;
+  }
+}
+
+/** Resend error names/status codes that no amount of retrying will fix. */
+function isPermanentSendError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const { name, statusCode } = error as { name?: string; statusCode?: number };
+  const permanentNames = new Set([
+    "validation_error", // malformed from/to
+    "invalid_from_address", // domain not verified for sending
+    "restricted_api_key", // key lacks send permission
+    "missing_api_key",
+    "invalid_api_key",
+    "not_found",
+  ]);
+  if (name && permanentNames.has(name)) return true;
+  // 4xx other than 429 is a client-side problem we cannot retry our way out of.
+  return typeof statusCode === "number" && statusCode >= 400 && statusCode < 500 && statusCode !== 429;
+}
+
+/**
  * Resend's `onboarding@resend.dev` is a SANDBOX domain that only delivers to
  * email addresses verified in the Resend dashboard. If we silently use it
  * for live customers, their welcome emails get rejected by Resend with no
@@ -170,11 +235,79 @@ export async function sendApiKeyEmail(opts: {
     ].join(""),
   });
   if (error) {
-    // Loud-fail so the webhook handler retries (Polar redelivers webhooks
-    // for any non-2xx response). Better than silently dropping the
-    // customer's welcome email and losing the subscription to a refund.
-    throw new Error(
+    // Loud-fail so the webhook handler can decide what to do. Tagged with
+    // whether a retry could ever succeed: transient failures are worth
+    // redelivering, permanent ones need a human, not another attempt.
+    throw new EmailSendError(
       `[email] Resend send failed for ${opts.to}: ${typeof error === "object" ? JSON.stringify(error) : String(error)}`,
+      isPermanentSendError(error),
+    );
+  }
+}
+
+/**
+ * Tell a human that someone paid and did not get their key.
+ *
+ * Best-effort by construction: it never throws, and it falls back to both a
+ * default recipient and the sandbox sender, because the situations it reports
+ * are precisely the ones where LEAD_NOTIFY_TO or RESEND_FROM may be missing.
+ * An alert that silently no-ops in the one case it was written for is worse
+ * than no alert at all — it looks like coverage that isn't there.
+ */
+export async function sendKeyDeliveryFailureAlert(alert: {
+  email: string;
+  plan: string;
+  customerId: string;
+  apiKey: string;
+  reason: string;
+}): Promise<void> {
+  try {
+    const r = resend();
+    if (!r) {
+      // No API key at all: the console is genuinely the only channel left.
+      console.error(
+        `[email] CANNOT ALERT (no RESEND_API_KEY) — ${alert.email} paid and did not receive key ${alert.apiKey}: ${alert.reason}`,
+      );
+      return;
+    }
+    const to = process.env.LEAD_NOTIFY_TO?.trim() || "asaf@amoss.co.il";
+    const payload = {
+      to,
+      subject: `⚠️ axle: ${alert.email} paid but did NOT receive their key`,
+      text: [
+        `Customer:    ${alert.email}`,
+        `Plan:        ${alert.plan}`,
+        `Customer ID: ${alert.customerId}`,
+        `API key:     ${alert.apiKey}`,
+        "",
+        `Reason:      ${alert.reason}`,
+        "",
+        "Send this key to them manually, then fix the cause above.",
+      ].join("\n"),
+    };
+
+    const primaryFrom = internalAlertFrom();
+    const { error } = await r.emails.send({ from: primaryFrom, ...payload });
+    if (!error) return;
+
+    // The most likely reason this alert failed is the same reason the customer's
+    // e-mail failed: RESEND_FROM names a domain that was never verified. Fall
+    // back to the sandbox sender, which does reach a dashboard-verified address.
+    if (primaryFrom !== SANDBOX_FROM) {
+      const retry = await r.emails.send({ from: SANDBOX_FROM, ...payload });
+      if (!retry.error) return;
+    }
+    console.error(
+      `[email] delivery-failure alert itself failed for ${alert.email}: ${
+        typeof error === "object" ? JSON.stringify(error) : String(error)
+      } — key was ${alert.apiKey}`,
+    );
+  } catch (err) {
+    // Alerting must never be the thing that fails the webhook.
+    console.error(
+      `[email] delivery-failure alert threw for ${alert.email}: ${
+        err instanceof Error ? err.message : String(err)
+      } — key was ${alert.apiKey}`,
     );
   }
 }
