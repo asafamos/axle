@@ -149,11 +149,13 @@ function Plan(props: {
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [errContact, setErrContact] = useState<string | null>(null);
 
   async function startCheckout() {
     if (!props.cta.startCheckout) return;
     setSubmitting(true);
     setErr(null);
+    setErrContact(null);
     try {
       const res = await fetch("/api/polar/checkout", {
         method: "POST",
@@ -164,7 +166,12 @@ function Plan(props: {
         }),
       });
       const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error || "Checkout failed");
+      if (!res.ok || !data.url) {
+        // data.error is written for the customer's eyes by the route; the
+        // internal detail stays in the server log.
+        if (typeof data.contact === "string") setErrContact(data.contact);
+        throw new Error(data.error || "Could not start checkout. Please try again.");
+      }
       window.location.href = data.url;
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Could not start checkout");
@@ -256,6 +263,19 @@ function Plan(props: {
         {err ? (
           <p className="mt-2 text-xs text-rose-600" role="alert">
             {err}
+            {errContact ? (
+              <>
+                {" "}
+                <a
+                  href={`mailto:${errContact}?subject=${encodeURIComponent(
+                    `axle ${props.tier} — ${props.cycle} plan`,
+                  )}`}
+                  className="font-semibold underline"
+                >
+                  Email {errContact}
+                </a>
+              </>
+            ) : null}
           </p>
         ) : null}
       </div>
