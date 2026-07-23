@@ -44,13 +44,14 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           # Browser set is part of the key — see a11y-scheduled.yml.
-          key: playwright-chromium+shell-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: playwright-shell-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Chromium
+      - name: Install Chromium headless shell
         if: steps.pw.outputs.cache-hit != 'true'
         # chromium.launch({ headless: true }) resolves to chrome-headless-shell,
-        # which is a separate download from chromium.
-        run: npx playwright install chromium chromium-headless-shell --with-deps
+        # which is a separate download from chromium — and is the only one the
+        # scanner ever launches.
+        run: npx playwright install chromium-headless-shell --with-deps
 
       - name: Install system deps (cache hit)
         if: steps.pw.outputs.cache-hit == 'true'
