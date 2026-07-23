@@ -37,7 +37,11 @@ jobs:
   scan:
     name: nightly axe + ai
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    # 15 minutes was a fine budget while this job scanned nothing and finished in
+    # 40s. Now that it installs a browser and sweeps the whole sitemap, 15 was
+    # enough to get cancelled mid-install — a fresh, uncached run needs room for
+    # the download plus ~55 page scans.
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
@@ -57,14 +61,16 @@ jobs:
           # The browser set is part of the key. Without it, a cache populated
           # before chromium-headless-shell was added would keep restoring an
           # incomplete install and skip the step that fixes it.
-          key: playwright-chromium+shell-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: playwright-shell-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Chromium
+      - name: Install Chromium headless shell
         if: steps.pw.outputs.cache-hit != 'true'
         # lib/scanner.ts calls chromium.launch({ headless: true }), which resolves
-        # to chrome-headless-shell — a *separate* download from chromium. Installing
-        # only chromium leaves the scan unable to launch a browser at all.
-        run: npx playwright install chromium chromium-headless-shell --with-deps
+        # to chrome-headless-shell — a *separate* download from chromium. The
+        # workflow used to install only chromium, so the scan could never launch
+        # a browser. Only the shell is needed; pulling full chromium as well just
+        # doubles a download that already ran this job into its timeout.
+        run: npx playwright install chromium-headless-shell --with-deps
 
       - name: Install system deps
         if: steps.pw.outputs.cache-hit == 'true'
