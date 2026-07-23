@@ -11,7 +11,11 @@ on:
   workflow_dispatch:
     inputs:
       urls:
-        description: "Comma-separated list of URLs to scan"
+        description: "Comma-separated URLs to scan. Leave empty to scan everything in the site's sitemap."
+        required: false
+        type: string
+      site:
+        description: "Origin whose sitemap is scanned when `urls` is empty."
         required: false
         type: string
       fail-on:
@@ -50,11 +54,17 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          # The browser set is part of the key. Without it, a cache populated
+          # before chromium-headless-shell was added would keep restoring an
+          # incomplete install and skip the step that fixes it.
+          key: playwright-chromium+shell-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Chromium
         if: steps.pw.outputs.cache-hit != 'true'
-        run: npx playwright install chromium --with-deps
+        # lib/scanner.ts calls chromium.launch({ headless: true }), which resolves
+        # to chrome-headless-shell — a *separate* download from chromium. Installing
+        # only chromium leaves the scan unable to launch a browser at all.
+        run: npx playwright install chromium chromium-headless-shell --with-deps
 
       - name: Install system deps
         if: steps.pw.outputs.cache-hit == 'true'
@@ -64,14 +74,33 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           URLS: ${{ inputs.urls || vars.A11Y_SCAN_URLS || '' }}
+          SITE: ${{ inputs.site || vars.A11Y_SITE_URL || 'https://axle-iota.vercel.app' }}
           FAIL_ON: ${{ inputs.fail-on || 'serious' }}
         run: |
-          if [ -z "$URLS" ]; then
-            echo "No URLs configured. Set inputs.urls, or the A11Y_SCAN_URLS repository variable (comma-separated)."
-            echo "No target URLs." > a11y-summary.md
-            exit 0
+          set -o pipefail
+          # Targets are derived from the site's own sitemap unless explicitly
+          # overridden. This step previously read a repository variable that was
+          # never set and then exited 0, so 97 consecutive nightly runs reported
+          # success having scanned nothing at all. Deriving the list means a new
+          # page is covered the day it ships with nothing to keep in sync, and an
+          # empty list is now a hard failure — a monitor that checks nothing must
+          # never report success.
+          if [ -n "$URLS" ]; then
+            IFS=',' read -r -a ARR <<< "$URLS"
+            echo "Using ${#ARR[@]} explicitly configured URL(s)."
+          else
+            echo "Deriving targets from ${SITE}/sitemap.xml"
+            mapfile -t ARR < <(
+              curl -sfS --max-time 30 "${SITE}/sitemap.xml" \
+                | grep -oE '<loc>[^<]+</loc>' \
+                | sed -e 's#</\?loc>##g' -e 's#[[:space:]]##g'
+            ) || true
           fi
-          IFS=',' read -r -a ARR <<< "$URLS"
+          if [ "${#ARR[@]}" -eq 0 ]; then
+            echo "::error::No URLs to scan — could not read ${SITE}/sitemap.xml and no URLs were configured. Failing loudly rather than reporting a green pass for zero coverage."
+            exit 1
+          fi
+          echo "Scanning ${#ARR[@]} URL(s)."
           mkdir -p reports
           worst_exit=0
           for raw in "${ARR[@]}"; do

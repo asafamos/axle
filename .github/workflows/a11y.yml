@@ -1,5 +1,10 @@
 # Dogfood: axle scans its own marketing site on every PR.
-# If axle regresses accessibility on its own homepage, the PR fails.
+# If axle regresses accessibility on a revenue-critical page, the PR fails.
+#
+# Two steps on purpose. The axle-action step proves the published action still
+# works end to end (and posts the PR comment); the sweep that follows covers the
+# rest of .github/a11y-critical-routes.txt, because the action scans a single URL
+# and this check previously stopped at the homepage.
 name: Accessibility
 
 on:
@@ -27,3 +32,86 @@ jobs:
           with-ai-fixes: "true"
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           comment-on-pr: "true"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Cache Playwright browsers
+        id: pw
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          # Browser set is part of the key — see a11y-scheduled.yml.
+          key: playwright-chromium+shell-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Chromium
+        if: steps.pw.outputs.cache-hit != 'true'
+        # chromium.launch({ headless: true }) resolves to chrome-headless-shell,
+        # which is a separate download from chromium.
+        run: npx playwright install chromium chromium-headless-shell --with-deps
+
+      - name: Install system deps (cache hit)
+        if: steps.pw.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Scan the remaining critical routes
+        env:
+          FAIL_ON: serious
+        run: |
+          set -o pipefail
+
+          # The action above backgrounds `npm start`, which normally survives
+          # into this step. Don't depend on that — a silently missing server
+          # would turn every route below into a false pass.
+          if ! curl -sf --max-time 5 http://localhost:3000 >/dev/null 2>&1; then
+            echo "No server on :3000 — starting one."
+            npm ci
+            npm run build
+            npm start &
+            for _ in $(seq 1 60); do
+              curl -sf --max-time 2 http://localhost:3000 >/dev/null 2>&1 && break
+              sleep 2
+            done
+          fi
+          curl -sf --max-time 5 http://localhost:3000 >/dev/null 2>&1 || {
+            echo "::error::Could not reach http://localhost:3000 — refusing to report a pass without scanning."
+            exit 1
+          }
+
+          mapfile -t ROUTES < <(grep -vE '^\s*(#|$)' .github/a11y-critical-routes.txt)
+          if [ "${#ROUTES[@]}" -eq 0 ]; then
+            echo "::error::.github/a11y-critical-routes.txt lists no routes. A check that scans nothing must not pass."
+            exit 1
+          fi
+
+          mkdir -p reports
+          worst=0
+          for route in "${ROUTES[@]}"; do
+            # "/" is already covered by the axle-action step above.
+            [ "$route" = "/" ] && continue
+            url="http://localhost:3000${route}"
+            safe=$(echo "$route" | sed 's#[^a-zA-Z0-9]#_#g')
+            echo "::group::scanning $route"
+            set +e
+            npm run a11y:ci -- \
+              --url "$url" \
+              --fail-on "$FAIL_ON" \
+              --with-ai-fixes false \
+              --json-out "reports/${safe}.json" \
+              --markdown-out "reports/${safe}.md"
+            rc=$?
+            set -e
+            echo "::endgroup::"
+            [ $rc -gt $worst ] && worst=$rc
+          done
+          exit $worst
+
+      - name: Upload route reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-pr-routes-${{ github.run_id }}
+          path: reports/
+          if-no-files-found: ignore

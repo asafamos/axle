@@ -1,0 +1,16 @@
+# Routes scanned for accessibility on every pull request.
+#
+# The PR check used to scan only "/", which is 1 of the ~55 public pages. That
+# meant a change to the pricing page — the one screen where money changes hands
+# — was never checked at all. Keep this list to the paths where a regression
+# costs us a customer or a legal claim; the nightly job covers the full sitemap.
+#
+# One path per line. Blank lines and # comments are ignored.
+
+/
+/pricing
+/checkout/success
+/free-scan
+/docs
+/faq
+/statement
