@@ -399,9 +399,17 @@ export default function StatementPage() {
               </div>
             )}
 
+            {/* Scrollable preview: max-h + overflow-y-auto makes this a scroll
+                region, so it must be keyboard-focusable (axe
+                scrollable-region-focusable) and labelled for screen readers. A
+                bare tabIndex was missed in the first pass because that only
+                covered <pre>; this is a <div>. */}
             <div
               className="prose prose-slate max-h-[80vh] overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm"
               dir="rtl"
+              tabIndex={0}
+              role="region"
+              aria-label="Accessibility statement preview"
               dangerouslySetInnerHTML={{ __html: previewHtml }}
             />
           </section>
