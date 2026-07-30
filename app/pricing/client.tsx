@@ -226,7 +226,7 @@ function Plan(props: {
       <ul className="mt-5 flex-1 space-y-2 text-sm text-slate-700">
         {props.features.map((f) => (
           <li key={f} className="flex items-start">
-            <span className="mt-0.5 mr-2 inline-block text-emerald-600">✓</span>
+            <span className="mt-0.5 mr-2 inline-block text-emerald-700">✓</span>
             <span>{f}</span>
           </li>
         ))}
@@ -240,7 +240,7 @@ function Plan(props: {
             rel="noopener"
             className={`block w-full rounded-md px-4 py-3 text-center text-sm font-semibold transition ${
               props.highlight
-                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                ? "bg-emerald-700 text-white hover:bg-emerald-800"
                 : "border border-slate-900 text-slate-900 hover:bg-slate-50"
             }`}
           >
@@ -253,7 +253,7 @@ function Plan(props: {
             disabled={submitting}
             className={`block w-full rounded-md px-4 py-3 text-center text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
               props.highlight
-                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                ? "bg-emerald-700 text-white hover:bg-emerald-800"
                 : "border border-slate-900 text-slate-900 hover:bg-slate-50"
             }`}
           >
@@ -261,7 +261,7 @@ function Plan(props: {
           </button>
         )}
         {err ? (
-          <p className="mt-2 text-xs text-rose-600" role="alert">
+          <p className="mt-2 text-xs text-rose-700" role="alert">
             {err}
             {errContact ? (
               <>

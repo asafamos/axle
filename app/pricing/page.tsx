@@ -171,7 +171,7 @@ export default function PricingPage() {
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <Link
               href="/free-scan"
-              className="rounded-md bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="rounded-md bg-emerald-700 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
             >
               Free scan →
             </Link>

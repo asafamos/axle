@@ -173,7 +173,7 @@ function CodeBlock({
           Copy
         </button>
       </div>
-      <pre className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
+      <pre tabIndex={0} className="overflow-x-auto rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800">
         {code}
       </pre>
       {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}

@@ -364,7 +364,7 @@ export default function StatementPage() {
               <button
                 onClick={publishVerified}
                 disabled={publish.kind === "loading"}
-                className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-50"
                 title="Team plan · requires axle API key saved on /account"
               >
                 {publish.kind === "loading"

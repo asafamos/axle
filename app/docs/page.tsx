@@ -65,7 +65,7 @@ export default function DocsPage() {
           <p className="mt-3 text-slate-700">
             Add to <code>.github/workflows/accessibility.yml</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`name: Accessibility
 on: [pull_request]
 jobs:
@@ -107,7 +107,7 @@ jobs:
             your PR has a preview URL from Vercel / Netlify / Cloudflare /
             Render etc.
           </p>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`- uses: asafamos/axle-action@v1
   with:
     url: https://preview-\${{ github.event.pull_request.number }}.example.com
@@ -119,7 +119,7 @@ jobs:
             <code>build-command</code> → <code>start-command</code> in the
             background, waits for the port, and scans <code>localhost:PORT</code>.
           </p>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`- uses: asafamos/axle-action@v1
   with:
     install-command: npm ci
@@ -136,7 +136,7 @@ jobs:
             Same engine as the Action, runs anywhere Node 20+ runs. Useful
             for GitLab / Jenkins / CircleCI / Buildkite / Bitbucket / local dev.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`# one-shot
 npx axle-cli scan https://example.com --fail-on serious
 
@@ -173,7 +173,7 @@ axle-cli scan https://example.com`}
           <p className="mt-2 text-slate-700">
             Add to <code>netlify.toml</code>:
           </p>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`[[plugins]]
 package = "axle-netlify-plugin"
 
@@ -194,7 +194,7 @@ package = "axle-netlify-plugin"
           <p className="mt-2 text-slate-700">
             Add a build step in <code>vercel.json</code>:
           </p>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`{
   "buildCommand": "next build && npx axle-vercel-plugin"
 }`}
@@ -297,7 +297,7 @@ package = "axle-netlify-plugin"
             Two artifacts are emitted on every run: <code>axle-report.json</code>{" "}
             (machine-readable) and <code>axle-report.md</code> (human-readable).
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`{
   "url": "https://example.com",
   "scanned_at": "2026-04-27T14:00:00.000Z",
@@ -365,7 +365,7 @@ package = "axle-netlify-plugin"
           <h3 className="mt-4 text-lg font-bold text-slate-900">
             Vercel preview URL per PR
           </h3>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`- uses: asafamos/axle-action@v1
   with:
     url: https://\${{ github.event.pull_request.head.ref }}-\${{ secrets.VERCEL_PROJECT }}.vercel.app
@@ -375,7 +375,7 @@ package = "axle-netlify-plugin"
           <h3 className="mt-4 text-lg font-bold text-slate-900">
             Multiple URLs (one job per page)
           </h3>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`jobs:
   a11y:
     strategy:
@@ -393,7 +393,7 @@ package = "axle-netlify-plugin"
           <h3 className="mt-4 text-lg font-bold text-slate-900">
             Monorepo (only run when frontend changes)
           </h3>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`on:
   pull_request:
     paths:

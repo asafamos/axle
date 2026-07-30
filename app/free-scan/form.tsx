@@ -113,7 +113,7 @@ export default function FreeScanForm() {
       <button
         type="submit"
         disabled={state.kind === "submitting"}
-        className="w-full rounded-md bg-emerald-600 px-4 py-3 text-base font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-md bg-emerald-700 px-4 py-3 text-base font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {state.kind === "submitting"
           ? "Scanning..."
@@ -121,7 +121,7 @@ export default function FreeScanForm() {
       </button>
 
       {state.kind === "error" ? (
-        <p className="text-sm text-rose-600" role="alert">
+        <p className="text-sm text-rose-700" role="alert">
           {state.message}
         </p>
       ) : null}

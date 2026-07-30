@@ -167,7 +167,7 @@ export default function SlackPage({
           Severity grid + top-three violations + a one-click button to the
           full certificate page:
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`@you  /axle scan https://example.com
 @axle :mag: Scanning https://example.com for WCAG 2.2 AA violations...
 @axle :warning: https://example.com

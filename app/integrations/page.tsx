@@ -105,7 +105,7 @@ export default function IntegrationsPage() {
                   outputs. Pipe it into Slack with the standard{" "}
                   <code>slackapi/slack-github-action</code>:
                 </p>
-                <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
+                <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
 {`- uses: asafamos/axle-action@v1
   id: axle
   with:
@@ -149,7 +149,7 @@ export default function IntegrationsPage() {
                   {`<page_path>`}</code> so duplicates are auto-merged when
                   the rule appears on the same path next scan:
                 </p>
-                <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
+                <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
 {`- uses: asafamos/axle-action@v1
   id: axle
   with:
@@ -199,7 +199,7 @@ export default function IntegrationsPage() {
                   Use the <code>axle-cli</code> npm package directly in
                   <code>.gitlab-ci.yml</code>:
                 </p>
-                <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
+                <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
 {`a11y:
   image: node:20
   stage: test

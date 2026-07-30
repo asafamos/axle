@@ -69,7 +69,7 @@ export default function VueAccessibilityPage() {
             keyboard-focusable by default. The fix is almost always the native
             element:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`<!-- Wrong -->
 <div class="btn" @click="handle">Submit</div>
 
@@ -97,7 +97,7 @@ export default function VueAccessibilityPage() {
             component libraries that still target 3.4), a ref-counter composable is
             acceptable but prefer upgrading.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`<script setup lang="ts">
 import { useId } from 'vue'
 
@@ -139,7 +139,7 @@ const errorId = useId()
             Keyboard and screen-reader users are left focused on the previous page&apos;s
             activation point — a WCAG 2.4.3 failure. Fix it globally:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -177,7 +177,7 @@ export default router`}
             backdrop, and Escape-to-close for you. Prefer it to a custom <code>role=&quot;dialog&quot;</code>{" "}
             <code>div</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`<script setup lang="ts">
 import { ref, watch } from 'vue'
 
@@ -223,7 +223,7 @@ watch(
             toasts, search-result counts, form-submit success — need to announce to
             screen readers via an ARIA live region.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`<template>
   <div
     role="status"
@@ -253,7 +253,7 @@ defineProps<{ message: string }>()
           <p className="mt-3 text-slate-700">
             Component-level with vitest and <code>@vitest-axe/vitest-axe</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// ProductCard.test.ts
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/vue'
@@ -275,7 +275,7 @@ describe('ProductCard', () => {
           <p className="mt-3 text-slate-700">
             Page-level with Playwright and <code>@axe-core/playwright</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// e2e/home.spec.ts
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
@@ -323,7 +323,7 @@ test('homepage is accessible', async ({ page }) => {
             <code>.github/workflows/accessibility.yml</code> to fail PRs on new
             WCAG violations:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`name: Accessibility
 on: [pull_request]
 jobs:

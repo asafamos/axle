@@ -94,7 +94,7 @@ export default function McpPage() {
           </code>{" "}
           (Windows):
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`{
   "mcpServers": {
     "axle": {
@@ -115,14 +115,14 @@ export default function McpPage() {
         <p className="mt-2 text-slate-700">
           Settings → Features → Model Context Protocol → Add server:
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`Command: npx -y axle-mcp`}
         </pre>
 
         <h2 className="mt-10 text-2xl font-semibold text-slate-900">
           Install in Cline (VS Code)
         </h2>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`{
   "axle": {
     "command": "npx",
@@ -137,7 +137,7 @@ export default function McpPage() {
         <p className="mt-2 text-slate-700">
           In <code className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-xs text-slate-900">~/.continue/config.json</code>:
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`{
   "mcpServers": {
     "axle": {
@@ -168,7 +168,7 @@ export default function McpPage() {
           from <Link className="underline hover:text-slate-900" href="/pricing">/pricing</Link>{" "}
           and add it to the MCP config:
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`{
   "mcpServers": {
     "axle": {
