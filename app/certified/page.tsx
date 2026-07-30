@@ -207,7 +207,7 @@ export default function CertifiedPage() {
             renders a live shield. Update happens automatically when scans
             re-pass. Sample embed:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-emerald-900 p-3 text-xs text-emerald-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-emerald-900 p-3 text-xs text-emerald-100">
 {`<a href="https://axle-iota.vercel.app/certified">
   <img
     src="https://axle-iota.vercel.app/api/badge?url=https://yoursite.com&standard=WCAG%202.2%20AA"

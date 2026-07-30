@@ -96,7 +96,7 @@ export default function AngularAccessibilityPage() {
             manually. The most common mistake is a floating placeholder with no
             <code>label</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// field.component.ts
 @Component({
   selector: 'app-field',
@@ -137,7 +137,7 @@ export class FieldComponent {
             reader UX both demand that focus move to meaningful content on
             navigation. Wire it in <code>AppComponent</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// app.component.ts
 import { Component, inject } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
@@ -183,7 +183,7 @@ export class AppComponent {
             <code>&lt;dialog&gt;</code> element. If you must hand-roll, wrap with{" "}
             <code>cdkTrapFocus</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`<div
   *ngIf="open"
   cdkTrapFocus
@@ -213,7 +213,7 @@ export class AppComponent {
             search-result counts, form-submit success — should announce via
             LiveAnnouncer:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 export class CartService {
@@ -261,7 +261,7 @@ export class CartService {
           <p className="mt-3 text-slate-700">
             Component / page-level with Cypress and <code>cypress-axe</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// cypress/e2e/home.cy.ts
 describe('Home page accessibility', () => {
   it('has no violations', () => {
@@ -279,7 +279,7 @@ describe('Home page accessibility', () => {
             Playwright + <code>@axe-core/playwright</code> covers anything Cypress
             can&apos;t and matches the engine the axle GitHub Action uses:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`// e2e/home.spec.ts
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
@@ -294,7 +294,7 @@ test('home page', async ({ page }) => {
 
         <section id="ci" className="mt-10">
           <h2 className="text-2xl font-bold text-slate-900">CI pipeline</h2>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`name: Accessibility
 on: [pull_request]
 jobs:
@@ -311,7 +311,7 @@ jobs:
             For enterprise Angular shops on Azure DevOps Pipelines or Bitbucket
             Pipelines, use <code>axle-cli</code> directly:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`npx axle-cli scan https://staging.example.com \\
   --fail-on serious \\
   --json-out axle-report.json \\

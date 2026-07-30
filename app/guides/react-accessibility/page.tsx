@@ -67,7 +67,7 @@ export default function ReactAccessibilityPage() {
             announced by screen readers correctly. A <code>&lt;div onClick&gt;</code> has
             none of that.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ❌ Inaccessible — not focusable, not keyboard-operable, wrong role
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ❌ Inaccessible — not focusable, not keyboard-operable, wrong role
 <div onClick={handleClick} className="btn">Submit</div>
 
 // ✅ Use the native element
@@ -94,7 +94,7 @@ export default function ReactAccessibilityPage() {
             (React 18+) is the cleanest way to wire <code>htmlFor</code> to a server-safe
             unique id:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`import { useId } from "react";
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`import { useId } from "react";
 
 function EmailField({ error }) {
   const id = useId();
@@ -130,7 +130,7 @@ function EmailField({ error }) {
             the top of the new page. In a React SPA (or Next.js App Router), focus stays
             where it was — which disorients keyboard and screen-reader users.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// Pattern: focus the h1 of the new page on route change
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// Pattern: focus the h1 of the new page on route change
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
@@ -153,7 +153,7 @@ export function PageFocusManager() {
           <p className="mt-3 text-slate-700">
             Also include a skip link at the top of the document, visible only on focus:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`<a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`<a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2">
   Skip to main content
 </a>
 <main id="main" tabIndex={-1}>…</main>`}</code></pre>
@@ -168,7 +168,7 @@ export function PageFocusManager() {
             <code>&lt;dialog&gt;</code> element handles focus trap, Escape key, and
             backdrop click out of the box. Use it instead of rolling your own:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`function ConfirmDialog({ open, onClose, title, children }) {
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`function ConfirmDialog({ open, onClose, title, children }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     if (!ref.current) return;
@@ -203,7 +203,7 @@ export function PageFocusManager() {
             sighted users see it. Screen-reader users don&apos;t, unless you mark the
             container as an ARIA live region.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// Assertive — interrupts the screen reader immediately (errors)
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// Assertive — interrupts the screen reader immediately (errors)
 <div role="alert" aria-live="assertive">
   {error && error.message}
 </div>
@@ -237,7 +237,7 @@ export function PageFocusManager() {
               issues (live regions, focus order).
             </li>
           </ul>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// unit: jest-axe
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// unit: jest-axe
 import { axe } from "jest-axe";
 test("PricingCard is accessible", async () => {
   const { container } = render(<PricingCard tier="team" />);
@@ -262,7 +262,7 @@ test("homepage has no serious violations", async ({ page }) => {
             &quot;block merges on new accessibility regressions&quot; outcome, add axle
             alongside:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`# .github/workflows/accessibility.yml
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`# .github/workflows/accessibility.yml
 name: Accessibility
 on: pull_request
 

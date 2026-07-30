@@ -77,7 +77,7 @@ export function ScanLeadCapture({
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-5 w-5 text-emerald-600"
+            className="h-5 w-5 text-emerald-700"
             aria-hidden="true"
           >
             <path d="M20 6L9 17l-5-5" />

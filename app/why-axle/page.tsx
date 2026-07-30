@@ -151,7 +151,7 @@ export default function WhyAxlePage() {
         <p className="mt-2 text-slate-700">
           New surface, shipped May 2026. <Link className="underline hover:text-slate-900" href="/mcp">axle-mcp</Link> is the only Model Context Protocol server for WCAG scanning. Wire it into any MCP-compatible agent in two lines:
         </p>
-        <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+        <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`{
   "mcpServers": {
     "axle": {

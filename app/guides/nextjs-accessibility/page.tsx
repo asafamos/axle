@@ -67,7 +67,7 @@ export default function NextjsPage() {
             WCAG 3.1.1 requires each page declares its primary language. In App Router,
             this lives in the root <code>app/layout.tsx</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// app/layout.tsx
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// app/layout.tsx
 export default function RootLayout({ children }) {
   return (
     <html lang="en">    {/* or "he", "de", "fr" for localised sites */}
@@ -79,7 +79,7 @@ export default function RootLayout({ children }) {
             For multi-language sites using a <code>[locale]</code> segment, pass locale
             through:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// app/[locale]/layout.tsx
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// app/[locale]/layout.tsx
 export default async function LocaleLayout({ children, params }) {
   const { locale } = await params;
   return <html lang={locale}>...</html>;
@@ -97,7 +97,7 @@ export default async function LocaleLayout({ children, params }) {
             decorative images that carry no information. <strong>Never</strong> put the
             filename or &quot;image&quot;.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ✅ Informative image — describe what it shows
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ✅ Informative image — describe what it shows
 <Image src={hero} alt="Accessibility report showing 3 critical violations" />
 
 // ✅ Decorative image — empty alt tells screen readers to skip
@@ -122,7 +122,7 @@ export default async function LocaleLayout({ children, params }) {
             menu, open a modal, submit a form). This is WCAG 4.1.2 compliance — screen
             readers announce &quot;link&quot; vs &quot;button&quot; differently.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ✅ Navigates to a route
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ✅ Navigates to a route
 <Link href="/pricing">See pricing</Link>
 
 // ✅ Action, no URL change
@@ -149,7 +149,7 @@ export default async function LocaleLayout({ children, params }) {
             and screen readers often don&apos;t announce placeholders at all. WCAG 3.3.2
             requires every input have a programmatically associated label.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ✅ Explicit label
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// ✅ Explicit label
 <label htmlFor="email">Email address</label>
 <input id="email" type="email" placeholder="you@example.com" required />
 
@@ -164,7 +164,7 @@ export default async function LocaleLayout({ children, params }) {
             <code>aria-describedby</code> so screen readers read them when the user focuses
             the field:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`<label htmlFor="email">Email</label>
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`<label htmlFor="email">Email</label>
 <input
   id="email"
   aria-invalid={!!error}
@@ -191,7 +191,7 @@ export default async function LocaleLayout({ children, params }) {
             route changes, but for visually-hidden skip links and heading-focus patterns
             you still need manual focus management. A common pattern:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// app/layout.tsx — skip link that jumps to main content
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`// app/layout.tsx — skip link that jumps to main content
 <body>
   <a href="#main-content" className="sr-only focus:not-sr-only ...">
     Skip to main content
@@ -259,7 +259,7 @@ useEffect(() => {
             The manual checks above are a one-time cleanup. To keep them clean, put
             axe-core in CI. Drop this into <code>.github/workflows/accessibility.yml</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`name: Accessibility
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-xs leading-snug text-slate-100"><code>{`name: Accessibility
 on: pull_request
 
 permissions:

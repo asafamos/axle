@@ -423,7 +423,7 @@ function Hero({
 
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="text-xs font-semibold uppercase text-slate-500">Suggested fix · high confidence</div>
-                <pre className="mt-1 overflow-x-auto rounded bg-white p-2 text-[11px] leading-snug">
+                <pre tabIndex={0} className="mt-1 overflow-x-auto rounded bg-white p-2 text-[11px] leading-snug">
                   <span className="text-red-700">
                     - {'<ul aria-labeledby="tb-trigger">'}
                   </span>
@@ -804,7 +804,7 @@ function PricingPreview() {
               <ul className="mt-5 space-y-2 text-sm">
                 {t.bullets.map((b) => (
                   <li key={b} className="flex gap-2">
-                    <span className={t.highlight ? "text-emerald-400" : "text-emerald-600"}>
+                    <span className={t.highlight ? "text-emerald-400" : "text-emerald-700"}>
                       ✓
                     </span>
                     <span className={t.highlight ? "text-slate-200" : "text-slate-700"}>
@@ -1190,7 +1190,7 @@ function ShareResultRow({ permalink }: { permalink: string }) {
       <button
         type="button"
         onClick={copy}
-        className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+        className="rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800"
       >
         {copied ? "Copied ✓" : "Copy link"}
       </button>

@@ -288,7 +288,7 @@ export default function ComparePage() {
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
               href="/free-scan"
-              className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
             >
               Free scan →
             </Link>

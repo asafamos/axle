@@ -118,7 +118,7 @@ export default function LawyersPage() {
             Drop-in clause for the Continuous Monitoring section of an ADA
             Title III consent decree. Adapt to your jurisdiction:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md border border-slate-200 bg-white p-4 text-xs text-slate-800">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md border border-slate-200 bg-white p-4 text-xs text-slate-800">
 {`§X.X CONTINUOUS COMPLIANCE MONITORING
 
 Defendant shall implement automated WCAG 2.1 AA conformance scanning

@@ -28,7 +28,7 @@ export default function ADADemandLetterPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       <article className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-xs font-semibold uppercase tracking-wider text-rose-600">
+        <p className="text-xs font-semibold uppercase tracking-wider text-rose-700">
           Emergency playbook · ADA Title III
         </p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">

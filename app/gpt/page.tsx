@@ -60,7 +60,7 @@ export default function GptPage() {
             <li>The action <code>scanUrlForAccessibility</code> will appear with the right schema.</li>
             <li>Privacy policy URL: <code>https://axle-iota.vercel.app/privacy</code></li>
             <li>System prompt suggestion (paste into Instructions):
-              <pre className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
+              <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
 {`When the user asks about a website's accessibility, WCAG conformance,
 ADA / EAA / Section 508 status, or asks to audit / scan a site for
 accessibility, call the scanUrlForAccessibility tool with the URL.
@@ -81,7 +81,7 @@ share the /r/<id> permalink so the user can open the full report.`}
             Claude&apos;s tool-use API takes the OpenAPI spec inline. Minimal
             example using <code>@anthropic-ai/sdk</code>:
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-slate-900 p-4 text-sm text-slate-100">
 {`import Anthropic from "@anthropic-ai/sdk";
 
 const client = new Anthropic();
@@ -131,7 +131,7 @@ async function runAxleScan(url: string) {
             Cline, or Continue.dev with one line. Full configs and example
             prompts at <Link className="underline hover:text-slate-900" href="/mcp">/mcp</Link>.
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
+          <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-relaxed text-slate-100">
 {`{
   "mcpServers": {
     "axle": {

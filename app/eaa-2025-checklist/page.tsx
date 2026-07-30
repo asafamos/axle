@@ -224,7 +224,7 @@ export default function EAA2025ChecklistPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       <article className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
+        <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
           EAA 2025 · 10-step checklist
         </p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-900">
