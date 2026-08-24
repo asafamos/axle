@@ -11,7 +11,7 @@ export type PublishedStatement = {
   createdAt: number;
   organizationName: string;
   customerKeyHash: string;
-  plan: "team" | "business";
+  plan: "site" | "team" | "business";
   input: StatementInput;
 };
 

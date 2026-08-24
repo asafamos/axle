@@ -186,14 +186,15 @@ export async function sendLeadNotificationEmail(lead: {
 export async function sendApiKeyEmail(opts: {
   to: string;
   apiKey: string;
-  plan: "team" | "business";
+  plan: "site" | "team" | "business";
 }): Promise<void> {
   const r = resend();
   if (!r) {
     console.warn("[email] RESEND_API_KEY missing — skipping email send");
     return;
   }
-  const planName = opts.plan === "business" ? "Business" : "Team";
+  const planName =
+    opts.plan === "business" ? "Business" : opts.plan === "site" ? "Site" : "Team";
   const site = siteUrl();
   const accountUrl = `${site}/account`;
   const from = fromAddress();

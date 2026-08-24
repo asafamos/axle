@@ -98,7 +98,8 @@ async function provisionFromSubscription(sub: PolarSubscription): Promise<void> 
   if (!email) throw new Error("subscription.created without customer email");
 
   const planMeta = typeof sub.metadata?.plan === "string" ? sub.metadata.plan : "team";
-  const plan = planMeta === "business" ? "business" : "team";
+  const plan: KeyRecord["plan"] =
+    planMeta === "business" ? "business" : planMeta === "site" ? "site" : "team";
 
   const record: KeyRecord = {
     email,

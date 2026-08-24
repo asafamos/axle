@@ -5,18 +5,28 @@ import Link from "next/link";
 
 type Cycle = "monthly" | "annual";
 
+const SITE_MONTHLY = 19;
+const SITE_ANNUAL_TOTAL = 190; // ~17% off — 12 months for the price of ~10
 const TEAM_MONTHLY = 49;
 const TEAM_ANNUAL_TOTAL = 470; // ~17% off — 12 months for the price of ~9.6
 const BUSINESS_MONTHLY = 299;
 const BUSINESS_ANNUAL_TOTAL = 2870; // ~17% off
 
-export default function PricingClient() {
+export default function PricingClient({
+  siteEnabled = false,
+}: {
+  // The Site tier only renders once its Polar product is configured, so a
+  // visitor never clicks "Subscribe" on a plan whose checkout isn't wired yet.
+  siteEnabled?: boolean;
+}) {
   const [cycle, setCycle] = useState<Cycle>("monthly");
 
+  const sitePrice = cycle === "annual" ? SITE_ANNUAL_TOTAL / 12 : SITE_MONTHLY;
   const teamPrice = cycle === "annual" ? TEAM_ANNUAL_TOTAL / 12 : TEAM_MONTHLY;
   const businessPrice =
     cycle === "annual" ? BUSINESS_ANNUAL_TOTAL / 12 : BUSINESS_MONTHLY;
 
+  const siteSaving = SITE_MONTHLY * 12 - SITE_ANNUAL_TOTAL;
   const teamSaving = TEAM_MONTHLY * 12 - TEAM_ANNUAL_TOTAL;
   const businessSaving = BUSINESS_MONTHLY * 12 - BUSINESS_ANNUAL_TOTAL;
 
@@ -48,7 +58,11 @@ export default function PricingClient() {
         </button>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+      <div
+        className={`mt-8 grid gap-6 ${
+          siteEnabled ? "md:grid-cols-2 lg:grid-cols-4" : "lg:grid-cols-3"
+        }`}
+      >
         <Plan
           tier="Open"
           price={0}
@@ -70,6 +84,33 @@ export default function PricingClient() {
             external: true,
           }}
         />
+        {siteEnabled ? (
+          <Plan
+            tier="Site"
+            price={sitePrice}
+            cycle={cycle}
+            highlight={false}
+            tagline="One website. AI fixes + compliance — no code, no keys."
+            saving={cycle === "annual" ? `Save $${siteSaving} / year` : undefined}
+            features={[
+              "1 website",
+              "Hosted AI fixes — no Anthropic key needed",
+              "Unlock inside the WordPress plugin (paste your key)",
+              "Accessibility statement (EN / HE)",
+              "Public compliance badge",
+              "Unlimited scans",
+            ]}
+            cta={{
+              label:
+                cycle === "annual"
+                  ? "Subscribe annually →"
+                  : "Subscribe monthly →",
+              href: `/api/polar/checkout?plan=site&cycle=${cycle}`,
+              external: false,
+              startCheckout: { plan: "site", cycle },
+            }}
+          />
+        ) : null}
         <Plan
           tier="Team"
           price={teamPrice}
@@ -134,7 +175,7 @@ type CTA = {
   label: string;
   href: string;
   external: boolean;
-  startCheckout?: { plan: "team" | "business"; cycle: Cycle };
+  startCheckout?: { plan: "site" | "team" | "business"; cycle: Cycle };
 };
 
 function Plan(props: {

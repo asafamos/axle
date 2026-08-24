@@ -18,7 +18,12 @@ export async function POST(req: Request) {
       cycle?: PolarCycle;
       email?: string;
     };
-    const plan: PolarPlan = body.plan === "business" ? "business" : "team";
+    const plan: PolarPlan =
+      body.plan === "business"
+        ? "business"
+        : body.plan === "site"
+          ? "site"
+          : "team";
     const cycle: PolarCycle = body.cycle === "annual" ? "annual" : "monthly";
 
     // Throws CheckoutUnavailableError if the SKU for this plan+cycle isn't

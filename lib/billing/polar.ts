@@ -23,7 +23,7 @@ export function polar(): Polar {
   return client;
 }
 
-export type PolarPlan = "team" | "business";
+export type PolarPlan = "site" | "team" | "business";
 export type PolarCycle = "monthly" | "annual";
 
 /** Where a customer should turn when they cannot complete a purchase. */
@@ -60,10 +60,12 @@ export function polarProductIdForPlan(
   cycle: PolarCycle = "monthly",
 ): string {
   const monthlyMap: Record<PolarPlan, string | undefined> = {
+    site: process.env.POLAR_PRODUCT_ID_SITE,
     team: process.env.POLAR_PRODUCT_ID_TEAM,
     business: process.env.POLAR_PRODUCT_ID_BUSINESS,
   };
   const annualMap: Record<PolarPlan, string | undefined> = {
+    site: process.env.POLAR_PRODUCT_ID_SITE_ANNUAL,
     team: process.env.POLAR_PRODUCT_ID_TEAM_ANNUAL,
     business: process.env.POLAR_PRODUCT_ID_BUSINESS_ANNUAL,
   };

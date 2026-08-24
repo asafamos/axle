@@ -11,7 +11,7 @@ export type KeyRecord = {
   email: string;
   customerId: string;
   subscriptionId: string | null;
-  plan: "team" | "business";
+  plan: "site" | "team" | "business";
   status: "active" | "past_due" | "canceled" | "trialing" | "incomplete";
   createdAt: number;
 };

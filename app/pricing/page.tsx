@@ -3,9 +3,9 @@ import Link from "next/link";
 import PricingClient from "./client";
 
 export const metadata: Metadata = {
-  title: "axle pricing — free, $49/mo Team, $299/mo Business",
+  title: "axle pricing — free · $19/mo Site · $49/mo Team · $299/mo Business",
   description:
-    "Open plan: free forever, 1 repo, bring your own Anthropic key. Team: $49/mo, hosted AI fixes, up to 10 repos. Business: $299/mo, unlimited repos + EAA-language statement pack + SLA. Annual saves ~17%.",
+    "Open: free forever, 1 repo, bring your own Anthropic key. Site: $19/mo — hosted AI fixes for one website, no code or key needed (ideal for WordPress). Team: $49/mo, up to 10 repos. Business: $299/mo, unlimited repos + EAA-language statement pack + SLA. Annual saves ~17%.",
   keywords: [
     "axle pricing",
     "accessibility CI pricing",
@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     "axle plans",
   ],
   openGraph: {
-    title: "axle pricing — free, $49/mo Team, $299/mo Business",
+    title: "axle pricing — free · $19/mo Site · $49/mo Team · $299/mo Business",
     description:
-      "Three plans. Open is free forever for 1 repo. Team adds hosted AI fixes + multi-repo. Business adds unlimited repos + EAA pack + SLA.",
+      "Four plans. Open is free forever for 1 repo. Site is $19/mo — hosted AI fixes for one website, no code needed. Team adds multi-repo. Business adds unlimited repos + EU pack + SLA.",
     type: "website",
     locale: "en_US",
   },
@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default function PricingPage() {
+  const siteEnabled = Boolean(process.env.POLAR_PRODUCT_ID_SITE);
   return (
     <main className="min-h-screen bg-slate-50">
       <article className="mx-auto max-w-5xl px-6 py-12">
@@ -34,12 +35,12 @@ export default function PricingPage() {
           Simple, no-seat pricing
         </h1>
         <p className="mt-4 max-w-3xl text-lg text-slate-700">
-          Three plans. No per-developer fees. No artificial PR limits. Cancel
-          anytime. Annual billing saves about 17% (two months free) on Team and
-          Business.
+          {siteEnabled
+            ? "Four plans. Start free, or unlock hosted AI fixes for a single site from $19/mo — no code, no keys. No per-developer fees, no artificial PR limits, cancel anytime. Annual billing saves about 17%."
+            : "Three plans. No per-developer fees, no artificial PR limits, cancel anytime. Annual billing saves about 17% on Team and Business."}
         </p>
 
-        <PricingClient />
+        <PricingClient siteEnabled={siteEnabled} />
 
         <section className="mt-16">
           <h2 className="text-2xl font-bold text-slate-900">What&apos;s included in every plan</h2>

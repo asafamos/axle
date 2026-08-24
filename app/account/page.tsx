@@ -8,7 +8,7 @@ type Status =
   | { kind: "error"; message: string };
 
 type Me = {
-  plan: "team" | "business";
+  plan: "site" | "team" | "business";
   status: string;
   email: string;
   created_at: string;
