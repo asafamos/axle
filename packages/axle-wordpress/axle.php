@@ -3,7 +3,7 @@
  * Plugin Name: AsafAmos Accessibility Scanner
  * Plugin URI:  https://github.com/asafamos/axle/tree/main/packages/axle-wordpress
  * Description: Scan this WordPress site for WCAG 2.1 / 2.2 AA accessibility violations. axe-core 4.11 runs in your admin browser via a hidden iframe — nothing transmitted by default. Built for EAA 2025 / ADA / תקנה 35.
- * Version:     1.2.2
+ * Version:     1.2.3
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      AsafAmos
@@ -24,7 +24,7 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-define('AXLE_VERSION', '1.2.2');
+define('AXLE_VERSION', '1.2.3');
 define('AXLE_API_BASE', 'https://axle-iota.vercel.app');
 define('AXLE_OPTION_SETTINGS', 'axle_settings');
 define('AXLE_OPTION_LAST_SCAN', 'axle_last_scan');
@@ -330,8 +330,8 @@ function axle_render_admin_page() {
                         <input type="password" id="axle_api_key" name="axle_settings[api_key]" class="regular-text"
                                value="<?php echo esc_attr($settings['api_key'] ?? ''); ?>" autocomplete="off" />
                         <p class="description">
-                            <?php esc_html_e('Paid plan unlocks AI fix suggestions. Leave empty for the free tier.', 'asafamos-accessibility-scanner'); ?>
-                            <a href="https://axle-iota.vercel.app/#pricing?utm_source=axle-wordpress" target="_blank" rel="noopener"><?php esc_html_e('Get a key →', 'asafamos-accessibility-scanner'); ?></a>
+                            <?php esc_html_e('The axle Site plan ($19/mo) unlocks hosted AI fix suggestions for one site — no developer or API key of your own. Leave empty for the free scan-only tier.', 'asafamos-accessibility-scanner'); ?>
+                            <a href="https://axle-iota.vercel.app/pricing?utm_source=axle-wordpress" target="_blank" rel="noopener"><?php esc_html_e('Get axle Site →', 'asafamos-accessibility-scanner'); ?></a>
                         </p>
                     </td>
                 </tr>
@@ -412,4 +412,16 @@ function axle_render_last_scan($last_scan) {
         isset($summary['moderate']) ? (int) $summary['moderate'] : 0,
         isset($summary['minor'])    ? (int) $summary['minor']    : 0
     )) . '</p>';
+
+    // Optional upgrade prompt, shown only when violations exist (this function
+    // has already returned for the no-violations and error paths above). Links
+    // to the hosted axle Site plan, which turns each violation above into a
+    // code-level fix. Kept to a single inline info box on the plugin's own
+    // page — no global admin notices, no tracking, no auto-dismiss nagging.
+    echo '<div class="notice notice-info inline" style="margin-top:14px">';
+    echo '<p><strong>' . esc_html__('Want these fixed for you?', 'asafamos-accessibility-scanner') . '</strong> ';
+    echo esc_html__('The axle Site plan generates the code-level fix for each violation above — no developer, no API key of your own. $19/mo for one site.', 'asafamos-accessibility-scanner');
+    echo ' <a href="https://axle-iota.vercel.app/pricing?utm_source=axle-wordpress-scan" target="_blank" rel="noopener">';
+    esc_html_e('See axle Site →', 'asafamos-accessibility-scanner');
+    echo '</a></p></div>';
 }

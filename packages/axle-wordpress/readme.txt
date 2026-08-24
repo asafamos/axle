@@ -4,7 +4,7 @@ Tags: accessibility, a11y, wcag, axe-core, scanner
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -111,6 +111,10 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 
 == Changelog ==
 
+= 1.2.3 =
+* Scan results now show an optional prompt to the hosted axle Site plan ($19/mo), which generates a code-level fix for each detected violation. It is a single inline note on the plugin's own results page — no global admin notices, no tracking, and the free client-side scanner is unchanged.
+* Settings: the optional API-key field now explains the axle Site plan and links to the correct pricing page.
+
 = 1.2.2 =
 * Tested up to WordPress 7.1. No functional changes — the scanner runs in an admin-side hidden iframe and is unaffected by the 7.1 editor / client-side-media / jQuery-UI changes.
 
@@ -134,6 +138,9 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 * Settings for target URL, severity threshold, optional API key.
 
 == Upgrade Notice ==
+
+= 1.2.3 =
+Scan results now offer an optional one-click path to hosted AI fixes (axle Site, $19/mo). Free scanning is unchanged. No tracking. Update recommended.
 
 = 1.2.0 =
 Renamed plugin per WordPress.org review feedback. Readme rewritten for accuracy. No functional change. Update recommended.
