@@ -198,6 +198,42 @@ export async function sendApiKeyEmail(opts: {
   const site = siteUrl();
   const accountUrl = `${site}/account`;
   const from = fromAddress();
+  // Onboarding differs by buyer: a Site customer is a WordPress site owner who
+  // pastes the key into the plugin — GitHub Action / CLI instructions would
+  // only confuse them. Team / Business are developer plans, so keep those.
+  const isSite = opts.plan === "site";
+  const howToText = isSite
+    ? [
+        "How to use it (in WordPress):",
+        "• In your WP admin, go to Tools → AsafAmos Accessibility Scanner → Settings.",
+        "• Paste this key into the 'axle API key' field and save.",
+        "• Click Scan now — you'll get AI-generated fixes for every violation found.",
+        `• Prefer the browser? Paste the key at ${accountUrl} to scan and fix any URL.`,
+      ]
+    : [
+        "How to use it:",
+        "• GitHub Action: add it as the 'AXLE_API_KEY' repo secret, then pass `axle-api-key: ${{ secrets.AXLE_API_KEY }}` to asafamos/axle-action@v1.",
+        "• CLI: `export AXLE_API_KEY=<key>` before running `npx axle-cli scan ...`.",
+        `• Web: visit ${accountUrl} and paste the key once to unlock unlimited fixes in the browser.`,
+      ];
+  const howToHtml = isSite
+    ? [
+        `<h3>How to use it (in WordPress)</h3>`,
+        `<ol>`,
+        `<li>In your WP admin, go to <strong>Tools → AsafAmos Accessibility Scanner → Settings</strong>.</li>`,
+        `<li>Paste this key into the <strong>axle API key</strong> field and save.</li>`,
+        `<li>Click <strong>Scan now</strong> — you'll get AI-generated fixes for every violation found.</li>`,
+        `<li>Prefer the browser? Paste the key at <a href="${accountUrl}">${accountUrl}</a> to scan and fix any URL.</li>`,
+        `</ol>`,
+      ].join("")
+    : [
+        `<h3>How to use it</h3>`,
+        `<ul>`,
+        `<li><strong>GitHub Action:</strong> add it as the <code>AXLE_API_KEY</code> repo secret, then pass it to <code>asafamos/axle-action@v1</code>.</li>`,
+        `<li><strong>CLI:</strong> <code>export AXLE_API_KEY=&lt;key&gt;</code> before running <code>npx axle-cli scan ...</code>.</li>`,
+        `<li><strong>Web:</strong> paste at <a href="${accountUrl}">${accountUrl}</a> once to unlock unlimited fixes in the browser.</li>`,
+        `</ul>`,
+      ].join("");
   const { error } = await r.emails.send({
     from,
     to: opts.to,
@@ -209,10 +245,7 @@ export async function sendApiKeyEmail(opts: {
       "",
       opts.apiKey,
       "",
-      "How to use it:",
-      "• GitHub Action: add it as the 'AXLE_API_KEY' repo secret, then pass `axle-api-key: ${{ secrets.AXLE_API_KEY }}` to asafamos/axle-action@v1.",
-      "• CLI: `export AXLE_API_KEY=<key>` before running `npx axle-cli scan ...`.",
-      `• Web: visit ${accountUrl} and paste the key once to unlock unlimited fixes in the browser.`,
+      ...howToText,
       "",
       `Manage your subscription anytime at ${accountUrl}.`,
       "",
@@ -224,12 +257,7 @@ export async function sendApiKeyEmail(opts: {
       `<p>Welcome to <strong>axle ${planName}</strong>.</p>`,
       `<p>Your API key (copy now — we won't show it again):</p>`,
       `<pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-family:monospace;user-select:all;word-break:break-all;">${opts.apiKey}</pre>`,
-      `<h3>How to use it</h3>`,
-      `<ul>`,
-      `<li><strong>GitHub Action:</strong> add it as the <code>AXLE_API_KEY</code> repo secret, then pass it to <code>asafamos/axle-action@v1</code>.</li>`,
-      `<li><strong>CLI:</strong> <code>export AXLE_API_KEY=&lt;key&gt;</code> before running <code>npx axle-cli scan ...</code>.</li>`,
-      `<li><strong>Web:</strong> paste at <a href="${accountUrl}">${accountUrl}</a> once to unlock unlimited fixes in the browser.</li>`,
-      `</ul>`,
+      howToHtml,
       `<p><a href="${accountUrl}">Manage your subscription</a> anytime.</p>`,
       `<p>If anything's broken, just reply to this email — it goes to a real human at <a href="mailto:asaf@amoss.co.il">asaf@amoss.co.il</a>.</p>`,
       `<p style="color:#888;font-size:12px;">axle provides remediation assistance, not a compliance certificate.</p>`,
