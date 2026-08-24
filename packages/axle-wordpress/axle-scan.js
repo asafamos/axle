@@ -7,10 +7,8 @@
  * via admin-ajax.php and stored in the axle_last_scan option so PHP can
  * render the summary on the next page load.
  *
- * No external network call for scanning. Optional anonymous ping to
- * /api/track fires after a successful scan if the user hasn't set
- * AXLE_NO_TELEMETRY, so the source counter on axle's dashboard reflects
- * real WP-plugin usage.
+ * No external network call at all — scanning and result storage happen
+ * entirely within your own WordPress (axe-core in the iframe + admin-ajax.php).
  */
 (function () {
     'use strict';
@@ -58,7 +56,6 @@
                 scanned_at: Date.now(),
             });
 
-            pingTelemetry();
             setStatus('Scan complete — reloading…');
             window.location.reload();
         } catch (err) {
@@ -151,28 +148,6 @@
         const json = await res.json();
         if (!json || !json.success) {
             throw new Error(json && json.data ? json.data : 'Save failed');
-        }
-    }
-
-    function pingTelemetry() {
-        // Fire-and-forget. No PII, no URL, no scan contents.
-        try {
-            const body = JSON.stringify({
-                source: 'axle-wordpress',
-                event: 'scan_complete',
-            });
-            if (navigator.sendBeacon) {
-                navigator.sendBeacon(cfg.telemetryUrl, new Blob([body], { type: 'application/json' }));
-            } else {
-                fetch(cfg.telemetryUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: body,
-                    keepalive: true,
-                }).catch(function () {});
-            }
-        } catch (e) {
-            /* no-op */
         }
     }
 
