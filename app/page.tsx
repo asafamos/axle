@@ -37,6 +37,11 @@ const confidenceColor: Record<string, string> = {
   low: "text-red-700 bg-red-100",
 };
 
+// Site plan kill switch. Mirrors /pricing (which gates on POLAR_PRODUCT_ID_SITE
+// server-side); set NEXT_PUBLIC_POLAR_SITE_ENABLED=1 in the same environments so
+// the homepage callout and the pricing card appear/disappear together.
+const SITE_ENABLED = process.env.NEXT_PUBLIC_POLAR_SITE_ENABLED === "1";
+
 export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -625,7 +630,7 @@ function IntegrationsStrip() {
     { name: "Netlify Plugin", status: "live", href: "https://www.npmjs.com/package/axle-netlify-plugin" },
     { name: "Cloudflare Pages", status: "live", href: "https://www.npmjs.com/package/axle-cloudflare-plugin" },
     { name: "Vercel", status: "live", href: "https://www.npmjs.com/package/axle-vercel-plugin" },
-    { name: "WordPress Plugin", status: "beta", href: "https://github.com/asafamos/axle/tree/main/packages/axle-wordpress" },
+    { name: "WordPress Plugin", status: "live", href: "https://wordpress.org/plugins/asafamos-accessibility-scanner/" },
     { name: "Shopify App", status: "planned", href: "#" },
   ];
   const badge: Record<string, string> = {
@@ -830,6 +835,29 @@ function PricingPreview() {
             </div>
           ))}
         </div>
+        {SITE_ENABLED && (
+          <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-emerald-200 bg-emerald-50 p-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                Not a developer? No repo, no CI?
+              </div>
+              <h3 className="mt-1 text-xl font-bold text-slate-900">
+                Run a WordPress or no-code site? axle Site is $19/mo.
+              </h3>
+              <p className="mt-1 max-w-2xl text-sm text-slate-700">
+                We host the AI fixes — no GitHub, no pipeline, no Anthropic key.
+                Install the free WordPress plugin, paste your key, and get
+                code-level WCAG fixes for one live site.
+              </p>
+            </div>
+            <a
+              href="/pricing"
+              className="mt-4 inline-block shrink-0 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800 sm:mt-0"
+            >
+              See axle Site →
+            </a>
+          </div>
+        )}
         {checkoutError && (
           <div className="mx-auto mt-6 max-w-xl rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
             Checkout failed: {checkoutError}
