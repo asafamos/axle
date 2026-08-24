@@ -9,6 +9,7 @@ type PolarCheckoutResp = {
   customerEmail?: string | null;
   customerId?: string | null;
   customer?: { id?: string | null } | null;
+  metadata?: Record<string, unknown> | null;
 };
 
 export default async function CheckoutSuccessPage({
@@ -25,6 +26,10 @@ export default async function CheckoutSuccessPage({
   let email: string | null = null;
   let apiKey: string | null = null;
   let error: string | null = null;
+  // Which plan they bought, so we show the right "next step". Site buyers are
+  // WordPress / no-code site owners — pointing them at a GitHub Action is worse
+  // than useless. Carried in the Polar checkout metadata set by our checkout route.
+  let plan: string | null = null;
 
   // Polar success: /checkout/success?provider=polar&checkout_id=...
   // Stripe success: /checkout/success?session_id=...
@@ -34,6 +39,10 @@ export default async function CheckoutSuccessPage({
         id: params.checkout_id,
       })) as unknown as PolarCheckoutResp;
       email = checkout.customerEmail || null;
+      plan =
+        typeof checkout.metadata?.plan === "string"
+          ? checkout.metadata.plan
+          : null;
       const customerId = checkout.customerId || checkout.customer?.id || null;
       // Belt-and-suspenders: even if the welcome email failed (Resend
       // misconfiguration, sandbox limit, etc.) the customer still sees
@@ -104,6 +113,32 @@ export default async function CheckoutSuccessPage({
             : "If it doesn't arrive in 2 minutes, check spam — or reply to this email at asaf@amoss.co.il and we'll resend manually."}
         </p>
 
+        {plan === "site" && (
+          <div className="mt-6 rounded-md border border-emerald-300 bg-white p-4 text-sm text-emerald-900">
+            <p className="font-semibold">Next step in WordPress:</p>
+            <ol className="mt-2 list-decimal space-y-1 ps-5">
+              <li>
+                Install the free{" "}
+                <a
+                  className="underline"
+                  href="https://wordpress.org/plugins/asafamos-accessibility-scanner/"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  AsafAmos Accessibility Scanner
+                </a>{" "}
+                plugin (if you haven&apos;t already).
+              </li>
+              <li>
+                In your admin: <strong>Tools → AsafAmos Accessibility
+                Scanner → Settings</strong>.
+              </li>
+              <li>Paste the key above into the &ldquo;axle API key&rdquo; field and save.</li>
+              <li>Click <strong>Scan now</strong> — AI fixes are unlocked for this site.</li>
+            </ol>
+          </div>
+        )}
+
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/account"
@@ -111,14 +146,25 @@ export default async function CheckoutSuccessPage({
           >
             Paste key → unlock web UI
           </Link>
-          <a
-            href="https://github.com/marketplace/actions/axle-a11y-wcag-accessibility-ci"
-            target="_blank"
-            rel="noopener"
-            className="rounded-md border border-emerald-300 bg-white px-5 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-100"
-          >
-            Install GitHub Action →
-          </a>
+          {plan === "site" ? (
+            <a
+              href="https://wordpress.org/plugins/asafamos-accessibility-scanner/"
+              target="_blank"
+              rel="noopener"
+              className="rounded-md border border-emerald-300 bg-white px-5 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-100"
+            >
+              Get the WordPress plugin →
+            </a>
+          ) : (
+            <a
+              href="https://github.com/marketplace/actions/axle-a11y-wcag-accessibility-ci"
+              target="_blank"
+              rel="noopener"
+              className="rounded-md border border-emerald-300 bg-white px-5 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-100"
+            >
+              Install GitHub Action →
+            </a>
+          )}
           <Link
             href="/"
             className="rounded-md border border-emerald-300 bg-white px-5 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-100"
