@@ -236,6 +236,10 @@ export async function sendApiKeyEmail(opts: {
       ].join("");
   const { error } = await r.emails.send({
     from,
+    // The sending domain (e.g. a send-only subdomain like axle.amoss.co.il) has
+    // no inbox, so a bare "reply to this email" would bounce. Route replies to a
+    // real mailbox that Asaf reads — this must match the address named in the body.
+    replyTo: "asaf@amoss.co.il",
     to: opts.to,
     subject: `Your axle API key — welcome to ${planName}`,
     text: [
