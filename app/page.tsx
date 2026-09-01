@@ -953,6 +953,8 @@ function Footer() {
               <li><a href="/accessibility-checker" className="text-slate-700 hover:underline">Accessibility checker</a></li>
               <li><a href="/section-508-checker" className="text-slate-700 hover:underline">Section 508 checker</a></li>
               <li><a href="/wordpress-accessibility" className="text-slate-700 hover:underline">WordPress accessibility</a></li>
+              <li><a href="/woocommerce-accessibility" className="text-slate-700 hover:underline">WooCommerce accessibility</a></li>
+              <li><a href="/wordpress-ada-compliance" className="text-slate-700 hover:underline">WordPress ADA compliance</a></li>
               <li><a href="/web-accessibility-audit" className="text-slate-700 hover:underline">Audit guide</a></li>
               <li><a href="/vpat-template" className="text-slate-700 hover:underline">VPAT template guide</a></li>
               <li><a href="/ada-demand-letter" className="text-slate-700 hover:underline">Got an ADA letter?</a></li>

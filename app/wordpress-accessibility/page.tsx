@@ -245,6 +245,24 @@ export default function WordPressAccessibilityPage() {
           </div>
         </section>
 
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold text-slate-900">Related guides</h2>
+          <ul className="mt-3 list-disc space-y-1 ps-6 text-slate-700">
+            <li>
+              <Link href="/wordpress-ada-compliance" className="underline">
+                Make your WordPress site ADA compliant
+              </Link>{" "}
+              — the standard, the steps, and demand-letter response.
+            </li>
+            <li>
+              <Link href="/woocommerce-accessibility" className="underline">
+                WooCommerce accessibility
+              </Link>{" "}
+              — fixing product, cart, and checkout for online stores.
+            </li>
+          </ul>
+        </section>
+
         <footer className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-500">
           Updated: 26 August 2026.{" "}
           <a className="underline" href="mailto:asaf@amoss.co.il">
