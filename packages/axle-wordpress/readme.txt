@@ -1,6 +1,6 @@
 === AsafAmos Accessibility Scanner ===
 Contributors: asafamos1
-Tags: accessibility, a11y, wcag, axe-core, scanner
+Tags: accessibility, accessibility checker, wcag, ada, a11y
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,11 +8,11 @@ Stable tag: 1.2.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Scan your WordPress site for WCAG 2.1 / 2.2 AA violations. axe-core 4.11 runs in your admin browser via a hidden iframe — nothing transmitted by default.
+Free WordPress accessibility checker: scan for WCAG 2.1/2.2 AA & ADA issues with axe-core — private, in-admin, no overlay widget. EAA 2025 ready.
 
 == Description ==
 
-**AsafAmos Accessibility Scanner** finds WCAG 2.1 / 2.2 AA accessibility violations on your WordPress site. The scan engine — axe-core 4.11 — is bundled with the plugin and runs **entirely in your WP admin browser tab**. The target page is loaded in a hidden iframe inside the admin area and evaluated there. The default scan flow does not transmit your URL, your HTML, or any scan contents to any external service.
+**AsafAmos Accessibility Scanner** is a free **WordPress accessibility checker** that finds WCAG 2.1 / 2.2 AA and ADA accessibility violations on your site — the standards behind the EAA 2025, ADA Title III, and Israeli תקנה 35. The scan engine — axe-core 4.11 — is bundled with the plugin and runs **entirely in your WP admin browser tab**. The target page is loaded in a hidden iframe inside the admin area and evaluated there. The default scan flow does not transmit your URL, your HTML, or any scan contents to any external service.
 
 **What it does**
 
