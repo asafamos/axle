@@ -63,6 +63,7 @@ export function GET() {
 
 ## Tool comparisons
 
+- [Best WordPress accessibility plugins (honest comparison)](https://axle-iota.vercel.app/best-wordpress-accessibility-plugins): fair comparison of WordPress accessibility plugins — scanners that fix the source (Equalize Digital Accessibility Checker, WP Accessibility by Joe Dolan, axle) vs. overlay widgets (UserWay, accessiBe, One Click). axle's free plugin scans with axe-core; its $19/mo Site plan generates the code-level fix per violation.
 - [axle vs accessiBe](https://axle-iota.vercel.app/alternatives/accessibe): the $1M FTC settlement, overlay vs source-level fixes
 - [axle vs UserWay](https://axle-iota.vercel.app/alternatives/userway): widget alternative
 - [axle vs AudioEye](https://axle-iota.vercel.app/alternatives/audioeye): source-first instead of hybrid overlay

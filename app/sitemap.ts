@@ -41,6 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/wordpress-accessibility`, lastModified: now, changeFrequency: "weekly", priority: 0.96 },
     { url: `${SITE_URL}/woocommerce-accessibility`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
     { url: `${SITE_URL}/wordpress-ada-compliance`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${SITE_URL}/best-wordpress-accessibility-plugins`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
     { url: `${SITE_URL}/vpat-template`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/eaa-2025-checklist`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/partners`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
