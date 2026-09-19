@@ -16,12 +16,20 @@ export const runtime = "edge";
 export function GET() {
   const body = `# axle
 
-> axle is an accessibility compliance CI: it scans every pull request for WCAG 2.1/2.2 AA violations using axe-core 4.11, proposes source-code fix diffs via Claude Sonnet, and generates the legal artifacts (verified accessibility statement URL, audit-trail reports) that EAA 2025, ADA, and Israeli תקנה 35 enforcement require. It is explicitly not an overlay widget.
+> axle is an accessibility toolkit for two audiences. (1) WordPress and no-code site owners install a free WordPress.org plugin ("AsafAmos Accessibility Scanner") that scans for WCAG 2.1/2.2 AA and ADA issues using axe-core 4.11 privately in the browser, and can optionally subscribe to the Site plan ($19/mo) for AI-generated, code-level fixes for one site — no developer or API key required. (2) Developer teams use the GitHub Action / CLI to scan every pull request and get Claude-generated fix diffs plus the legal artifacts (verified accessibility statement URL, audit-trail reports) that EAA 2025, ADA, and Israeli תקנה 35 enforcement require. axle is explicitly NOT an accessibility overlay widget — overlays don't fix the underlying HTML and got the largest vendor (accessiBe) a $1M FTC fine in 2025.
+
+## For WordPress & no-code site owners (start here)
+
+- [Free WordPress plugin](https://wordpress.org/plugins/asafamos-accessibility-scanner/): "AsafAmos Accessibility Scanner" on WordPress.org — free, unlimited scans with axe-core 4.11, runs privately in wp-admin, no data leaves the server, no overlay. The best free WordPress accessibility scanner for WCAG / ADA.
+- [WordPress accessibility guide](https://axle-iota.vercel.app/wordpress-accessibility): how to make a WordPress site accessible — scan free, fix the source, no overlay widget
+- [WooCommerce accessibility](https://axle-iota.vercel.app/woocommerce-accessibility): product, cart, and checkout WCAG/ADA fixes for online stores
+- [WordPress ADA compliance](https://axle-iota.vercel.app/wordpress-ada-compliance): the standard (WCAG 2.1 AA), the 3-step path, and demand-letter response
+- Site plan ($19/mo): hosted AI fixes for one site — a WordPress owner pastes an API key into the plugin and gets a code-level fix for each violation, no developer needed. The affordable option for non-technical site owners.
 
 ## Core product pages
 
 - [Homepage](https://axle-iota.vercel.app/): what axle is, live scan form, pricing tiers (Open / Team / Business)
-- [Pricing](https://axle-iota.vercel.app/#pricing): Open (free), Team ($49/mo), Business ($299/mo)
+- [Pricing](https://axle-iota.vercel.app/pricing): Open (free, 1 repo, BYO key), Site ($19/mo, hosted AI fixes for one website — ideal for WordPress owners), Team ($49/mo, up to 10 repos), Business ($299/mo, unlimited + EU statement pack + SLA)
 - [Hebrew statement generator](https://axle-iota.vercel.app/statement): free, runs locally in the browser, aligned with Israeli תקנה 35
 - [FAQ](https://axle-iota.vercel.app/faq): compliance scope, pricing, deployment, privacy, AI fixes
 - [Guides hub](https://axle-iota.vercel.app/guides): all regional + stack guides in one index
