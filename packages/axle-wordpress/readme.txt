@@ -4,7 +4,7 @@ Tags: accessibility, accessibility checker, wcag, ada, a11y
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -36,7 +36,7 @@ Overlay widgets (the &ldquo;robot button&rdquo; you've seen on other sites) inje
 
 The plugin itself is free. Unlimited scans, optional daily cron, full per-rule violation report — all included.
 
-A separate hosted service at https://axle-iota.vercel.app offers Claude-generated code-fix suggestions per violation. That service is not part of this plugin and is not used by the default scan flow. If you sign up there and obtain an API key, you can paste it in this plugin's Settings; it is then only used during the optional cron / hosted-scan path described below.
+A separate hosted service at https://axlescan.com offers Claude-generated code-fix suggestions per violation. That service is not part of this plugin and is not used by the default scan flow. If you sign up there and obtain an API key, you can paste it in this plugin's Settings; it is then only used during the optional cron / hosted-scan path described below.
 
 **Not a compliance certificate**
 
@@ -62,16 +62,16 @@ This is the full and accurate transmission story for every feature. The default 
 **2. Auto scan = Daily (opt in only — Off by default)**
 
 * Only relevant if you explicitly enable this in Tools → AsafAmos Accessibility Scanner → Settings.
-* WP-Cron runs without a browser, so the daily cron cannot use the in-browser iframe scanner. Instead it uses the hosted scanner at `POST https://axle-iota.vercel.app/api/scan` with body `{ "url": "<your configured target URL>", "source": "axle-wordpress" }` (and `Authorization: Bearer <key>` if you've entered an axle API key).
+* WP-Cron runs without a browser, so the daily cron cannot use the in-browser iframe scanner. Instead it uses the hosted scanner at `POST https://axlescan.com/api/scan` with body `{ "url": "<your configured target URL>", "source": "axle-wordpress" }` (and `Authorization: Bearer <key>` if you've entered an axle API key).
 * **Requires your target URL to be publicly reachable** — the hosted scanner cannot reach LocalWP, staging behind basic auth, or VPN-only environments.
 * No visitor data, form data, or admin content is sent. Only the configured target URL.
 * Disabled by default. Setting can be turned off again at any time.
 
-**Service provider for #2 (the opt-in daily cron only):** axle (https://axle-iota.vercel.app)
-**Terms of use:** https://axle-iota.vercel.app/terms
-**Privacy policy:** https://axle-iota.vercel.app/privacy
+**Service provider for #2 (the opt-in daily cron only):** axle (https://axlescan.com)
+**Terms of use:** https://axlescan.com/terms
+**Privacy policy:** https://axlescan.com/privacy
 
-You may disable all external communication by deactivating the plugin, by turning off Auto scan and not clicking Scan now, or by blocking the host `axle-iota.vercel.app` at the network level.
+You may disable all external communication by deactivating the plugin, by turning off Auto scan and not clicking Scan now, or by blocking the host `axlescan.com` at the network level.
 
 == Frequently Asked Questions ==
 
@@ -101,7 +101,7 @@ Yes — the default Scan now flow works on any environment because it runs entir
 
 = Why is the plugin called &ldquo;AsafAmos Accessibility Scanner&rdquo; and not &ldquo;axle&rdquo;? =
 
-The author's WordPress.org username is `asafamos1`. The plugin is part of the `axle` accessibility-CI ecosystem (separate hosted service at https://axle-iota.vercel.app) but maintained by AsafAmos individually for the WordPress.org directory.
+The author's WordPress.org username is `asafamos1`. The plugin is part of the `axle` accessibility-CI ecosystem (separate hosted service at https://axlescan.com) but maintained by AsafAmos individually for the WordPress.org directory.
 
 == Screenshots ==
 
@@ -110,6 +110,9 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 3. Settings page with daily auto-scan toggle.
 
 == Changelog ==
+
+= 1.2.4 =
+* Moved the hosted service to its own domain (axlescan.com). The optional daily cron scan and the Site-plan links now use the new address; the free in-browser scanner is unchanged and still transmits nothing.
 
 = 1.2.3 =
 * Scan results now show an optional prompt to the hosted axle Site plan ($19/mo), which generates a code-level fix for each detected violation. It is a single inline note on the plugin's own results page — no global admin notices, no tracking, and the free client-side scanner is unchanged.
@@ -138,6 +141,9 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 * Settings for target URL, severity threshold, optional API key.
 
 == Upgrade Notice ==
+
+= 1.2.4 =
+Hosted service moved to axlescan.com. Free scanning is unchanged. Update recommended so the optional cron/Site-plan features use the new address.
 
 = 1.2.3 =
 Scan results now offer an optional one-click path to hosted AI fixes (axle Site, $19/mo). Free scanning is unchanged. No tracking. Update recommended.
