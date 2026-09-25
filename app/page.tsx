@@ -196,8 +196,8 @@ function Header() {
         <a href="/" className="flex items-center gap-2 font-bold">
           <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-900 text-white">a</span>
           <span className="text-lg tracking-tight">axle</span>
-          <span className="hidden rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 sm:inline">
-            private beta
+          <span className="hidden rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 sm:inline">
+            WCAG · ADA · EAA
           </span>
         </a>
         <nav className="hidden items-center gap-1 text-sm md:flex">
