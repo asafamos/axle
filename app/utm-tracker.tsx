@@ -14,9 +14,29 @@ export function UtmTracker() {
       }
       const trackedSrc = src || window.sessionStorage.getItem(STORAGE_KEY);
 
+      // Capture the EXTERNAL referrer host (where the visitor actually came
+      // from) — the signal UTM tags miss, since most real traffic (organic
+      // Google, a plain Reddit/Facebook link) carries no utm_source. Own-domain
+      // referrers are internal navigation and excluded.
+      const OWN = new Set([
+        "axlescan.com",
+        "axle-iota.vercel.app",
+        "localhost",
+      ]);
+      let ref: string | undefined;
+      try {
+        if (document.referrer) {
+          const rh = new URL(document.referrer).hostname.replace(/^www\./, "");
+          if (rh && !OWN.has(rh)) ref = rh.slice(0, 100);
+        }
+      } catch {
+        /* referrer unparseable — skip */
+      }
+
       const payload = {
         source: trackedSrc || undefined,
         event: "page_view",
+        ref,
       };
       const body = JSON.stringify(payload);
       if ("sendBeacon" in navigator) {

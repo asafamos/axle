@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   const redis = kv();
   if (!redis) return NextResponse.json({ ok: true, kv: false });
 
-  let payload: { source?: string; event?: string } = {};
+  let payload: { source?: string; event?: string; ref?: string } = {};
   try {
     payload = await req.json();
   } catch {
@@ -37,6 +37,15 @@ export async function POST(req: Request) {
   const event = typeof payload.event === "string" ? payload.event : "page_view";
   const day = new Date().toISOString().slice(0, 10);
 
+  // External referrer host (validated to a hostname shape to keep the hash
+  // bounded and injection-safe). This is the "which channel actually drives
+  // traffic" signal — the one thing to watch once outreach starts.
+  const refRaw = typeof payload.ref === "string" ? payload.ref.trim().toLowerCase() : "";
+  const ref =
+    refRaw && refRaw.length <= 100 && /^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/.test(refRaw)
+      ? refRaw
+      : null;
+
   const ops: Promise<unknown>[] = [
     redis.incr("axle:stats:views:all"),
     redis.incr(`axle:stats:views:${day}`),
@@ -44,6 +53,11 @@ export async function POST(req: Request) {
   if (source) {
     ops.push(redis.incr(`axle:stats:views:src:${source}`));
     ops.push(redis.incr(`axle:stats:views:src:${source}:${day}`));
+  }
+  if (ref) {
+    ops.push(redis.hincrby("axle:stats:referrers", ref, 1));
+    ops.push(redis.hincrby(`axle:stats:referrers:${day}`, ref, 1));
+    ops.push(redis.expire(`axle:stats:referrers:${day}`, 60 * 60 * 24 * 14));
   }
   if (event === "scan_complete" && source) {
     ops.push(redis.incr(`axle:stats:scans:src:${source}`));

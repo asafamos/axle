@@ -127,6 +127,25 @@ export async function GET(req: Request) {
         const leads_external = leads_recent.filter((l) => !l.is_internal);
         const leads_internal = leads_recent.filter((l) => l.is_internal);
 
+        // Where traffic actually comes from (external referrer hosts) — the
+        // channel-attribution signal to watch once outreach starts.
+        let top_referrers: Array<{ referrer: string; count: number }> = [];
+        try {
+          const refs = (await redis.hgetall("axle:stats:referrers")) as Record<
+            string,
+            number | string
+          > | null;
+          if (refs) {
+            top_referrers = Object.entries(refs)
+              .map(([referrer, count]) => ({ referrer, count: Number(count) || 0 }))
+              .filter((r) => r.count > 0)
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 20);
+          }
+        } catch {
+          /* no-op */
+        }
+
         return {
           scans_all_time: Number(scansAll ?? 0),
           scans_today: Number(scansToday ?? 0),
@@ -139,6 +158,7 @@ export async function GET(req: Request) {
           leads_internal_count: leads_internal.length,
           scans_by_source,
           views_by_source,
+          top_referrers,
           leads_recent,
         };
       })()
