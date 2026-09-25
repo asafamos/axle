@@ -28,6 +28,7 @@ type Summary = {
         leads_today: number;
         scans_by_source: Record<string, number>;
         views_by_source: Record<string, number>;
+        top_referrers?: Array<{ referrer: string; count: number }>;
         leads_recent: LeadRecord[];
       }
     | { note: string };
@@ -353,6 +354,31 @@ export default function AdminPage() {
                   Page views by source
                 </h3>
                 <SourceTable data={stats.views_by_source} />
+
+                <h3 className="mt-6 text-sm font-semibold text-slate-700">
+                  Top referrers (where real traffic comes from)
+                </h3>
+                {stats.top_referrers && stats.top_referrers.length > 0 ? (
+                  <table className="mt-2 w-full max-w-md text-sm">
+                    <tbody>
+                      {stats.top_referrers.map((r) => (
+                        <tr key={r.referrer} className="border-b border-slate-100">
+                          <td className="py-1.5 font-medium text-slate-800">
+                            {r.referrer}
+                          </td>
+                          <td className="py-1.5 text-right tabular-nums text-slate-600">
+                            {r.count}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="mt-2 text-sm text-slate-400">
+                    No external referrers yet — this fills in once people arrive
+                    from Google, Reddit, Facebook, etc. Watch it after you post.
+                  </p>
+                )}
 
                 <h3 className="mt-6 text-sm font-semibold text-slate-700">
                   Recent leads (scan-result subscribers)
