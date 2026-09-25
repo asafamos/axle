@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 const CLIENT_ID = process.env.SLACK_CLIENT_ID || "";
 const SCOPES = "commands,chat:write,chat:write.public";
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
 const INSTALL_URL = CLIENT_ID
   ? `https://slack.com/oauth/v2/authorize?client_id=${CLIENT_ID}&scope=${SCOPES}&redirect_uri=${encodeURIComponent(
       `${SITE_URL}/api/slack/oauth`,

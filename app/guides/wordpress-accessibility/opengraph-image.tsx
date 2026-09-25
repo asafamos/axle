@@ -11,6 +11,6 @@ export default function OG() {
     title: "WordPress accessibility — the practical guide.",
     subtitle:
       "Themes, Gutenberg, alt text at scale, Gravity / WPForms / CF7 ranking, and a plugin that works on LocalWP.",
-    footer: "axle-iota.vercel.app  ·  WP 6.7+  ·  WCAG 2.1 / 2.2 AA",
+    footer: "axlescan.com  ·  WP 6.7+  ·  WCAG 2.1 / 2.2 AA",
   });
 }

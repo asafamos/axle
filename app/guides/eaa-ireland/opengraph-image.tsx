@@ -11,6 +11,6 @@ export default function OG() {
     title: "EAA in Ireland — the practical guide.",
     subtitle:
       "Fines up to €60,000. Director liability. Enforced 28 June 2025. NDA coordinates, CCPC + sector regulators enforce.",
-    footer: "axle-iota.vercel.app  ·  EN 301 549  ·  WCAG 2.1 AA",
+    footer: "axlescan.com  ·  EN 301 549  ·  WCAG 2.1 AA",
   });
 }

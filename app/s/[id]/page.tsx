@@ -59,7 +59,7 @@ export default async function StatementPage({
     day: "numeric",
   });
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
 
   return (
     <main className="min-h-screen bg-slate-50">

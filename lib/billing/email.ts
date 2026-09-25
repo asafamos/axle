@@ -18,7 +18,7 @@ function resend(): Resend | null {
  * link 404'd, and they refunded.
  */
 function siteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app").replace(/\/$/, "");
+  return (process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com").replace(/\/$/, "");
 }
 
 const SANDBOX_FROM = "axle <onboarding@resend.dev>";
@@ -94,7 +94,7 @@ function isPermanentSendError(error: unknown): boolean {
  * for live customers, their welcome emails get rejected by Resend with no
  * surface-level error and the customer never receives their API key — direct
  * cause of refunds. RESEND_FROM must be explicitly set in production to a
- * verified domain (e.g. "axle <hello@axle-iota.vercel.app>" or a custom
+ * verified domain (e.g. "axle <hello@axlescan.com>" or a custom
  * verified domain).
  */
 function fromAddress(): string {

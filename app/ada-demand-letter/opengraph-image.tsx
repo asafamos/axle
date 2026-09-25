@@ -11,6 +11,6 @@ export default function OG() {
     title: "ADA demand letter — the first 48 hours.",
     subtitle:
       "Preserve evidence, scan and inventory, engage counsel, publish a plan. Engineering-side playbook.",
-    footer: "axle-iota.vercel.app  ·  ADA Title III  ·  WCAG 2.1 AA",
+    footer: "axlescan.com  ·  ADA Title III  ·  WCAG 2.1 AA",
   });
 }

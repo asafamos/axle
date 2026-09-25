@@ -54,11 +54,11 @@ export default function GptPage() {
             <li>Authentication: <strong>None</strong>.</li>
             <li>Schema → <strong>Import from URL</strong>: paste{" "}
               <code className="rounded bg-slate-200 px-1 py-0.5 text-sm text-slate-900">
-                https://axle-iota.vercel.app/openapi.yaml
+                https://axlescan.com/openapi.yaml
               </code>
             </li>
             <li>The action <code>scanUrlForAccessibility</code> will appear with the right schema.</li>
-            <li>Privacy policy URL: <code>https://axle-iota.vercel.app/privacy</code></li>
+            <li>Privacy policy URL: <code>https://axlescan.com/privacy</code></li>
             <li>System prompt suggestion (paste into Instructions):
               <pre tabIndex={0} className="mt-2 overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
 {`When the user asks about a website's accessibility, WCAG conformance,
@@ -112,7 +112,7 @@ const message = await client.messages.create({
 
 // When Claude returns tool_use, fetch from axle:
 async function runAxleScan(url: string) {
-  const res = await fetch("https://axle-iota.vercel.app/api/scan", {
+  const res = await fetch("https://axlescan.com/api/scan", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url, source: "claude-tool" }),
@@ -181,7 +181,7 @@ async function runAxleScan(url: string) {
 
         <section className="mt-10 flex flex-wrap gap-3">
           <a
-            href="https://axle-iota.vercel.app/openapi.yaml"
+            href="https://axlescan.com/openapi.yaml"
             target="_blank"
             rel="noopener"
             className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
@@ -189,7 +189,7 @@ async function runAxleScan(url: string) {
             Open OpenAPI spec →
           </a>
           <a
-            href="https://axle-iota.vercel.app/.well-known/ai-plugin.json"
+            href="https://axlescan.com/.well-known/ai-plugin.json"
             target="_blank"
             rel="noopener"
             className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-100"

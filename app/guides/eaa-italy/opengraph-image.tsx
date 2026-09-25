@@ -11,6 +11,6 @@ export default function OG() {
     title: "Legge Stanca + EAA 2025 per sviluppatori.",
     subtitle:
       "D.lgs. 82/2022 · Sanzioni fino al 5% del fatturato · Monitoraggio AgID",
-    footer: "axle-iota.vercel.app  ·  EN 301 549  ·  WCAG 2.1 AA  ·  AgID",
+    footer: "axlescan.com  ·  EN 301 549  ·  WCAG 2.1 AA  ·  AgID",
   });
 }

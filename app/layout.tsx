@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 // (DNS doesn't resolve as of 2026-04-27). Fall back to the live deployment so
 // canonical / OG / sitemap still produce valid URLs even if NEXT_PUBLIC_SITE_URL
 // is somehow unset at build time.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -160,7 +160,7 @@ const structuredData = {
           acceptedAnswer: {
             "@type": "Answer",
             text:
-              "axle ships as a GitHub Action, an npm CLI (axle-cli), and plugins for Netlify, Cloudflare Pages, Vercel, and WordPress. For the free tier and CI pipelines, scans run on your own infrastructure (GitHub runner, Netlify build, etc.) using the open-source axe-core engine — no signup. The hosted service at axle-iota.vercel.app is optional and only involved if you use the web scan form, paid AI fixes, or the published verified statement URL feature.",
+              "axle ships as a GitHub Action, an npm CLI (axle-cli), and plugins for Netlify, Cloudflare Pages, Vercel, and WordPress. For the free tier and CI pipelines, scans run on your own infrastructure (GitHub runner, Netlify build, etc.) using the open-source axe-core engine — no signup. The hosted service at axlescan.com is optional and only involved if you use the web scan form, paid AI fixes, or the published verified statement URL feature.",
           },
         },
         {
@@ -169,7 +169,7 @@ const structuredData = {
           acceptedAnswer: {
             "@type": "Answer",
             text:
-              "Yes. The Hebrew statement generator at axle-iota.vercel.app/statement runs locally in your browser and produces a statement aligned with Israeli regulation 35(ד). No signup, no upload — the form stays on your device. For compliance officers, the Team plan adds a published verified URL (axle-iota.vercel.app/s/<id>) that is tamper-evident and timestamped for use in disclosure documents.",
+              "Yes. The Hebrew statement generator at axlescan.com/statement runs locally in your browser and produces a statement aligned with Israeli regulation 35(ד). No signup, no upload — the form stays on your device. For compliance officers, the Team plan adds a published verified URL (axlescan.com/s/<id>) that is tamper-evident and timestamped for use in disclosure documents.",
           },
         },
         {

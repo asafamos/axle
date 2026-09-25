@@ -11,6 +11,6 @@ export default function OG() {
     title: "Why accessibility overlay widgets don't work.",
     subtitle:
       "FTC $1M settlement. Princeton study. Regulators scan served HTML, not runtime overlays.",
-    footer: "axle-iota.vercel.app  ·  Real fixes, not widgets  ·  EAA 2025 ready",
+    footer: "axlescan.com  ·  Real fixes, not widgets  ·  EAA 2025 ready",
   });
 }

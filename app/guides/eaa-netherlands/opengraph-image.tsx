@@ -11,6 +11,6 @@ export default function OG() {
     title: "Implementatiewet toegankelijkheid — voor developers.",
     subtitle:
       "ACM-handhaving, boetes tot €900.000, toegankelijkheidsverklaring en CI-pipeline.",
-    footer: "axle-iota.vercel.app  ·  EN 301 549 · WCAG 2.1 AA  ·  28 juni 2025",
+    footer: "axlescan.com  ·  EN 301 549 · WCAG 2.1 AA  ·  28 juni 2025",
   });
 }

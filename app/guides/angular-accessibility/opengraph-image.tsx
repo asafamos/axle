@@ -11,6 +11,6 @@ export default function OG() {
     title: "Angular accessibility — the practical guide.",
     subtitle:
       "CDK a11y primitives, Material patterns, reactive forms, router focus, cypress-axe + Playwright, CI.",
-    footer: "axle-iota.vercel.app  ·  Angular 17/18/19  ·  WCAG 2.1 / 2.2 AA",
+    footer: "axlescan.com  ·  Angular 17/18/19  ·  WCAG 2.1 / 2.2 AA",
   });
 }

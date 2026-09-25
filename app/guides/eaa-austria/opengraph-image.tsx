@@ -11,6 +11,6 @@ export default function OG() {
     title: "Barrierefreiheitsgesetz — für Entwickler:innen.",
     subtitle:
       "Sozialministeriumservice, VStG-Strafen bis €80.000, BGStG-Zivilklagen, CI-Pipeline.",
-    footer: "axle-iota.vercel.app  ·  EN 301 549 · WCAG 2.1 AA  ·  28. Juni 2025",
+    footer: "axlescan.com  ·  EN 301 549 · WCAG 2.1 AA  ·  28. Juni 2025",
   });
 }

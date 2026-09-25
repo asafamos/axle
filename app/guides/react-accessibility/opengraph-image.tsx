@@ -11,6 +11,6 @@ export default function OG() {
     title: "React accessibility — the practical guide.",
     subtitle:
       "Component semantics, useId forms, focus management, jest-axe + Playwright, and a CI pipeline.",
-    footer: "axle-iota.vercel.app  ·  React 18 / 19  ·  WCAG 2.1 / 2.2 AA",
+    footer: "axlescan.com  ·  React 18 / 19  ·  WCAG 2.1 / 2.2 AA",
   });
 }

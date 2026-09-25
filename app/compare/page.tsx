@@ -41,7 +41,7 @@ type Tool = {
 const tools: Tool[] = [
   {
     name: "axle",
-    url: "https://axle-iota.vercel.app",
+    url: "https://axlescan.com",
     engine: "axe-core 4.11 (same as below)",
     ci: "GitHub Action + npm CLI + Netlify / Cloudflare / Vercel / WordPress / VSCode / Storybook · MCP server for Claude / Cursor / Cline",
     ai: "Claude Sonnet code-fix diffs in PR comments + axle-mcp explain_violation",
@@ -96,7 +96,7 @@ const tools: Tool[] = [
   },
   {
     name: "accessiBe / UserWay / AudioEye",
-    url: "https://axle-iota.vercel.app/why-not-overlay",
+    url: "https://axlescan.com/why-not-overlay",
     engine: "Runtime overlay widget — not a scanner",
     ci: "Doesn't apply",
     ai: "Auto-injected ARIA at runtime",

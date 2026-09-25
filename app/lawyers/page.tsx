@@ -127,7 +127,7 @@ on every code deployment to its primary consumer-facing web property
 this Decree.
 
 Acceptable automated scanning solutions include but are not limited to
-axle (axle-iota.vercel.app), Pa11y, Deque axe DevTools, or any other
+axle (axlescan.com), Pa11y, Deque axe DevTools, or any other
 tool that:
 
   (a) evaluates the Site against the WCAG 2.1 AA success criteria using

@@ -3,7 +3,7 @@ import { kv } from "@/lib/billing/kv";
 
 export const runtime = "nodejs";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
 
 /**
  * /api/slack/oauth — Slack OAuth callback.

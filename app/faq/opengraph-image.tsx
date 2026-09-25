@@ -11,6 +11,6 @@ export default function OG() {
     title: "axle — frequently asked questions.",
     subtitle:
       "How it differs from overlays, EAA/ADA/תקנה 35 scope, pricing, deployment, privacy.",
-    footer: "axle-iota.vercel.app  ·  axe-core 4.11  ·  WCAG 2.1 / 2.2 AA",
+    footer: "axlescan.com  ·  axe-core 4.11  ·  WCAG 2.1 / 2.2 AA",
   });
 }

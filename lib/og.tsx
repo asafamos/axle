@@ -97,7 +97,7 @@ export function renderGuideOg(args: {
             color: "#94a3b8",
           }}
         >
-          {(footer ?? "axle-iota.vercel.app  ·  WCAG 2.1 / 2.2 AA  ·  EAA 2025").split("  ·  ").flatMap((part, i, arr) =>
+          {(footer ?? "axlescan.com  ·  WCAG 2.1 / 2.2 AA  ·  EAA 2025").split("  ·  ").flatMap((part, i, arr) =>
             i < arr.length - 1
               ? [<div key={i}>{part}</div>, <div key={`sep-${i}`}>·</div>]
               : [<div key={i}>{part}</div>]

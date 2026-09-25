@@ -79,7 +79,7 @@ export async function POST(req: Request) {
   await redis.lpush(`axle:customer:${record.customerId}:statements`, id);
 
   const site =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
   return NextResponse.json({
     id,
     url: `${site}/s/${id}`,

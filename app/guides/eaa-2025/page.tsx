@@ -426,7 +426,7 @@ export default function EaaGuidePage() {
               <strong>Accessibility statement generator</strong> that meets
               EAA statement requirements, with a hosted verified URL (
               <code className="mx-1 rounded bg-slate-100 px-1 text-xs">
-                axle-iota.vercel.app/s/&lt;id&gt;
+                axlescan.com/s/&lt;id&gt;
               </code>
               ). Tamper-evident, timestamped, indexable — exactly what a
               regulator wants to see linked from your footer.

@@ -11,6 +11,6 @@ export default function OG() {
     title: "Ustawa o dostępności — dla developerów.",
     subtitle:
       "UOKiK, kary do 10% obrotu, deklaracja dostępności, CI pipeline.",
-    footer: "axle-iota.vercel.app  ·  EN 301 549 · WCAG 2.1 AA  ·  28 czerwca 2025",
+    footer: "axlescan.com  ·  EN 301 549 · WCAG 2.1 AA  ·  28 czerwca 2025",
   });
 }

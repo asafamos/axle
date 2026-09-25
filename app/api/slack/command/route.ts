@@ -4,7 +4,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
 
 /**
  * /api/slack/command — handler for the /axle slash command.

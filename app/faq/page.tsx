@@ -139,7 +139,7 @@ const sections: { title: string; items: QA[] }[] = [
             <p>
               Yes. The Hebrew statement generator at{" "}
               <Link href="/statement" className="underline">
-                axle-iota.vercel.app/statement
+                axlescan.com/statement
               </Link>{" "}
               produces a <em>הצהרת נגישות</em> aligned with regulation 35(ד) —
               accessibility coordinator contact, escalation to נציב שוויון, methodology,
@@ -246,7 +246,7 @@ const sections: { title: string; items: QA[] }[] = [
               signup required; the axe-core engine is open source.
             </p>
             <p className="mt-3">
-              The hosted service at axle-iota.vercel.app is optional and only
+              The hosted service at axlescan.com is optional and only
               involved if you (a) use the web-scan form on the homepage, (b) use the
               paid hosted AI-fix feature, or (c) publish a verified statement URL.
             </p>
@@ -433,7 +433,7 @@ const sections: { title: string; items: QA[] }[] = [
         a: (
           <p>
             On paid plans, the statement can be published at{" "}
-            <code>axle-iota.vercel.app/s/&lt;id&gt;</code> with a cryptographic hash of
+            <code>axlescan.com/s/&lt;id&gt;</code> with a cryptographic hash of
             the content and a timestamp. When regulators ask for a statement URL in
             disclosure documents, that verified URL is tamper-evident — if the
             statement is modified later, the hash stops matching. This is meaningful

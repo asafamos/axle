@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
   if (redis) {
     const site =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app";
+      process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com";
     const ids = await redis
       .lrange<string>(`axle:customer:${record.customerId}:statements`, 0, 49)
       .catch(() => []);

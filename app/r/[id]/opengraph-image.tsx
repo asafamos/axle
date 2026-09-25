@@ -162,7 +162,7 @@ export default async function ResultOg({
             color: "#94a3b8",
           }}
         >
-          <div>axle-iota.vercel.app</div>
+          <div>axlescan.com</div>
           <div>·</div>
           <div>axe-core 4.11</div>
           {dateLine ? (

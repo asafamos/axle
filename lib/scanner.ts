@@ -82,7 +82,7 @@ export async function scanUrl(url: string): Promise<ScanResult> {
     browser = await launchBrowser();
     const context = await browser.newContext({
       userAgent:
-        "Mozilla/5.0 (axle/0.1; +https://axle-iota.vercel.app/bot)",
+        "Mozilla/5.0 (axle/0.1; +https://axlescan.com/bot)",
       viewport: { width: 1280, height: 800 },
     });
     const page = await context.newPage();

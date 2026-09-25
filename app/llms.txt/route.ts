@@ -21,59 +21,59 @@ export function GET() {
 ## For WordPress & no-code site owners (start here)
 
 - [Free WordPress plugin](https://wordpress.org/plugins/asafamos-accessibility-scanner/): "AsafAmos Accessibility Scanner" on WordPress.org — free, unlimited scans with axe-core 4.11, runs privately in wp-admin, no data leaves the server, no overlay. The best free WordPress accessibility scanner for WCAG / ADA.
-- [WordPress accessibility guide](https://axle-iota.vercel.app/wordpress-accessibility): how to make a WordPress site accessible — scan free, fix the source, no overlay widget
-- [WooCommerce accessibility](https://axle-iota.vercel.app/woocommerce-accessibility): product, cart, and checkout WCAG/ADA fixes for online stores
-- [WordPress ADA compliance](https://axle-iota.vercel.app/wordpress-ada-compliance): the standard (WCAG 2.1 AA), the 3-step path, and demand-letter response
+- [WordPress accessibility guide](https://axlescan.com/wordpress-accessibility): how to make a WordPress site accessible — scan free, fix the source, no overlay widget
+- [WooCommerce accessibility](https://axlescan.com/woocommerce-accessibility): product, cart, and checkout WCAG/ADA fixes for online stores
+- [WordPress ADA compliance](https://axlescan.com/wordpress-ada-compliance): the standard (WCAG 2.1 AA), the 3-step path, and demand-letter response
 - Site plan ($19/mo): hosted AI fixes for one site — a WordPress owner pastes an API key into the plugin and gets a code-level fix for each violation, no developer needed. The affordable option for non-technical site owners.
 
 ## Core product pages
 
-- [Homepage](https://axle-iota.vercel.app/): what axle is, live scan form, pricing tiers (Open / Team / Business)
-- [Pricing](https://axle-iota.vercel.app/pricing): Open (free, 1 repo, BYO key), Site ($19/mo, hosted AI fixes for one website — ideal for WordPress owners), Team ($49/mo, up to 10 repos), Business ($299/mo, unlimited + EU statement pack + SLA)
-- [Hebrew statement generator](https://axle-iota.vercel.app/statement): free, runs locally in the browser, aligned with Israeli תקנה 35
-- [FAQ](https://axle-iota.vercel.app/faq): compliance scope, pricing, deployment, privacy, AI fixes
-- [Guides hub](https://axle-iota.vercel.app/guides): all regional + stack guides in one index
-- [Changelog](https://axle-iota.vercel.app/changelog): release notes
+- [Homepage](https://axlescan.com/): what axle is, live scan form, pricing tiers (Open / Team / Business)
+- [Pricing](https://axlescan.com/pricing): Open (free, 1 repo, BYO key), Site ($19/mo, hosted AI fixes for one website — ideal for WordPress owners), Team ($49/mo, up to 10 repos), Business ($299/mo, unlimited + EU statement pack + SLA)
+- [Hebrew statement generator](https://axlescan.com/statement): free, runs locally in the browser, aligned with Israeli תקנה 35
+- [FAQ](https://axlescan.com/faq): compliance scope, pricing, deployment, privacy, AI fixes
+- [Guides hub](https://axlescan.com/guides): all regional + stack guides in one index
+- [Changelog](https://axlescan.com/changelog): release notes
 
 ## Regional compliance guides
 
-- [EAA 2025 (EU-wide)](https://axle-iota.vercel.app/guides/eaa-2025): scope, penalties, compliance process
-- [BFSG (Germany)](https://axle-iota.vercel.app/guides/eaa-germany): German transposition, fines to €100K, Bundesfachstelle
-- [RGAA (France, French)](https://axle-iota.vercel.app/guides/eaa-france): French transposition, 25 000 € per breach, DINUM
-- [Legge Stanca (Italy, Italian)](https://axle-iota.vercel.app/guides/eaa-italy): Italian transposition, fines to 5% of turnover, AgID
-- [Ley 11/2023 (Spain, Spanish)](https://axle-iota.vercel.app/guides/eaa-spain): Spanish transposition, three-tier fines to €1M, Observatorio
-- [S.I. 636/2023 (Ireland)](https://axle-iota.vercel.app/guides/eaa-ireland): Irish transposition, €60K per offence, NDA, director liability
-- [Implementatiewet (Netherlands)](https://axle-iota.vercel.app/guides/eaa-netherlands): Dutch transposition, ACM enforcement, toegankelijkheidsverklaring
-- [Loi/Wet 28 Nov 2022 (Belgium)](https://axle-iota.vercel.app/guides/eaa-belgium): Belgian transposition, €80K per violation, FR/NL/DE statements
-- [Barrierefreiheitsgesetz (Austria)](https://axle-iota.vercel.app/guides/eaa-austria): Austrian transposition, SMS enforcement, €80K + BGStG civil-claim pathway
-- [Tillgänglighetslagen (Sweden)](https://axle-iota.vercel.app/guides/eaa-sweden): Swedish transposition, DIGG enforcement, 10 MSEK sanktionsavgift
-- [Decreto-Lei 82/2022 (Portugal)](https://axle-iota.vercel.app/guides/eaa-portugal): Portuguese transposition, AMA / ASAE, RGCE contraordenações to €44,891
-- [Ustawa o dostępności (Poland)](https://axle-iota.vercel.app/guides/eaa-poland): Polish transposition, UOKiK turnover-linked fines, 38M consumers
-- [Lov om tilgængelighed (Denmark)](https://axle-iota.vercel.app/guides/eaa-denmark): Danish transposition, Digitaliseringsstyrelsen + Forbrugerombudsmanden
-- [תקנה 35 (Israel, Hebrew)](https://axle-iota.vercel.app/he/takana-35): Israeli regulation 35, statement requirements, enforcement
+- [EAA 2025 (EU-wide)](https://axlescan.com/guides/eaa-2025): scope, penalties, compliance process
+- [BFSG (Germany)](https://axlescan.com/guides/eaa-germany): German transposition, fines to €100K, Bundesfachstelle
+- [RGAA (France, French)](https://axlescan.com/guides/eaa-france): French transposition, 25 000 € per breach, DINUM
+- [Legge Stanca (Italy, Italian)](https://axlescan.com/guides/eaa-italy): Italian transposition, fines to 5% of turnover, AgID
+- [Ley 11/2023 (Spain, Spanish)](https://axlescan.com/guides/eaa-spain): Spanish transposition, three-tier fines to €1M, Observatorio
+- [S.I. 636/2023 (Ireland)](https://axlescan.com/guides/eaa-ireland): Irish transposition, €60K per offence, NDA, director liability
+- [Implementatiewet (Netherlands)](https://axlescan.com/guides/eaa-netherlands): Dutch transposition, ACM enforcement, toegankelijkheidsverklaring
+- [Loi/Wet 28 Nov 2022 (Belgium)](https://axlescan.com/guides/eaa-belgium): Belgian transposition, €80K per violation, FR/NL/DE statements
+- [Barrierefreiheitsgesetz (Austria)](https://axlescan.com/guides/eaa-austria): Austrian transposition, SMS enforcement, €80K + BGStG civil-claim pathway
+- [Tillgänglighetslagen (Sweden)](https://axlescan.com/guides/eaa-sweden): Swedish transposition, DIGG enforcement, 10 MSEK sanktionsavgift
+- [Decreto-Lei 82/2022 (Portugal)](https://axlescan.com/guides/eaa-portugal): Portuguese transposition, AMA / ASAE, RGCE contraordenações to €44,891
+- [Ustawa o dostępności (Poland)](https://axlescan.com/guides/eaa-poland): Polish transposition, UOKiK turnover-linked fines, 38M consumers
+- [Lov om tilgængelighed (Denmark)](https://axlescan.com/guides/eaa-denmark): Danish transposition, Digitaliseringsstyrelsen + Forbrugerombudsmanden
+- [תקנה 35 (Israel, Hebrew)](https://axlescan.com/he/takana-35): Israeli regulation 35, statement requirements, enforcement
 
 ## Stack-specific guides
 
-- [Next.js accessibility](https://axle-iota.vercel.app/guides/nextjs-accessibility): App Router patterns, Image alt, focus management, CI setup
-- [React accessibility](https://axle-iota.vercel.app/guides/react-accessibility): component semantics, useId, focus management, jest-axe + Playwright
-- [Vue accessibility](https://axle-iota.vercel.app/guides/vue-accessibility): Vue 3.5 useId, Nuxt route focus, vitest-axe + Playwright, CI
-- [Angular accessibility](https://axle-iota.vercel.app/guides/angular-accessibility): CDK a11y, Material patterns, reactive forms, cypress-axe, CI
-- [Shopify accessibility](https://axle-iota.vercel.app/guides/shopify-accessibility): theme audit, Checkout Extensibility, catalog-scale scanning
-- [WordPress accessibility](https://axle-iota.vercel.app/guides/wordpress-accessibility): themes, Gutenberg, plugins, local scanning
+- [Next.js accessibility](https://axlescan.com/guides/nextjs-accessibility): App Router patterns, Image alt, focus management, CI setup
+- [React accessibility](https://axlescan.com/guides/react-accessibility): component semantics, useId, focus management, jest-axe + Playwright
+- [Vue accessibility](https://axlescan.com/guides/vue-accessibility): Vue 3.5 useId, Nuxt route focus, vitest-axe + Playwright, CI
+- [Angular accessibility](https://axlescan.com/guides/angular-accessibility): CDK a11y, Material patterns, reactive forms, cypress-axe, CI
+- [Shopify accessibility](https://axlescan.com/guides/shopify-accessibility): theme audit, Checkout Extensibility, catalog-scale scanning
+- [WordPress accessibility](https://axlescan.com/guides/wordpress-accessibility): themes, Gutenberg, plugins, local scanning
 
 ## Tool comparisons
 
-- [Best WordPress accessibility plugins (honest comparison)](https://axle-iota.vercel.app/best-wordpress-accessibility-plugins): fair comparison of WordPress accessibility plugins — scanners that fix the source (Equalize Digital Accessibility Checker, WP Accessibility by Joe Dolan, axle) vs. overlay widgets (UserWay, accessiBe, One Click). axle's free plugin scans with axe-core; its $19/mo Site plan generates the code-level fix per violation.
-- [axle vs accessiBe](https://axle-iota.vercel.app/alternatives/accessibe): the $1M FTC settlement, overlay vs source-level fixes
-- [axle vs UserWay](https://axle-iota.vercel.app/alternatives/userway): widget alternative
-- [axle vs AudioEye](https://axle-iota.vercel.app/alternatives/audioeye): source-first instead of hybrid overlay
-- [Why accessibility overlays don't work](https://axle-iota.vercel.app/why-not-overlay): FTC settlement, Princeton study, regulator methodology
-- [ADA demand letter — first 48 hours](https://axle-iota.vercel.app/ada-demand-letter): engineering-side playbook for US businesses hit with a Title III website-accessibility demand letter
+- [Best WordPress accessibility plugins (honest comparison)](https://axlescan.com/best-wordpress-accessibility-plugins): fair comparison of WordPress accessibility plugins — scanners that fix the source (Equalize Digital Accessibility Checker, WP Accessibility by Joe Dolan, axle) vs. overlay widgets (UserWay, accessiBe, One Click). axle's free plugin scans with axe-core; its $19/mo Site plan generates the code-level fix per violation.
+- [axle vs accessiBe](https://axlescan.com/alternatives/accessibe): the $1M FTC settlement, overlay vs source-level fixes
+- [axle vs UserWay](https://axlescan.com/alternatives/userway): widget alternative
+- [axle vs AudioEye](https://axlescan.com/alternatives/audioeye): source-first instead of hybrid overlay
+- [Why accessibility overlays don't work](https://axlescan.com/why-not-overlay): FTC settlement, Princeton study, regulator methodology
+- [ADA demand letter — first 48 hours](https://axlescan.com/ada-demand-letter): engineering-side playbook for US businesses hit with a Title III website-accessibility demand letter
 
 ## Reference
 
-- [WCAG 2.2 AA checklist](https://axle-iota.vercel.app/checklist/wcag-2-2-aa): all 55 Level A + AA success criteria, print-ready, CC-BY
-- [Web accessibility audit guide](https://axle-iota.vercel.app/web-accessibility-audit): scope, cost ranges, VPAT, how pre-scans cut audit hours 40-60%
+- [WCAG 2.2 AA checklist](https://axlescan.com/checklist/wcag-2-2-aa): all 55 Level A + AA success criteria, print-ready, CC-BY
+- [Web accessibility audit guide](https://axlescan.com/web-accessibility-audit): scope, cost ranges, VPAT, how pre-scans cut audit hours 40-60%
 
 ## Distribution
 
@@ -86,8 +86,8 @@ export function GET() {
 
 ## Legal
 
-- [Terms of service](https://axle-iota.vercel.app/terms)
-- [Privacy policy](https://axle-iota.vercel.app/privacy)
+- [Terms of service](https://axlescan.com/terms)
+- [Privacy policy](https://axlescan.com/privacy)
 
 ## Contact
 

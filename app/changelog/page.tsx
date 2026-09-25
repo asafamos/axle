@@ -68,7 +68,7 @@ const ENTRIES: Entry[] = [
     title: "/lawyers vertical + /certified directory",
     body: [
       "Shipped /lawyers — dedicated vertical for ADA Title III defense and plaintiff law firms. Drop-in consent-decree language naming axle alongside Pa11y and Deque axe DevTools. 30% recurring partner program.",
-      "Launched /certified — public directory of WCAG 2.2 AA-verified sites. Network-effect play. Bootstrap entry: axle-iota.vercel.app with permalink /r/PCFp1QGemnC184g2. 30-day re-verification cycle.",
+      "Launched /certified — public directory of WCAG 2.2 AA-verified sites. Network-effect play. Bootstrap entry: axlescan.com with permalink /r/PCFp1QGemnC184g2. 30-day re-verification cycle.",
       "ChatGPT GPT + Claude tool-use integration: /openapi.yaml + /.well-known/ai-plugin.json now live, /gpt landing with copy-paste recipes for both LLM ecosystems.",
     ],
   },
@@ -92,7 +92,7 @@ const ENTRIES: Entry[] = [
       "Full accessibility-compliance CI ships with the initial release: every PR is scanned by axe-core 4.11 across WCAG 2.1 / 2.2 AA rule sets, and AI-generated code fixes are posted inline via Claude Sonnet 4.6.",
       "Compliance artifacts shipped from day one: Hebrew accessibility statement generator aligned with תקנה 35, embeddable compliance badge, and audit-trail JSON + markdown reports uploaded to every workflow run.",
       "Billing rail activated via Polar.sh — Israeli founders can accept USD payments globally without setting up a US LLC. First real subscription processed end-to-end on launch day.",
-      "Free distribution across GitHub Marketplace (asafamos/axle-action), npm (axle-cli + axle-netlify-plugin), and the hosted web UI at axle-iota.vercel.app. Paid Team tier unlocks hosted AI fixes, nightly monitoring, and audit PDFs.",
+      "Free distribution across GitHub Marketplace (asafamos/axle-action), npm (axle-cli + axle-netlify-plugin), and the hosted web UI at axlescan.com. Paid Team tier unlocks hosted AI fixes, nightly monitoring, and audit PDFs.",
     ],
   },
 ];

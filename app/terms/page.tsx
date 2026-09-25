@@ -22,7 +22,7 @@ export default function TermsPage() {
           axle is a set of developer tools (a GitHub Action, a CLI, and
           platform plugins for Netlify, Cloudflare Pages, Vercel, and WordPress)
           plus a hosted scanning service at{" "}
-          <code>axle-iota.vercel.app</code> that runs axe-core 4.11 against URLs
+          <code>axlescan.com</code> that runs axe-core 4.11 against URLs
           you submit. By using any of these tools or the hosted service, you
           agree to these terms.
         </p>

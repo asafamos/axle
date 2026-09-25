@@ -11,6 +11,6 @@ export default function OG() {
     title: "RGAA + EAA pour développeurs.",
     subtitle:
       "Loi 11-2023 · Sanctions 25 000 € · Référentiel Général d'Amélioration de l'Accessibilité 4.1.2",
-    footer: "axle-iota.vercel.app  ·  WCAG 2.1 AA  ·  DINUM  ·  Défenseur des droits",
+    footer: "axlescan.com  ·  WCAG 2.1 AA  ·  DINUM  ·  Défenseur des droits",
   });
 }

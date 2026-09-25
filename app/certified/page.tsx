@@ -35,7 +35,7 @@ const certified: {
   certifiedAt: string;
 }[] = [
   {
-    domain: "axle-iota.vercel.app",
+    domain: "axlescan.com",
     description: "axle's own marketing site — eat our own dogfood. Continuous CI on every PR.",
     category: "Developer tools",
     scanUrl: "/r/PCFp1QGemnC184g2",
@@ -208,9 +208,9 @@ export default function CertifiedPage() {
             re-pass. Sample embed:
           </p>
           <pre tabIndex={0} className="mt-3 overflow-x-auto rounded-md bg-emerald-900 p-3 text-xs text-emerald-100">
-{`<a href="https://axle-iota.vercel.app/certified">
+{`<a href="https://axlescan.com/certified">
   <img
-    src="https://axle-iota.vercel.app/api/badge?url=https://yoursite.com&standard=WCAG%202.2%20AA"
+    src="https://axlescan.com/api/badge?url=https://yoursite.com&standard=WCAG%202.2%20AA"
     alt="axle Certified — WCAG 2.2 AA"
   />
 </a>`}

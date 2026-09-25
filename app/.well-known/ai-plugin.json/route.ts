@@ -28,11 +28,11 @@ export function GET() {
     },
     api: {
       type: "openapi",
-      url: "https://axle-iota.vercel.app/openapi.yaml",
+      url: "https://axlescan.com/openapi.yaml",
     },
-    logo_url: "https://axle-iota.vercel.app/opengraph-image",
+    logo_url: "https://axlescan.com/opengraph-image",
     contact_email: "asaf@amoss.co.il",
-    legal_info_url: "https://axle-iota.vercel.app/terms",
+    legal_info_url: "https://axlescan.com/terms",
   };
   return NextResponse.json(manifest);
 }

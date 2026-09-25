@@ -11,6 +11,6 @@ export default function OG() {
     title: "Next.js accessibility — the practical guide.",
     subtitle:
       "App Router specifics, focus management, Image alt text, and a CI pipeline that blocks regressions.",
-    footer: "axle-iota.vercel.app  ·  Next 14 / 15 / 16  ·  WCAG 2.1 / 2.2 AA",
+    footer: "axlescan.com  ·  Next 14 / 15 / 16  ·  WCAG 2.1 / 2.2 AA",
   });
 }

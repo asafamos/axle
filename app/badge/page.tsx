@@ -13,7 +13,7 @@ const STATES = [
 // used for canonical / sitemap. Hardcoding axle.dev (which doesn't resolve)
 // in badge embed snippets sent users to a dead page when they clicked the
 // shield. Strip trailing slash so the snippets compose cleanly.
-const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://axle-iota.vercel.app").replace(/\/$/, "");
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://axlescan.com").replace(/\/$/, "");
 
 export default function BadgePage() {
   const [url, setUrl] = useState("https://example.com");

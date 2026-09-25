@@ -532,7 +532,7 @@ function FeatureGrid() {
     },
     {
       title: "Shareable scan results",
-      desc: "Every scan auto-generates a public URL like axle-iota.vercel.app/r/<id> with a custom OG image. Send to a stakeholder, drop in Slack, link from your accessibility statement. 30-day TTL.",
+      desc: "Every scan auto-generates a public URL like axlescan.com/r/<id> with a custom OG image. Send to a stakeholder, drop in Slack, link from your accessibility statement. 30-day TTL.",
       icon: "🔗",
     },
   ];

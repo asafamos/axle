@@ -290,7 +290,7 @@ export default function TakanaPage() {
               <strong>URL מאומת להצהרה</strong> (Team plan) — במקום להטמיע את
               ההצהרה כ-HTML בתוך האתר שלכם, מפרסמים ב-
               <code className="mx-1 rounded bg-slate-100 px-1 text-xs">
-                axle-iota.vercel.app/s/&lt;id&gt;
+                axlescan.com/s/&lt;id&gt;
               </code>{" "}
               ומקשרים מה-footer. tamper-evident, עם חותמת זמן. עורך דין של תובע
               יכול לוודא שההצהרה לא שונתה.

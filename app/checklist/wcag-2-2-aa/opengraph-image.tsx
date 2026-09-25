@@ -11,6 +11,6 @@ export default function OG() {
     title: "WCAG 2.2 AA checklist.",
     subtitle:
       "All 55 Level A + AA success criteria. Plain-English test steps. Print-ready. Always free.",
-    footer: "axle-iota.vercel.app  ·  Always updated  ·  Share freely with attribution",
+    footer: "axlescan.com  ·  Always updated  ·  Share freely with attribution",
   });
 }

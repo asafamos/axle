@@ -11,6 +11,6 @@ export default function OG() {
     title: "BFSG compliance for developers.",
     subtitle:
       "Fines up to €100,000 per violation. Enforced 28 June 2025. A practical CI-first guide.",
-    footer: "axle-iota.vercel.app  ·  WCAG 2.1 AA  ·  EN 301 549  ·  BITV 2.0",
+    footer: "axlescan.com  ·  WCAG 2.1 AA  ·  EN 301 549  ·  BITV 2.0",
   });
 }

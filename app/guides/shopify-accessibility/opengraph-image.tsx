@@ -11,6 +11,6 @@ export default function OG() {
     title: "Shopify accessibility — the practical guide.",
     subtitle:
       "Theme audit, product pages, Checkout Extensibility, app install risks, and catalog-scale scanning.",
-    footer: "axle-iota.vercel.app  ·  Online Store 2.0  ·  WCAG 2.1 / 2.2 AA",
+    footer: "axlescan.com  ·  Online Store 2.0  ·  WCAG 2.1 / 2.2 AA",
   });
 }

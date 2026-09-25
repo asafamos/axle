@@ -11,6 +11,6 @@ export default function OG() {
     title: "axle vs UserWay — real fixes, not a widget.",
     subtitle:
       "CI scanning + Claude code-fix diffs + published verified statement URL. $0 free tier.",
-    footer: "axle-iota.vercel.app  ·  No overlay widget  ·  EAA 2025 ready",
+    footer: "axlescan.com  ·  No overlay widget  ·  EAA 2025 ready",
   });
 }

@@ -240,7 +240,7 @@ export default function IntegrationsPage() {
 
         <section className="mt-10 flex flex-wrap gap-3">
           <a
-            href="https://axle-iota.vercel.app/openapi.yaml"
+            href="https://axlescan.com/openapi.yaml"
             target="_blank"
             rel="noopener"
             className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"

@@ -34,9 +34,9 @@ info:
     email: asaf@amoss.co.il
   license:
     name: MIT (extension code) / proprietary (hosted scan service)
-    url: https://axle-iota.vercel.app/terms
+    url: https://axlescan.com/terms
 servers:
-  - url: https://axle-iota.vercel.app
+  - url: https://axlescan.com
     description: Production hosted axle scanner
 paths:
   /api/scan:
@@ -95,7 +95,7 @@ components:
           example: "9Af5ha3B7MocgpMf"
         permalink:
           type: string
-          description: Path on axle-iota.vercel.app where the public result is rendered
+          description: Path on axlescan.com where the public result is rendered
           example: "/r/9Af5ha3B7MocgpMf"
         summary:
           type: object

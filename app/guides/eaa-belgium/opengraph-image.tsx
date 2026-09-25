@@ -11,6 +11,6 @@ export default function OG() {
     title: "EAA in Belgium — the 28 November 2022 law.",
     subtitle:
       "SPF Économie / FOD Economie enforcement, €80k fines, FR/NL/DE statements, CI pipeline.",
-    footer: "axle-iota.vercel.app  ·  EN 301 549 · WCAG 2.1 AA  ·  28 June 2025",
+    footer: "axlescan.com  ·  EN 301 549 · WCAG 2.1 AA  ·  28 June 2025",
   });
 }

@@ -11,6 +11,6 @@ export default function OG() {
     title: "Accessibility compliance guides.",
     subtitle:
       "EAA transpositions per country, תקנה 35 for Israel, and stack-specific engineering guides.",
-    footer: "axle-iota.vercel.app  ·  8 regions  ·  4 stacks",
+    footer: "axlescan.com  ·  8 regions  ·  4 stacks",
   });
 }
