@@ -1,27 +1,31 @@
 import { NextResponse } from "next/server";
 import { kv } from "@/lib/billing/kv";
 import { isInternalEmail } from "@/lib/internal";
-import { sendLeadNotificationEmail } from "@/lib/billing/email";
+import {
+  sendLeadNotificationEmail,
+  sendScanReportEmail,
+} from "@/lib/billing/email";
+import { scanUrl } from "@/lib/scanner";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const URL_MAX = 500;
 const SUSPICIOUS_TLD = /\.(local|test|invalid|example)$/i;
 
 /**
- * /api/free-scan — accepts a URL + email pair, queues a deeper scan,
- * and the scan output is delivered to the email. The actual scan run
- * happens out-of-band (current implementation: stored as a queue
- * entry; an operator picks up via /admin and triggers the email).
+ * /api/free-scan — accepts a URL + email, RUNS the scan now, emails the report,
+ * and returns the results so the page can show them inline immediately.
  *
- * For the Wave 7 launch, we get the email captured + queued; the
- * delivery side is wired through the existing scan + email pipeline.
+ * This replaces the previous design, which only queued the request for a human
+ * operator to pick up from /admin and email manually — in practice that step
+ * never happened, so every "check your inbox" promise went unfulfilled. Now the
+ * scan runs synchronously (maxDuration 60s), results come straight back to the
+ * caller, and the email is a best-effort copy (never blocks the response).
  *
- * Anti-abuse: lightweight URL validation (must parse, http/https only,
- * no obvious internal hostnames). Email format check. Per-email rate
- * limit at 5 scans / day to prevent the form being used as an
- * adversarial scanner against arbitrary targets.
+ * Anti-abuse: URL must parse as http/https and not be an internal hostname;
+ * per-email rate limit of 5 scans/day.
  */
 export async function POST(req: Request) {
   let body: { email?: string; url?: string; source?: string };
@@ -48,7 +52,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Could not parse URL" }, { status: 400 });
   }
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    return NextResponse.json({ error: "Only http/https URLs are accepted" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Only http/https URLs are accepted" },
+      { status: 400 },
+    );
   }
   if (
     parsed.hostname === "localhost" ||
@@ -58,84 +65,124 @@ export async function POST(req: Request) {
     SUSPICIOUS_TLD.test(parsed.hostname)
   ) {
     return NextResponse.json(
-      { error: "Internal/test hostnames are not accepted on the public scan endpoint" },
+      {
+        error:
+          "Internal/test hostnames are not accepted on the public scan endpoint",
+      },
       { status: 400 },
     );
   }
 
   const redis = kv();
-  if (!redis) {
-    return NextResponse.json({ ok: true, queued: false });
-  }
 
-  // Per-email per-day rate limit
-  try {
-    const day = new Date().toISOString().slice(0, 10);
-    const rateKey = `axle:free-scan:rate:${email}:${day}`;
-    const used = Number((await redis.get(rateKey)) || 0);
-    if (used >= 5) {
-      return NextResponse.json(
-        { error: "Daily free-scan limit reached for this email. Try again tomorrow." },
-        { status: 429 },
-      );
+  // Per-email per-day rate limit (best-effort; never blocks on infra failure).
+  if (redis) {
+    try {
+      const day = new Date().toISOString().slice(0, 10);
+      const rateKey = `axle:free-scan:rate:${email}:${day}`;
+      const used = Number((await redis.get(rateKey)) || 0);
+      if (used >= 5) {
+        return NextResponse.json(
+          {
+            error:
+              "Daily free-scan limit reached for this email. Try again tomorrow.",
+          },
+          { status: 429 },
+        );
+      }
+      await redis.incr(rateKey);
+      await redis.expire(rateKey, 60 * 60 * 26);
+    } catch {
+      /* rate-limit infra down — do not block the user */
     }
-    await redis.incr(rateKey);
-    await redis.expire(rateKey, 60 * 60 * 26);
-  } catch {
-    // If rate-limit infra fails, do not block the user.
   }
 
-  const record = {
-    email,
-    url: parsed.toString().slice(0, URL_MAX),
-    host: parsed.hostname,
-    source: typeof body.source === "string" ? body.source.slice(0, 40) : "free-scan-page",
-    status: "queued" as const,
-    queued_at: Date.now(),
-    queued_at_iso: new Date().toISOString(),
-    ua: req.headers.get("user-agent")?.slice(0, 200) || "",
-  };
+  const source =
+    typeof body.source === "string" ? body.source.slice(0, 40) : "free-scan-page";
 
-  // New email vs idempotent re-submit — so the founder is pinged once per lead.
-  // Fail-closed: a lookup error is treated as not-new (skip notification).
-  const isNew = !(await redis.get(`axle:lead:${email}`).catch(() => "x"));
-
-  try {
-    // The job ID is the queued_at timestamp prefixed by the email — unique enough.
-    const id = `${record.queued_at}-${email}`;
-    await redis.set(`axle:free-scan:job:${id}`, JSON.stringify(record));
-    await redis.lpush("axle:free-scan:queue", id);
-
-    // Also write the email into the general lead pipeline so the
-    // /admin dashboard sees a unified leads view.
-    await redis.set(`axle:lead:${email}`, JSON.stringify({
-      email,
-      url: record.url,
-      source: `free-scan:${record.source}`,
-      created_at: record.queued_at,
-      created_at_iso: record.queued_at_iso,
-    }));
-    await redis.lpush("axle:leads:list", email);
-
-    const day = new Date().toISOString().slice(0, 10);
-    await redis.incr("axle:stats:free-scan:all");
-    await redis.incr(`axle:stats:free-scan:${day}`);
-    await redis.expire(`axle:stats:free-scan:${day}`, 60 * 60 * 48);
-    await redis.incr("axle:stats:leads:all");
-    await redis.incr(`axle:stats:leads:${day}`);
-    await redis.expire(`axle:stats:leads:${day}`, 60 * 60 * 48);
-  } catch {
-    return NextResponse.json({ ok: true, queued: false });
+  // Capture the lead + counters (best-effort). Done before the scan so a lead is
+  // never lost even if the scan then fails.
+  const isNew = redis
+    ? !(await redis.get(`axle:lead:${email}`).catch(() => "x"))
+    : true;
+  if (redis) {
+    try {
+      const now = Date.now();
+      const day = new Date().toISOString().slice(0, 10);
+      await redis.set(
+        `axle:lead:${email}`,
+        JSON.stringify({
+          email,
+          url: parsed.toString().slice(0, URL_MAX),
+          source: `free-scan:${source}`,
+          created_at: now,
+          created_at_iso: new Date(now).toISOString(),
+        }),
+      );
+      await redis.lpush("axle:leads:list", email);
+      await redis.incr("axle:stats:free-scan:all");
+      await redis.incr(`axle:stats:free-scan:${day}`);
+      await redis.expire(`axle:stats:free-scan:${day}`, 60 * 60 * 48);
+      await redis.incr("axle:stats:leads:all");
+      await redis.incr(`axle:stats:leads:${day}`);
+      await redis.expire(`axle:stats:leads:${day}`, 60 * 60 * 48);
+    } catch {
+      /* lead capture failed — continue; the scan is the priority */
+    }
   }
 
-  // Brand-new *external* lead → ping the founder. Best-effort, never blocks.
+  // Notify the founder of a genuinely new external lead (best-effort).
   if (isNew && !isInternalEmail(email)) {
     await sendLeadNotificationEmail({
       email,
-      url: record.url,
-      source: `free-scan:${record.source}`,
+      url: parsed.toString(),
+      source: `free-scan:${source}`,
     });
   }
 
-  return NextResponse.json({ ok: true, queued: true });
+  // Run the scan now.
+  let result;
+  try {
+    result = await scanUrl(parsed.toString());
+  } catch (err) {
+    console.warn(
+      `[free-scan] scan failed for ${parsed.hostname}: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return NextResponse.json({
+      ok: true,
+      scanned: false,
+      host: parsed.hostname,
+      message:
+        "We couldn't load that URL to scan it. Make sure it's a public page (not behind a login) and try again.",
+    });
+  }
+
+  const violations = result.violations.map((v) => ({
+    id: v.id,
+    impact: v.impact,
+    help: v.help,
+    helpUrl: v.helpUrl,
+    nodeCount: Array.isArray(v.nodes) ? v.nodes.length : 0,
+  }));
+
+  // Best-effort emailed copy (never blocks / throws).
+  await sendScanReportEmail({
+    to: email,
+    url: result.url,
+    violations,
+    summary: result.summary,
+    permalink: result.permalink ?? null,
+  });
+
+  return NextResponse.json({
+    ok: true,
+    scanned: true,
+    host: parsed.hostname,
+    title: result.title,
+    total: violations.length,
+    summary: result.summary,
+    // Cap the inline list; the email carries the same top slice.
+    violations: violations.slice(0, 20),
+    emailed: email,
+  });
 }

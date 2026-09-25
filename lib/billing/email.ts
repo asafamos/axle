@@ -344,3 +344,132 @@ export async function sendKeyDeliveryFailureAlert(alert: {
     );
   }
 }
+
+/**
+ * Send the free-scan report to the person who requested it. Best-effort: the
+ * results are ALSO returned to the page and shown inline, so a delivery
+ * failure never blocks the user — we only log it. This replaces the old
+ * "queue it and a human operator emails it manually" design, under which the
+ * report was, in practice, never sent at all.
+ */
+export async function sendScanReportEmail(opts: {
+  to: string;
+  url: string;
+  violations: Array<{
+    id: string;
+    impact: "minor" | "moderate" | "serious" | "critical" | null;
+    help: string;
+    helpUrl: string;
+    nodeCount: number;
+  }>;
+  summary: { critical: number; serious: number; moderate: number; minor: number };
+  permalink?: string | null;
+}): Promise<void> {
+  const r = resend();
+  if (!r) return;
+
+  const esc = (str: string) =>
+    str.replace(
+      /[&<>"']/g,
+      (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ||
+        c,
+    );
+
+  let host = opts.url;
+  try {
+    host = new URL(opts.url).hostname;
+  } catch {
+    /* keep raw url as the label */
+  }
+
+  const total = opts.violations.length;
+  const s = opts.summary;
+  const site = siteUrl();
+  const pluginUrl =
+    "https://wordpress.org/plugins/asafamos-accessibility-scanner/";
+  const top = opts.violations.slice(0, 12);
+  const nodeWord = (n: number) => `${n} element${n === 1 ? "" : "s"}`;
+
+  const headline =
+    total === 0
+      ? "No WCAG 2.1 / 2.2 AA violations were detected by automated testing."
+      : `Found ${total} issue type${total === 1 ? "" : "s"}: ${s.critical} critical · ${s.serious} serious · ${s.moderate} moderate · ${s.minor} minor.`;
+
+  const text = [
+    `Your accessibility scan for ${host}`,
+    "",
+    headline,
+    total === 0
+      ? "Automated tools catch roughly 57% of WCAG issues — a human review is still recommended."
+      : "",
+    "",
+    ...(top.length
+      ? [
+          "Top issues:",
+          ...top.map(
+            (v) =>
+              `- [${(v.impact || "issue").toUpperCase()}] ${v.id} — ${v.help} (${nodeWord(v.nodeCount)})`,
+          ),
+          "",
+        ]
+      : []),
+    opts.permalink ? `Full shareable report: ${opts.permalink}` : "",
+    "",
+    "Fix these on WordPress:",
+    `- Free plugin (re-scan anytime): ${pluginUrl}`,
+    `- Site plan ($19/mo) generates the code-level fix for each issue: ${site}/pricing`,
+    "",
+    "Reply to this email if you'd like help — it reaches a real person.",
+    "",
+    "axle provides remediation assistance, not a compliance certificate.",
+  ]
+    .filter((l) => l !== "")
+    .join("\n");
+
+  const rows = top
+    .map(
+      (v) =>
+        `<tr><td style="padding:4px 10px 4px 0;border-bottom:1px solid #eee;white-space:nowrap;"><strong>${(v.impact || "issue").toUpperCase()}</strong></td><td style="padding:4px 0;border-bottom:1px solid #eee;"><a href="${esc(v.helpUrl)}">${esc(v.id)}</a> — ${esc(v.help)} <span style="color:#888;">(${nodeWord(v.nodeCount)})</span></td></tr>`,
+    )
+    .join("");
+
+  const html = [
+    `<p>Your accessibility scan for <strong>${esc(host)}</strong>:</p>`,
+    `<p>${esc(headline)}</p>`,
+    total === 0
+      ? `<p style="color:#555;">Automated tools catch ~57% of WCAG issues — a human review is still recommended.</p>`
+      : `<table style="border-collapse:collapse;font-size:14px;">${rows}</table>`,
+    opts.permalink
+      ? `<p><a href="${esc(opts.permalink)}">View the full shareable report →</a></p>`
+      : "",
+    `<p><strong>Fix these on WordPress:</strong></p>`,
+    `<ul><li><a href="${pluginUrl}">Free plugin</a> — re-scan anytime.</li><li><a href="${site}/pricing">Site plan ($19/mo)</a> — generates the code-level fix for each issue.</li></ul>`,
+    `<p>Reply to this email if you'd like help — it reaches a real person.</p>`,
+    `<p style="color:#888;font-size:12px;">axle provides remediation assistance, not a compliance certificate.</p>`,
+  ].join("");
+
+  try {
+    const from = fromAddress();
+    const { error } = await r.emails.send({
+      from,
+      replyTo: "asaf@amoss.co.il",
+      to: opts.to,
+      subject:
+        total === 0
+          ? `Accessibility scan for ${host} — no automated issues found`
+          : `Accessibility scan for ${host} — ${total} issue${total === 1 ? "" : "s"} found`,
+      text,
+      html,
+    });
+    if (error) {
+      console.warn(
+        `[email] scan report to ${opts.to} rejected: ${typeof error === "object" ? JSON.stringify(error) : String(error)}`,
+      );
+    }
+  } catch (err) {
+    console.warn(
+      `[email] scan report to ${opts.to} threw: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+}
