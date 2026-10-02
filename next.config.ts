@@ -20,6 +20,23 @@ const nextConfig: NextConfig = {
   // playwright-core + @sparticuz/chromium must be left unbundled in the
   // server runtime so their internal file paths still resolve.
   serverExternalPackages: ["@sparticuz/chromium", "playwright-core"],
+  // The site moved to axlescan.com, but axle-iota.vercel.app is still attached
+  // to this project and already has pages in Google's index. Without a redirect
+  // it keeps serving a full duplicate at 200, so search traffic lands there and
+  // ranking signals never consolidate on the new domain. Send every page
+  // permanently (308) to the same path on axlescan.com. /api/* is deliberately
+  // excluded: the published WordPress plugin (<= 1.2.3), README badges and other
+  // integrations call the old host's API directly and must keep working.
+  async redirects() {
+    return [
+      {
+        source: "/:path((?!api(?:/|$)).*)",
+        has: [{ type: "host", value: "axle-iota.vercel.app" }],
+        destination: "https://axlescan.com/:path",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
