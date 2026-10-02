@@ -8,6 +8,15 @@ export function UtmTracker() {
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
+
+      // Owner opt-out: visit any page once with ?notrack=1 (and ?notrack=0 to
+      // undo). Stored per browser, so your own testing stops being counted as
+      // "visitors". Nothing identifying is stored — just this flag.
+      const optOut = params.get("notrack");
+      if (optOut === "1") window.localStorage.setItem("axle:notrack", "1");
+      if (optOut === "0") window.localStorage.removeItem("axle:notrack");
+      if (window.localStorage.getItem("axle:notrack") === "1") return;
+
       const src = params.get("utm_source") || params.get("source");
       if (src) {
         window.sessionStorage.setItem(STORAGE_KEY, src);
@@ -37,6 +46,7 @@ export function UtmTracker() {
         source: trackedSrc || undefined,
         event: "page_view",
         ref,
+        path: window.location.pathname,
       };
       const body = JSON.stringify(payload);
       if ("sendBeacon" in navigator) {

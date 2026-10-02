@@ -146,6 +146,78 @@ export async function GET(req: Request) {
           /* no-op */
         }
 
+        // Human vs automated page views with daily history (see /api/track).
+        // Classification is a user-agent heuristic and only exists from
+        // `since` onward — earlier traffic was never split, so `since` is
+        // returned for the dashboard to say so instead of implying a total.
+        let traffic: {
+          since: string | null;
+          daily: Array<{ day: string; human: number; automated: number }>;
+          human_7d: number;
+          automated_7d: number;
+          by_host_7d: Array<{ host: string; count: number }>;
+          top_landing_pages_7d: Array<{ path: string; count: number }>;
+        } | null = null;
+        try {
+          const days = Array.from({ length: 14 }, (_, i) =>
+            new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10)
+          ); // newest first
+          const last7 = days.slice(0, 7);
+          const [humanCounts, autoCounts, since, hostMaps, pathMaps] =
+            await Promise.all([
+              Promise.all(
+                days.map((d) =>
+                  redis.get<number>(`axle:stats:split:human:${d}`).catch(() => 0)
+                )
+              ),
+              Promise.all(
+                days.map((d) =>
+                  redis.get<number>(`axle:stats:split:auto:${d}`).catch(() => 0)
+                )
+              ),
+              redis.get<string>("axle:stats:split:since").catch(() => null),
+              Promise.all(
+                last7.map((d) =>
+                  redis.hgetall(`axle:stats:split:host:${d}`).catch(() => null)
+                )
+              ),
+              Promise.all(
+                last7.map((d) =>
+                  redis.hgetall(`axle:stats:split:paths:${d}`).catch(() => null)
+                )
+              ),
+            ]);
+
+          const merge = (maps: Array<Record<string, unknown> | null>) => {
+            const out: Record<string, number> = {};
+            for (const m of maps) {
+              if (!m) continue;
+              for (const [k, v] of Object.entries(m)) {
+                out[k] = (out[k] || 0) + (Number(v) || 0);
+              }
+            }
+            return Object.entries(out).sort((a, b) => b[1] - a[1]);
+          };
+
+          const daily = days.map((day, i) => ({
+            day,
+            human: Number(humanCounts[i] ?? 0),
+            automated: Number(autoCounts[i] ?? 0),
+          }));
+          traffic = {
+            since: typeof since === "string" ? since : null,
+            daily,
+            human_7d: daily.slice(0, 7).reduce((n, d) => n + d.human, 0),
+            automated_7d: daily.slice(0, 7).reduce((n, d) => n + d.automated, 0),
+            by_host_7d: merge(hostMaps).map(([host, count]) => ({ host, count })),
+            top_landing_pages_7d: merge(pathMaps)
+              .slice(0, 15)
+              .map(([path, count]) => ({ path, count })),
+          };
+        } catch {
+          /* no-op */
+        }
+
         return {
           scans_all_time: Number(scansAll ?? 0),
           scans_today: Number(scansToday ?? 0),
@@ -159,6 +231,7 @@ export async function GET(req: Request) {
           scans_by_source,
           views_by_source,
           top_referrers,
+          traffic,
           leads_recent,
         };
       })()

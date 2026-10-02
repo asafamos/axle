@@ -29,6 +29,14 @@ type Summary = {
         scans_by_source: Record<string, number>;
         views_by_source: Record<string, number>;
         top_referrers?: Array<{ referrer: string; count: number }>;
+        traffic?: {
+          since: string | null;
+          daily: Array<{ day: string; human: number; automated: number }>;
+          human_7d: number;
+          automated_7d: number;
+          by_host_7d: Array<{ host: string; count: number }>;
+          top_landing_pages_7d: Array<{ path: string; count: number }>;
+        } | null;
         leads_recent: LeadRecord[];
       }
     | { note: string };
@@ -354,6 +362,88 @@ export default function AdminPage() {
                   Page views by source
                 </h3>
                 <SourceTable data={stats.views_by_source} />
+
+                <h3 className="mt-6 text-sm font-semibold text-slate-700">
+                  Visitors: people vs bots/tools (last 14 days)
+                </h3>
+                {stats.traffic ? (
+                  <>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {stats.traffic.since
+                        ? `Classified since ${stats.traffic.since} (user-agent heuristic — a bot that spoofs a browser still counts as a person). Earlier traffic was never split. Add ?notrack=1 to any URL once in your own browser to stop counting yourself.`
+                        : "No classified traffic yet."}
+                    </p>
+                    <div className="mt-2 flex gap-6 text-sm">
+                      <div>
+                        <span className="text-2xl font-bold tabular-nums text-slate-900">
+                          {stats.traffic.human_7d}
+                        </span>{" "}
+                        <span className="text-slate-500">people · 7 days</span>
+                      </div>
+                      <div>
+                        <span className="text-2xl font-bold tabular-nums text-slate-400">
+                          {stats.traffic.automated_7d}
+                        </span>{" "}
+                        <span className="text-slate-500">bots/tools · 7 days</span>
+                      </div>
+                    </div>
+                    <table className="mt-3 w-full max-w-md text-sm">
+                      <thead className="text-left text-xs uppercase text-slate-500">
+                        <tr>
+                          <th className="py-1">Day (UTC)</th>
+                          <th className="text-right">People</th>
+                          <th className="text-right">Bots/tools</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {stats.traffic.daily.map((d) => (
+                          <tr key={d.day} className="border-b border-slate-100">
+                            <td className="py-1 text-slate-700">{d.day}</td>
+                            <td className="text-right tabular-nums font-medium text-slate-900">
+                              {d.human}
+                            </td>
+                            <td className="text-right tabular-nums text-slate-400">
+                              {d.automated}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {stats.traffic.by_host_7d.length > 0 ? (
+                      <p className="mt-3 text-xs text-slate-600">
+                        People by domain (7d):{" "}
+                        {stats.traffic.by_host_7d
+                          .map((h) => `${h.host} ${h.count}`)
+                          .join(" · ")}
+                      </p>
+                    ) : null}
+                    {stats.traffic.top_landing_pages_7d.length > 0 ? (
+                      <>
+                        <h4 className="mt-3 text-xs font-semibold uppercase text-slate-500">
+                          Top landing pages (people, 7d)
+                        </h4>
+                        <table className="mt-1 w-full max-w-md text-sm">
+                          <tbody>
+                            {stats.traffic.top_landing_pages_7d.map((p) => (
+                              <tr key={p.path} className="border-b border-slate-100">
+                                <td className="py-1 font-mono text-xs text-slate-800">
+                                  {p.path}
+                                </td>
+                                <td className="py-1 text-right tabular-nums text-slate-600">
+                                  {p.count}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  <p className="mt-2 text-sm text-slate-400">
+                    Traffic split unavailable.
+                  </p>
+                )}
 
                 <h3 className="mt-6 text-sm font-semibold text-slate-700">
                   Top referrers (where real traffic comes from)
