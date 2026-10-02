@@ -12,10 +12,16 @@ export function UtmTracker() {
       // Owner opt-out: visit any page once with ?notrack=1 (and ?notrack=0 to
       // undo). Stored per browser, so your own testing stops being counted as
       // "visitors". Nothing identifying is stored — just this flag.
-      const optOut = params.get("notrack");
-      if (optOut === "1") window.localStorage.setItem("axle:notrack", "1");
-      if (optOut === "0") window.localStorage.removeItem("axle:notrack");
-      if (window.localStorage.getItem("axle:notrack") === "1") return;
+      // Isolated in its own try: storage can be blocked (privacy modes), and
+      // that must never disable tracking for everyone else's visit.
+      try {
+        const optOut = params.get("notrack");
+        if (optOut === "1") window.localStorage.setItem("axle:notrack", "1");
+        if (optOut === "0") window.localStorage.removeItem("axle:notrack");
+        if (window.localStorage.getItem("axle:notrack") === "1") return;
+      } catch {
+        /* storage unavailable — track normally */
+      }
 
       const src = params.get("utm_source") || params.get("source");
       if (src) {
