@@ -80,7 +80,10 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           URLS: ${{ inputs.urls || vars.A11Y_SCAN_URLS || '' }}
-          SITE: ${{ inputs.site || vars.A11Y_SITE_URL || 'https://axle-iota.vercel.app' }}
+          # Production lives on axlescan.com; axle-iota.vercel.app now 308-redirects
+          # every page to it, so pointing the monitor there made the sitemap fetch
+          # return a redirect instead of XML and the job fail with "No URLs".
+          SITE: ${{ inputs.site || vars.A11Y_SITE_URL || 'https://axlescan.com' }}
           FAIL_ON: ${{ inputs.fail-on || 'serious' }}
         run: |
           set -o pipefail
@@ -97,7 +100,7 @@ jobs:
           else
             echo "Deriving targets from ${SITE}/sitemap.xml"
             mapfile -t ARR < <(
-              curl -sfS --max-time 30 "${SITE}/sitemap.xml" \
+              curl -sfSL --max-time 30 "${SITE}/sitemap.xml" \
                 | grep -oE '<loc>[^<]+</loc>' \
                 | sed -e 's#</\?loc>##g' -e 's#[[:space:]]##g'
             ) || true
