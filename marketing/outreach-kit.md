@@ -1,5 +1,7 @@
 # axle — Outreach Kit (ready to copy-paste)
 
+> **Note (2026-10-04):** for the Israeli market use `outreach-kit-he.md` instead — it leads with the free Hebrew accessibility-statement generator. The English posts below lead with "free WordPress scanner", which no longer differentiates: several near-identical free axe-core scanners now exist (Tazeen, AccessLens, Adinav, Equalize Digital). Use these only if you post in English-language communities, and consider leading with the AI-written fixes instead.
+
 **Goal:** get the first WordPress site owners in front of the free plugin → convert a few to the $19/mo Site plan. Everything below is written **value-first** (communities ban salesy posts). Post from your own name, engage in replies, don't drop-and-run.
 
 **Core links:**
