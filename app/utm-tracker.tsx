@@ -53,6 +53,10 @@ export function UtmTracker() {
         event: "page_view",
         ref,
         path: window.location.pathname,
+        // Raw campaign tag (utm_source), kept separately from `source` because
+        // the server collapses unknown `source` values into "unknown" — which
+        // makes every tagged outreach link indistinguishable.
+        utm: trackedSrc || undefined,
       };
       const body = JSON.stringify(payload);
       if ("sendBeacon" in navigator) {

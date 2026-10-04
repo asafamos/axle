@@ -157,13 +157,14 @@ export async function GET(req: Request) {
           automated_7d: number;
           by_host_7d: Array<{ host: string; count: number }>;
           top_landing_pages_7d: Array<{ path: string; count: number }>;
+          by_campaign_7d: Array<{ utm: string; count: number }>;
         } | null = null;
         try {
           const days = Array.from({ length: 14 }, (_, i) =>
             new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10)
           ); // newest first
           const last7 = days.slice(0, 7);
-          const [humanCounts, autoCounts, since, hostMaps, pathMaps] =
+          const [humanCounts, autoCounts, since, hostMaps, pathMaps, utmMaps] =
             await Promise.all([
               Promise.all(
                 days.map((d) =>
@@ -184,6 +185,11 @@ export async function GET(req: Request) {
               Promise.all(
                 last7.map((d) =>
                   redis.hgetall(`axle:stats:split:paths:${d}`).catch(() => null)
+                )
+              ),
+              Promise.all(
+                last7.map((d) =>
+                  redis.hgetall(`axle:stats:split:utm:${d}`).catch(() => null)
                 )
               ),
             ]);
@@ -213,6 +219,9 @@ export async function GET(req: Request) {
             top_landing_pages_7d: merge(pathMaps)
               .slice(0, 15)
               .map(([path, count]) => ({ path, count })),
+            by_campaign_7d: merge(utmMaps)
+              .slice(0, 20)
+              .map(([utm, count]) => ({ utm, count })),
           };
         } catch {
           /* no-op */

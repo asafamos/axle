@@ -62,7 +62,13 @@ export async function POST(req: Request) {
   const redis = kv();
   if (!redis) return NextResponse.json({ ok: true, kv: false });
 
-  let payload: { source?: string; event?: string; ref?: string; path?: string } = {};
+  let payload: {
+    source?: string;
+    event?: string;
+    ref?: string;
+    path?: string;
+    utm?: string;
+  } = {};
   try {
     payload = await req.json();
   } catch {
@@ -77,6 +83,11 @@ export async function POST(req: Request) {
     req.headers.get("x-forwarded-host") || req.headers.get("host"),
   );
   const path = normalizePath(payload.path);
+
+  // Campaign tag from ?utm_source=. Charset/length-bounded like the other
+  // user-supplied keys so the per-day hash can't be bloated or injected into.
+  const utmRaw = typeof payload.utm === "string" ? payload.utm.trim().toLowerCase() : "";
+  const utm = /^[a-z0-9][a-z0-9_-]{0,39}$/.test(utmRaw) ? utmRaw : null;
 
   // External referrer host (validated to a hostname shape to keep the hash
   // bounded and injection-safe). This is the "which channel actually drives
@@ -122,6 +133,10 @@ export async function POST(req: Request) {
       if (path) {
         ops.push(redis.hincrby(`axle:stats:split:paths:${day}`, path, 1));
         ops.push(redis.expire(`axle:stats:split:paths:${day}`, HISTORY_TTL));
+      }
+      if (utm) {
+        ops.push(redis.hincrby(`axle:stats:split:utm:${day}`, utm, 1));
+        ops.push(redis.expire(`axle:stats:split:utm:${day}`, HISTORY_TTL));
       }
     }
   }

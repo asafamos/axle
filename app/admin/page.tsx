@@ -36,6 +36,7 @@ type Summary = {
           automated_7d: number;
           by_host_7d: Array<{ host: string; count: number }>;
           top_landing_pages_7d: Array<{ path: string; count: number }>;
+          by_campaign_7d?: Array<{ utm: string; count: number }>;
         } | null;
         leads_recent: LeadRecord[];
       }
@@ -417,6 +418,15 @@ export default function AdminPage() {
                           .join(" · ")}
                       </p>
                     ) : null}
+                    <p className="mt-2 text-xs text-slate-600">
+                      Tagged links (people, 7d — ?utm_source=…):{" "}
+                      {stats.traffic.by_campaign_7d &&
+                      stats.traffic.by_campaign_7d.length > 0
+                        ? stats.traffic.by_campaign_7d
+                            .map((c) => `${c.utm} ${c.count}`)
+                            .join(" · ")
+                        : "none yet — add ?utm_source=<name> to links you post"}
+                    </p>
                     {stats.traffic.top_landing_pages_7d.length > 0 ? (
                       <>
                         <h4 className="mt-3 text-xs font-semibold uppercase text-slate-500">
