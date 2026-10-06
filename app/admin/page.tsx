@@ -49,6 +49,8 @@ type Summary = {
         revenue_total_minor: number;
         revenue_external_minor?: number;
         revenue_currency: string;
+        other_product_orders_excluded?: number;
+        filtered_to_axle_products?: boolean;
         recent: Array<{
           id: string;
           amount_minor: number;
@@ -239,6 +241,13 @@ export default function AdminPage() {
             )}
             {polar && (
               <>
+                <p className="mt-1 text-xs text-slate-500">
+                  {polar.filtered_to_axle_products === false
+                    ? "Product filter unavailable (no POLAR_PRODUCT_ID_* configured) — showing every order in the Polar org, including other projects."
+                    : polar.other_product_orders_excluded
+                      ? `axle products only. ${polar.other_product_orders_excluded} order(s) for other products in the same Polar org (e.g. Deck Caddie) are excluded.`
+                      : "axle products only."}
+                </p>
                 <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
                   <Stat
                     label="Orders · external"

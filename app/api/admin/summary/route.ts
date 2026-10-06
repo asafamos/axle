@@ -254,6 +254,8 @@ export async function GET(req: Request) {
         revenue_total_minor: number;
         revenue_external_minor: number;
         revenue_currency: string;
+        other_product_orders_excluded: number;
+        filtered_to_axle_products: boolean;
         recent: Array<{
           id: string;
           amount_minor: number;
@@ -281,14 +283,39 @@ export async function GET(req: Request) {
       customerEmail?: string | null;
     };
     const iter = await p.orders.list({ limit: 100 });
-    const orders: PolarOrder[] = [];
+    const allOrders: PolarOrder[] = [];
     for await (const page of iter) {
       const items = (
         page as unknown as { result?: { items?: PolarOrder[] } }
       )?.result?.items;
-      if (Array.isArray(items)) orders.push(...items);
-      if (orders.length >= 100) break;
+      if (Array.isArray(items)) allOrders.push(...items);
+      if (allOrders.length >= 100) break;
     }
+
+    // The Polar organisation is shared with another project (Deck Caddie), so
+    // org-wide orders are not axle sales. Count only orders for the products
+    // this app actually sells — the same env vars the checkout uses, so the
+    // filter follows the configuration. If none are configured we cannot tell
+    // axle products apart, so fall back to everything rather than show zero.
+    const axleProductIds = new Set(
+      [
+        process.env.POLAR_PRODUCT_ID_SITE,
+        process.env.POLAR_PRODUCT_ID_SITE_ANNUAL,
+        process.env.POLAR_PRODUCT_ID_TEAM,
+        process.env.POLAR_PRODUCT_ID_TEAM_ANNUAL,
+        process.env.POLAR_PRODUCT_ID_BUSINESS,
+        process.env.POLAR_PRODUCT_ID_BUSINESS_ANNUAL,
+      ]
+        .map((v) => v?.trim())
+        .filter((v): v is string => Boolean(v)),
+    );
+    const orders =
+      axleProductIds.size > 0
+        ? allOrders.filter((o) =>
+            axleProductIds.has(o.productId || o.product?.id || ""),
+          )
+        : allOrders;
+    const otherProductOrders = allOrders.length - orders.length;
 
     const internalCfg = loadInternalConfig();
     const orderEmail = (o: PolarOrder) =>
@@ -317,6 +344,8 @@ export async function GET(req: Request) {
       revenue_total_minor: revenue,
       revenue_external_minor: revenueExternal,
       revenue_currency: currency,
+      other_product_orders_excluded: otherProductOrders,
+      filtered_to_axle_products: axleProductIds.size > 0,
       recent: orders.slice(0, 10).map((o) => {
         const email = orderEmail(o);
         return {
