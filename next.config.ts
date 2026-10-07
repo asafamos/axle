@@ -35,6 +35,17 @@ const nextConfig: NextConfig = {
         destination: "https://axlescan.com/:path",
         permanent: true,
       },
+      // www is attached to the project too and used to serve the whole site at
+      // 200 (canonical pointed at the apex, so it was harmless but still a second
+      // host for the same content). Send it to the apex, paths and query intact.
+      // Nothing in this repo calls www directly (checked), and 308 preserves the
+      // request method, so this includes /api.
+      {
+        source: "/:path(.*)",
+        has: [{ type: "host", value: "www.axlescan.com" }],
+        destination: "https://axlescan.com/:path",
+        permanent: true,
+      },
     ];
   },
 };
