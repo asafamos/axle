@@ -127,7 +127,12 @@ export default function AdminPage() {
   const polarError = data?.polar && "error" in data.polar ? data.polar.error : null;
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    // This page is built from light-theme slate/white components. Without its own
+    // background it inherited the dark body in dark mode, which left the stat
+    // numbers (inherited #ededed) nearly invisible on their white cards. Pin a
+    // light surface like the other pages do.
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="text-2xl font-bold">axle — admin</h1>
       <p className="mt-1 text-sm text-slate-600">
         Private dashboard. Token lives in localStorage. Set{" "}
@@ -549,6 +554,7 @@ export default function AdminPage() {
           </p>
         </div>
       )}
+      </div>
     </main>
   );
 }
