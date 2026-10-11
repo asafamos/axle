@@ -10,6 +10,10 @@ import {
   type StatementInput,
 } from "@/lib/statement/hebrew-template";
 
+// Same kill switch as /pricing and the homepage: show the paid-plan link only
+// while the Site plan is on sale.
+const SITE_ENABLED = process.env.NEXT_PUBLIC_POLAR_SITE_ENABLED === "1";
+
 type StringField = Exclude<
   keyof StatementInput,
   "adjustments" | "limitations" | "auditorIsExternal" | "standard"
@@ -126,14 +130,14 @@ export default function StatementPage() {
                 מחולל הצהרת נגישות
               </h1>
               <p className="mt-2 text-slate-600">
-                הצהרה חוקית בעברית, תואמת תקנות שוויון זכויות לאנשים עם מוגבלות, תקנה 35. חינם, ללא הרשמה, הכל רץ בדפדפן.
+                טיוטת הצהרה בעברית לפי תקנות שוויון זכויות לאנשים עם מוגבלות, תקנה 35. חינם, ללא הרשמה, הכל רץ בדפדפן.
               </p>
             </div>
             <a
-              href="/"
+              href="/he/bdikat-negishut?utm_source=statement-top"
               className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
             >
-              ← לסריקת נגישות
+              ← לבדיקת נגישות לאתר
             </a>
           </div>
           <p className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
@@ -398,6 +402,34 @@ export default function StatementPage() {
                 </a>
               </div>
             )}
+
+            {/* Bridge. People land here from search, get the statement and leave.
+                A statement describes the site but does not check it, so point
+                them at the next step while they are still looking at the
+                buttons (not below an 80vh scrolling preview). */}
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950">
+              <p className="font-semibold">הצהרה היא חצי מהעבודה</p>
+              <p className="mt-1">
+                ההצהרה מתארת את מצב האתר אבל לא בודקת אותו. כדאי לראות איפה האתר
+                באמת עומד לפני שמפרסמים אותה.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a
+                  href="/he/bdikat-negishut?utm_source=statement-bridge"
+                  className="rounded-md bg-emerald-700 px-3 py-1.5 font-medium text-white hover:bg-emerald-800"
+                >
+                  בדיקת נגישות חינם לאתר ←
+                </a>
+                {SITE_ENABLED ? (
+                  <a
+                    href="/pricing?utm_source=statement-bridge"
+                    className="rounded-md border border-emerald-300 bg-white px-3 py-1.5 font-medium text-emerald-900 hover:bg-emerald-100"
+                  >
+                    תיקונים בקוד לוורדפרס, $19 לחודש ←
+                  </a>
+                ) : null}
+              </div>
+            </div>
 
             {/* Scrollable preview: max-h + overflow-y-auto makes this a scroll
                 region, so it must be keyboard-focusable (axe

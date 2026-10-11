@@ -206,7 +206,8 @@ export default function TakanaPage() {
             <li>
               <strong>סריקה אוטומטית ראשונה</strong>: הריצו את axe-core 4.11 על
               דף הבית + 3-5 דפים מרכזיים. תגלו 30-80 חריגות. 50% מהן פשוטות
-              (חסר alt, חסר label). 50% דורשות עבודה.
+              (חסר alt, חסר label). 50% דורשות עבודה. אפשר להתחיל עכשיו
+              ב-<Link href="/he/bdikat-negishut?utm_source=he-takana" className="underline">בדיקת נגישות חינם בעברית</Link>.
             </li>
             <li>
               <strong>תיקון בקוד המקור</strong>: עריכה של תבניות React/Vue/WP,

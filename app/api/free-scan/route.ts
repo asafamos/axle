@@ -28,32 +28,37 @@ const SUSPICIOUS_TLD = /\.(local|test|invalid|example)$/i;
  * per-email rate limit of 5 scans/day.
  */
 export async function POST(req: Request) {
-  let body: { email?: string; url?: string; source?: string };
+  let body: { email?: string; url?: string; source?: string; locale?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Hebrew landing page sends locale:"he" — it localises the API's own error
+  // messages and the emailed report. Anything else is English.
+  const locale: "en" | "he" = body.locale === "he" ? "he" : "en";
+  const t = (en: string, he: string) => (locale === "he" ? he : en);
+
   const email = String(body.email || "").trim().toLowerCase();
   if (!EMAIL_RE.test(email) || email.length > 254) {
-    return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    return NextResponse.json({ error: t("Invalid email", "כתובת האימייל אינה תקינה") }, { status: 400 });
   }
 
   const rawUrl = String(body.url || "").trim();
   if (!rawUrl || rawUrl.length > URL_MAX) {
-    return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    return NextResponse.json({ error: t("Invalid URL", "כתובת האתר אינה תקינה") }, { status: 400 });
   }
 
   let parsed: URL;
   try {
     parsed = new URL(rawUrl);
   } catch {
-    return NextResponse.json({ error: "Could not parse URL" }, { status: 400 });
+    return NextResponse.json({ error: t("Could not parse URL", "לא הצלחנו לקרוא את כתובת האתר. כדאי להתחיל ב-https://") }, { status: 400 });
   }
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
     return NextResponse.json(
-      { error: "Only http/https URLs are accepted" },
+      { error: t("Only http/https URLs are accepted", "מתקבלות רק כתובות שמתחילות ב-http או https") },
       { status: 400 },
     );
   }
@@ -66,8 +71,10 @@ export async function POST(req: Request) {
   ) {
     return NextResponse.json(
       {
-        error:
+        error: t(
           "Internal/test hostnames are not accepted on the public scan endpoint",
+          "כתובות פנימיות או כתובות בדיקה אינן נתמכות בבדיקה הציבורית",
+        ),
       },
       { status: 400 },
     );
@@ -84,8 +91,10 @@ export async function POST(req: Request) {
       if (used >= 5) {
         return NextResponse.json(
           {
-            error:
+            error: t(
               "Daily free-scan limit reached for this email. Try again tomorrow.",
+              "הגעת למגבלת הבדיקות היומית עבור האימייל הזה. נסו שוב מחר.",
+            ),
           },
           { status: 429 },
         );
@@ -152,8 +161,10 @@ export async function POST(req: Request) {
       ok: true,
       scanned: false,
       host: parsed.hostname,
-      message:
+      message: t(
         "We couldn't load that URL to scan it. Make sure it's a public page (not behind a login) and try again.",
+        "לא הצלחנו לטעון את הכתובת כדי לבדוק אותה. ודאו שזה דף ציבורי (ללא התחברות) ונסו שוב.",
+      ),
     });
   }
 
@@ -172,6 +183,7 @@ export async function POST(req: Request) {
     violations,
     summary: result.summary,
     permalink: result.permalink ?? null,
+    locale,
   });
 
   return NextResponse.json({

@@ -51,6 +51,8 @@ export function GET() {
 - [Ustawa o dostępności (Poland)](https://axlescan.com/guides/eaa-poland): Polish transposition, UOKiK turnover-linked fines, 38M consumers
 - [Lov om tilgængelighed (Denmark)](https://axlescan.com/guides/eaa-denmark): Danish transposition, Digitaliseringsstyrelsen + Forbrugerombudsmanden
 - [תקנה 35 (Israel, Hebrew)](https://axlescan.com/he/takana-35): Israeli regulation 35, statement requirements, enforcement
+- [בדיקת נגישות לאתר (Hebrew free scan)](https://axlescan.com/he/bdikat-negishut): free Hebrew-language WCAG 2.2 AA website accessibility check with axe-core; results shown instantly and emailed in Hebrew
+- [מחולל הצהרת נגישות (Hebrew statement generator)](https://axlescan.com/statement): free in-browser draft of an Israeli accessibility statement (regulation 35), for review by legal counsel
 
 ## Stack-specific guides
 

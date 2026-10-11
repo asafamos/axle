@@ -352,7 +352,7 @@ export async function sendKeyDeliveryFailureAlert(alert: {
  * "queue it and a human operator emails it manually" design, under which the
  * report was, in practice, never sent at all.
  */
-export async function sendScanReportEmail(opts: {
+export type ScanReportOpts = {
   to: string;
   url: string;
   violations: Array<{
@@ -364,9 +364,14 @@ export async function sendScanReportEmail(opts: {
   }>;
   summary: { critical: number; serious: number; moderate: number; minor: number };
   permalink?: string | null;
-}): Promise<void> {
+  /** "he" sends the report in Hebrew (RTL); anything else is English. */
+  locale?: "en" | "he";
+};
+
+export async function sendScanReportEmail(opts: ScanReportOpts): Promise<void> {
   const r = resend();
   if (!r) return;
+  if (opts.locale === "he") return sendScanReportEmailHe(r, opts);
 
   const esc = (str: string) =>
     str.replace(
@@ -470,6 +475,131 @@ export async function sendScanReportEmail(opts: {
   } catch (err) {
     console.warn(
       `[email] scan report to ${opts.to} threw: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+}
+
+const IMPACT_HE: Record<string, string> = {
+  critical: "קריטי",
+  serious: "חמור",
+  moderate: "בינוני",
+  minor: "קל",
+};
+
+/**
+ * Hebrew (RTL) variant of the free-scan report. Same data and best-effort
+ * contract as {@link sendScanReportEmail}: never throws, the results are also
+ * shown on the page. Rule ids and their one-line descriptions come from axe-core
+ * and stay in English (the email says so) — they link to the full rule docs.
+ */
+async function sendScanReportEmailHe(r: Resend, opts: ScanReportOpts): Promise<void> {
+  const esc = (str: string) =>
+    str.replace(
+      /[&<>"']/g,
+      (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ||
+        c,
+    );
+
+  let host = opts.url;
+  try {
+    host = new URL(opts.url).hostname;
+  } catch {
+    /* keep the raw url as the label */
+  }
+
+  const total = opts.violations.length;
+  const s = opts.summary;
+  const site = siteUrl();
+  const pluginUrl =
+    "https://wordpress.org/plugins/asafamos-accessibility-scanner/";
+  const statementUrl = `${site}/statement?utm_source=scan-email-he`;
+  const pricingUrl = `${site}/pricing?utm_source=scan-email-he`;
+  const top = opts.violations.slice(0, 12);
+  const elements = (n: number) => (n === 1 ? "אלמנט אחד" : `${n} אלמנטים`);
+  const level = (v: { impact: string | null }) =>
+    IMPACT_HE[v.impact || ""] || "בעיה";
+
+  const headline =
+    total === 0
+      ? "לא זוהו הפרות WCAG 2.1 / 2.2 AA שניתן לזהות אוטומטית."
+      : `נמצאו ${total} סוגי בעיות: ${s.critical} קריטיות · ${s.serious} חמורות · ${s.moderate} בינוניות · ${s.minor} קלות.`;
+
+  const text = [
+    `בדיקת הנגישות עבור ${host}`,
+    "",
+    headline,
+    total === 0
+      ? "בדיקה אוטומטית תופסת כ-57% מבעיות WCAG, ולכן מומלצת גם בדיקה אנושית."
+      : "",
+    "",
+    ...(top.length
+      ? [
+          "הבעיות המרכזיות (שם הכלל והתיאור באנגלית, כפי שמופיעים ב-axe-core):",
+          ...top.map(
+            (v) => `- [${level(v)}] ${v.id} — ${v.help} (${elements(v.nodeCount)})`,
+          ),
+          "",
+        ]
+      : []),
+    opts.permalink ? `דוח מלא לשיתוף: ${opts.permalink}` : "",
+    "",
+    "מה הלאה:",
+    `- הצהרת נגישות בעברית (טיוטה לבדיקת יועץ משפטי), חינם: ${statementUrl}`,
+    `- התוסף החינמי לוורדפרס: ${pluginUrl}`,
+    `- תיקונים בקוד לכל בעיה, מסלול Site ($19 לחודש): ${pricingUrl}`,
+    "",
+    "אפשר להשיב למייל הזה, והוא מגיע לאדם אמיתי.",
+    "",
+    "זו בדיקה אוטומטית ואינה ייעוץ משפטי או אישור תאימות.",
+  ]
+    .filter((l) => l !== "")
+    .join("\n");
+
+  const rows = top
+    .map(
+      (v) =>
+        `<tr><td style="padding:4px 0 4px 10px;border-bottom:1px solid #eee;white-space:nowrap;"><strong>${esc(level(v))}</strong></td><td style="padding:4px 0;border-bottom:1px solid #eee;"><a href="${esc(v.helpUrl)}" dir="ltr">${esc(v.id)}</a> — <span dir="ltr">${esc(v.help)}</span> <span style="color:#888;">(${elements(v.nodeCount)})</span></td></tr>`,
+    )
+    .join("");
+
+  const html = [
+    `<div dir="rtl" lang="he" style="text-align:right;">`,
+    `<p>בדיקת הנגישות עבור <strong dir="ltr">${esc(host)}</strong>:</p>`,
+    `<p>${esc(headline)}</p>`,
+    total === 0
+      ? `<p style="color:#555;">בדיקה אוטומטית תופסת כ-57% מבעיות WCAG, ולכן מומלצת גם בדיקה אנושית.</p>`
+      : `<p style="color:#555;font-size:13px;">שם הכלל והתיאור מופיעים באנגלית, כפי שהם ב-axe-core, ומקושרים להסבר המלא.</p><table style="border-collapse:collapse;font-size:14px;">${rows}</table>`,
+    opts.permalink
+      ? `<p><a href="${esc(opts.permalink)}">לדוח המלא לשיתוף ←</a></p>`
+      : "",
+    `<p><strong>מה הלאה:</strong></p>`,
+    `<ul><li><a href="${statementUrl}">הצהרת נגישות בעברית</a> (טיוטה לבדיקת יועץ משפטי), חינם.</li><li><a href="${pluginUrl}">התוסף החינמי לוורדפרס</a>.</li><li><a href="${pricingUrl}">מסלול Site ($19 לחודש)</a>: תיקון בקוד לכל בעיה.</li></ul>`,
+    `<p>אפשר להשיב למייל הזה, והוא מגיע לאדם אמיתי.</p>`,
+    `<p style="color:#888;font-size:12px;">זו בדיקה אוטומטית ואינה ייעוץ משפטי או אישור תאימות.</p>`,
+    `</div>`,
+  ].join("");
+
+  try {
+    const { error } = await r.emails.send({
+      from: fromAddress(),
+      replyTo: "asaf@amoss.co.il",
+      to: opts.to,
+      subject:
+        total === 0
+          ? `בדיקת נגישות ל-${host}: לא נמצאו בעיות אוטומטיות`
+          : `בדיקת נגישות ל-${host}: נמצאו ${total} סוגי בעיות`,
+      text,
+      html,
+    });
+    if (error) {
+      console.warn(
+        `[email] he scan report to ${opts.to} rejected: ${typeof error === "object" ? JSON.stringify(error) : String(error)}`,
+      );
+    }
+  } catch (err) {
+    console.warn(
+      `[email] he scan report to ${opts.to} threw: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 }
