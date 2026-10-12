@@ -31,7 +31,7 @@ info:
     agent framework that wants to answer "is this website accessible?".
   version: "1.0.0"
   contact:
-    email: asaf@amoss.co.il
+    email: info@axlescan.com
   license:
     name: MIT (extension code) / proprietary (hosted scan service)
     url: https://axlescan.com/terms

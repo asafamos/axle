@@ -187,7 +187,7 @@ export default function CaseStudiesPage() {
               📅 Book a 15-min demo
             </Link>
             <a
-              href="mailto:asaf@amoss.co.il?subject=axle%20early%20adopter%20%E2%80%94%20list%20us"
+              href="mailto:info@axlescan.com?subject=axle%20early%20adopter%20%E2%80%94%20list%20us"
               className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-900 hover:bg-slate-100"
             >
               Email instead

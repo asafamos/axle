@@ -81,7 +81,7 @@ const sections: { title: string; items: QA[] }[] = [
         q: "Who built axle and why?",
         a: (
           <p>
-            axle was built by an independent developer (asaf@amoss.co.il) as a
+            axle was built by an independent developer (info@axlescan.com) as a
             practical alternative to the overlay ecosystem and to the manual-only
             audit firms. EAA 2025 enforcement made continuous compliance a real
             engineering problem — not something you can solve once a year with an
@@ -223,7 +223,7 @@ const sections: { title: string; items: QA[] }[] = [
           <p>
             The Business plan covers most enterprise needs at $299/mo. For true
             self-hosted deployments (air-gapped, VPC-only, no outbound to Anthropic),
-            email asaf@amoss.co.il with the requirement. The GitHub Action itself is
+            email info@axlescan.com with the requirement. The GitHub Action itself is
             already self-hosted-runner-compatible; the piece that needs negotiation
             is the AI-fix backend.
           </p>
@@ -527,8 +527,8 @@ export default function FAQPage() {
           </Link>{" "}
           goes deeper per jurisdiction and stack. For a billing question not
           answered here, email{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
           .
         </p>
@@ -566,8 +566,8 @@ export default function FAQPage() {
           <h2 className="text-xl font-bold text-slate-900">Still have a question?</h2>
           <p className="mt-2 text-sm text-slate-700">
             Email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             . I read every message and usually reply within a day. For compliance or
             legal questions specific to your jurisdiction, I&apos;ll still recommend

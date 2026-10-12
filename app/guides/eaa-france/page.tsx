@@ -247,8 +247,8 @@ export default function FrancePage() {
           <p className="mt-3">
             Mis à jour : 21 avril 2026. Révisé lorsque les textes évoluent. Corrections
             factuelles bienvenues :{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

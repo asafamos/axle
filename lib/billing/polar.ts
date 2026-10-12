@@ -27,7 +27,7 @@ export type PolarPlan = "site" | "team" | "business";
 export type PolarCycle = "monthly" | "annual";
 
 /** Where a customer should turn when they cannot complete a purchase. */
-export const SALES_CONTACT_EMAIL = "asaf@amoss.co.il";
+export const SALES_CONTACT_EMAIL = "info@axlescan.com";
 
 /**
  * A plan the customer asked for that we cannot sell them right now.

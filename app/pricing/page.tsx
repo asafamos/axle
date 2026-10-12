@@ -126,8 +126,8 @@ export default function PricingPage() {
                   The free tier is already self-hosted (the GitHub Action runs
                   in your runner, the CLI runs anywhere). For air-gapped /
                   on-prem AI-fix backends, contact{" "}
-                  <a className="underline" href="mailto:asaf@amoss.co.il">
-                    asaf@amoss.co.il
+                  <a className="underline" href="mailto:info@axlescan.com">
+                    info@axlescan.com
                   </a>
                   .
                 </>

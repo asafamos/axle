@@ -116,8 +116,8 @@ export default function CertifiedPage() {
             </li>
             <li>
               <strong>Apply.</strong> Email{" "}
-              <a className="underline" href="mailto:asaf@amoss.co.il?subject=axle%20Certified%20application">
-                asaf@amoss.co.il
+              <a className="underline" href="mailto:info@axlescan.com?subject=axle%20Certified%20application">
+                info@axlescan.com
               </a>{" "}
               with: domain, description (under 200 chars), category, and a
               link to your most recent <code>/r/&lt;id&gt;</code> scan result.

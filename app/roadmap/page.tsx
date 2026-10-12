@@ -158,8 +158,8 @@ export default function RoadmapPage() {
 
         <p className="text-sm text-slate-600">
           Disagree with what&apos;s in or out?{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>{" "}
           — happy to discuss. The roadmap above is opinionated but
           falsifiable. Comparison-shopping?{" "}

@@ -489,8 +489,8 @@ package = "axle-netlify-plugin"
           <p className="mt-3 text-slate-700">
             Lost the key? It&apos;s in the welcome email under subject
             &ldquo;Your axle API key&rdquo;. If you can&apos;t find it, email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>{" "}
             with the email used at checkout.
           </p>
@@ -529,7 +529,7 @@ package = "axle-netlify-plugin"
 
         <footer className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-500">
           Updated: 27 April 2026.{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
+          <a className="underline" href="mailto:info@axlescan.com">
             Documentation feedback
           </a>{" "}
           welcome.

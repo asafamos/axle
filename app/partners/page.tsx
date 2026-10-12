@@ -110,8 +110,8 @@ export default function PartnersPage() {
           <ol className="mt-3 list-decimal space-y-2 ps-6 text-slate-700">
             <li>
               <strong>Apply.</strong> Email{" "}
-              <a className="underline" href="mailto:asaf@amoss.co.il?subject=axle%20partners%20application">
-                asaf@amoss.co.il
+              <a className="underline" href="mailto:info@axlescan.com?subject=axle%20partners%20application">
+                info@axlescan.com
               </a>{" "}
               with a link to your work, audience, and the channels you&apos;d use
               to refer (blog, podcast, conference, agency newsletter, etc.).
@@ -153,14 +153,14 @@ export default function PartnersPage() {
           </h2>
           <p className="mt-2 text-sm text-emerald-900">
             No formal application. Email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il?subject=axle%20partners%20application">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com?subject=axle%20partners%20application">
+              info@axlescan.com
             </a>{" "}
             with: who you are, your audience / channel, and a link to your work.
             We approve manually within 2 business days. Quality over volume.
           </p>
           <a
-            href="mailto:asaf@amoss.co.il?subject=axle%20partners%20application"
+            href="mailto:info@axlescan.com?subject=axle%20partners%20application"
             className="mt-4 inline-block rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
           >
             Apply by email →

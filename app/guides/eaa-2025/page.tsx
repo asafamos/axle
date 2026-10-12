@@ -472,8 +472,8 @@ export default function EaaGuidePage() {
           <p className="mt-3">
             Updated: 20 April 2026. Revised when the law or EN 301 549
             changes. Factual corrections welcome:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

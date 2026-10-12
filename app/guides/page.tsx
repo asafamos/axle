@@ -300,8 +300,8 @@ export default function GuidesHub() {
             coverage for another EU member state, a stack (Vue, Svelte, Rails,
             Django, .NET), or a specific industry vertical (fintech, healthcare,
             edtech), email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>{" "}
             with the market context. Practical case studies help prioritisation.
           </p>

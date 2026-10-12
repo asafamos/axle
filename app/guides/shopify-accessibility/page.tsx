@@ -259,8 +259,8 @@ export default function ShopifyAccessibilityPage() {
             Updated: 21 April 2026. Covers Shopify themes on Online Store 2.0 (OS 2.0).
             Pre-OS-2.0 themes follow broadly similar patterns but section / block
             structure differs.{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

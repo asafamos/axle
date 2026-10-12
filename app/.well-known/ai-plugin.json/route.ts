@@ -31,7 +31,7 @@ export function GET() {
       url: "https://axlescan.com/openapi.yaml",
     },
     logo_url: "https://axlescan.com/opengraph-image",
-    contact_email: "asaf@amoss.co.il",
+    contact_email: "info@axlescan.com",
     legal_info_url: "https://axlescan.com/terms",
   };
   return NextResponse.json(manifest);

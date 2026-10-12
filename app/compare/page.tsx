@@ -320,8 +320,8 @@ export default function ComparePage() {
             <strong>Disclosure:</strong> this comparison is published by axle.
             Where alternatives are genuinely better for a specific scenario,
             we&apos;ve said so above. Factual corrections / disagreements:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

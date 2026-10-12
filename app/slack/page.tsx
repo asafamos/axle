@@ -74,8 +74,8 @@ export default function SlackPage({
         {installError ? (
           <div className="mt-6 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-900">
             Install failed: {installError}. Try again or reach out to{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </div>

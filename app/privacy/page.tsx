@@ -151,8 +151,8 @@ export default function PrivacyPage() {
           <li>
             Published statements: indefinite, until you ask us to remove them
             by emailing{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </li>
@@ -162,8 +162,8 @@ export default function PrivacyPage() {
         <p>
           If you are in the EU, UK, Israel, or another jurisdiction with a
           right-to-access / right-to-delete regime, email{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
           . We will respond within 30 days. Given the minimal data surface,
           most requests can be handled by simply deleting your API key record
@@ -173,8 +173,8 @@ export default function PrivacyPage() {
         <h2>Contact</h2>
         <p>
           Privacy-related questions:{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
           .
         </p>

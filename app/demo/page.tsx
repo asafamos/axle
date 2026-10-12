@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/demo" },
 };
 
-const MAILTO = `mailto:asaf@amoss.co.il?subject=${encodeURIComponent(
+const MAILTO = `mailto:info@axlescan.com?subject=${encodeURIComponent(
   "axle — 15-min demo call",
 )}&body=${encodeURIComponent(
   [
@@ -99,7 +99,7 @@ export default function DemoPage() {
           href={MAILTO}
           className="mt-5 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white hover:bg-slate-800"
         >
-          📅 Email to book — asaf@amoss.co.il
+          📅 Email to book — info@axlescan.com
         </a>
         <p className="mt-3 text-sm text-slate-600">
           The email opens with a pre-filled form so we get the right context

@@ -281,8 +281,8 @@ export default function BestWordPressAccessibilityPluginsPage() {
         <footer className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-500">
           Updated: 19 September 2026. Made by the axle team; comparisons are our
           honest read of the category, not endorsements.{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
         </footer>
       </article>

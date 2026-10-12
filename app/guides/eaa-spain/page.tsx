@@ -227,8 +227,8 @@ export default function SpainPage() {
           <p className="mt-3">
             Actualizado: 21 de abril de 2026. Revisado cuando las normas evolucionan.
             Correcciones fácticas bienvenidas:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

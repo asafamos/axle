@@ -322,8 +322,8 @@ jobs:
             Updated: 21 April 2026. Covers Next.js 14–16. App Router patterns shown; Pages
             Router is broadly similar but focus-management timing differs. Feedback
             welcome:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

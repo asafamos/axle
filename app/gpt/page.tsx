@@ -166,8 +166,8 @@ async function runAxleScan(url: string) {
           <p className="mt-3 text-sm text-slate-700">
             If you ship a public ChatGPT GPT or Claude integration that uses
             axle, email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>{" "}
             and we&apos;ll feature it in our docs / certified directory. The
             partner program ({" "}

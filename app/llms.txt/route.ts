@@ -93,7 +93,7 @@ export function GET() {
 
 ## Contact
 
-Questions: asaf@amoss.co.il
+Questions: info@axlescan.com
 `;
   return new NextResponse(body, {
     status: 200,

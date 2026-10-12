@@ -188,8 +188,8 @@ or affected URL pattern.`}
             white-label the consent-decree language with your firm&apos;s
             template + provide a dedicated integration point for retrieving
             scan reports during ongoing-compliance review. Email{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il?subject=axle%20-%20law%20firm%20partnership">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com?subject=axle%20-%20law%20firm%20partnership">
+              info@axlescan.com
             </a>{" "}
             to discuss.
           </p>
@@ -223,7 +223,7 @@ or affected URL pattern.`}
 
         <section className="mt-12 flex flex-wrap gap-3">
           <a
-            href="mailto:asaf@amoss.co.il?subject=axle%20-%20law%20firm%20partnership"
+            href="mailto:info@axlescan.com?subject=axle%20-%20law%20firm%20partnership"
             className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
           >
             Email re: firm partnership

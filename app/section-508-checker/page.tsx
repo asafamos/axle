@@ -228,8 +228,8 @@ export default function Section508CheckerPage() {
           </p>
           <p className="mt-3">
             Updated: 27 April 2026.{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
           </p>
         </footer>

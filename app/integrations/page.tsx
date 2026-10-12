@@ -181,8 +181,8 @@ export default function IntegrationsPage() {
                 token + email pair as Basic auth. The same
                 violation-to-issue script structure works — just swap the
                 Linear GraphQL call for the Jira REST call. Email{" "}
-                <a className="underline" href="mailto:asaf@amoss.co.il">
-                  asaf@amoss.co.il
+                <a className="underline" href="mailto:info@axlescan.com">
+                  info@axlescan.com
                 </a>{" "}
                 if you want a starter template for your specific Jira
                 workflow.
@@ -231,8 +231,8 @@ export default function IntegrationsPage() {
           </ul>
           <p className="mt-3 text-sm text-slate-700">
             Vote / request priority by emailing{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il?subject=axle%20integration%20request">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com?subject=axle%20integration%20request">
+              info@axlescan.com
             </a>
             . The thing customers ask for first is the thing we build first.
           </p>

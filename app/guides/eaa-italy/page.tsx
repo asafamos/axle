@@ -229,8 +229,8 @@ export default function ItalyPage() {
           <p className="mt-3">
             Aggiornato: 21 aprile 2026. Rivisto quando evolvono le normative. Correzioni
             fattuali benvenute:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

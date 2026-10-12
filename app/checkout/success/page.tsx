@@ -110,7 +110,7 @@ export default async function CheckoutSuccessPage({
         <p className="mt-3 text-center text-sm text-emerald-700">
           {apiKey
             ? "If you'd rather work from email, the same key is on its way to your inbox (subject: \"Your axle API key — welcome\")."
-            : "If it doesn't arrive in 2 minutes, check spam — or reply to this email at asaf@amoss.co.il and we'll resend manually."}
+            : "If it doesn't arrive in 2 minutes, check spam — or reply to this email at info@axlescan.com and we'll resend manually."}
         </p>
 
         {plan === "site" && (
@@ -177,7 +177,7 @@ export default async function CheckoutSuccessPage({
           <p className="mt-4 text-center text-xs text-red-700">
             Note: couldn&apos;t load full session details ({error}). This
             doesn&apos;t affect your subscription. If your key didn&apos;t
-            arrive, email asaf@amoss.co.il.
+            arrive, email info@axlescan.com.
           </p>
         )}
       </div>

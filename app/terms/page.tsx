@@ -119,8 +119,8 @@ export default function TermsPage() {
         <h2>11. Contact</h2>
         <p>
           Questions about these terms:{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
           .
         </p>

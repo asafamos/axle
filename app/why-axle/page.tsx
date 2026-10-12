@@ -234,7 +234,7 @@ export default function WhyAxlePage() {
             </Link>
           </div>
           <p className="mt-4 text-sm text-slate-600">
-            Questions? <a className="underline" href="mailto:asaf@amoss.co.il">asaf@amoss.co.il</a>{" "}— or comparison-shop at <Link className="underline" href="/compare">/compare</Link>.
+            Questions? <a className="underline" href="mailto:info@axlescan.com">info@axlescan.com</a>{" "}— or comparison-shop at <Link className="underline" href="/compare">/compare</Link>.
           </p>
         </div>
       </article>

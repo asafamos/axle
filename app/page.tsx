@@ -758,7 +758,7 @@ function PricingPreview() {
       highlight: false,
       onClick: () =>
         (window.location.href =
-          "mailto:asaf@amoss.co.il?subject=axle%20Business%20plan"),
+          "mailto:info@axlescan.com?subject=axle%20Business%20plan"),
     },
   ];
   return (

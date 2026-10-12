@@ -335,8 +335,8 @@ export default function TakanaPage() {
           </p>
           <p className="mt-3">
             עודכן: 20 באפריל 2026. מתעדכן כשחקיקה משתנה. תגובה על טעויות עובדתיות:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

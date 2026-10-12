@@ -346,8 +346,8 @@ export default function WebAccessibilityAuditPage() {
           </p>
           <p className="mt-3">
             Updated: 22 April 2026. Factual corrections:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

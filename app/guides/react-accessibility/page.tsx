@@ -315,8 +315,8 @@ jobs:
             (pre-hooks) are broadly similar; the <code>useEffect</code> + <code>useId</code>{" "}
             hooks map to <code>componentDidMount</code> + a stable instance id.
             Feedback:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

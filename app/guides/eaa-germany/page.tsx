@@ -261,8 +261,8 @@ export default function GermanyPage() {
           <p className="mt-3">
             Updated: 21 April 2026. Revised when statutes or enforcement guidance
             change. Factual corrections welcome:{" "}
-            <a className="underline" href="mailto:asaf@amoss.co.il">
-              asaf@amoss.co.il
+            <a className="underline" href="mailto:info@axlescan.com">
+              info@axlescan.com
             </a>
             .
           </p>

@@ -133,7 +133,7 @@ export async function sendLeadNotificationEmail(lead: {
   try {
     const r = resend();
     if (!r) return; // no RESEND_API_KEY — nothing to do
-    const to = process.env.LEAD_NOTIFY_TO?.trim() || "asaf@amoss.co.il";
+    const to = process.env.LEAD_NOTIFY_TO?.trim() || "info@axlescan.com";
     const site = siteUrl();
     const host = (() => {
       try {
@@ -239,7 +239,7 @@ export async function sendApiKeyEmail(opts: {
     // The sending domain (e.g. a send-only subdomain like axle.amoss.co.il) has
     // no inbox, so a bare "reply to this email" would bounce. Route replies to a
     // real mailbox that Asaf reads — this must match the address named in the body.
-    replyTo: "asaf@amoss.co.il",
+    replyTo: "info@axlescan.com",
     to: opts.to,
     subject: `Your axle API key — welcome to ${planName}`,
     text: [
@@ -253,7 +253,7 @@ export async function sendApiKeyEmail(opts: {
       "",
       `Manage your subscription anytime at ${accountUrl}.`,
       "",
-      "If anything's broken, just reply to this email — it goes to a real human. asaf@amoss.co.il",
+      "If anything's broken, just reply to this email — it goes to a real human. info@axlescan.com",
       "",
       "axle provides remediation assistance, not a compliance certificate.",
     ].join("\n"),
@@ -263,7 +263,7 @@ export async function sendApiKeyEmail(opts: {
       `<pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-family:monospace;user-select:all;word-break:break-all;">${opts.apiKey}</pre>`,
       howToHtml,
       `<p><a href="${accountUrl}">Manage your subscription</a> anytime.</p>`,
-      `<p>If anything's broken, just reply to this email — it goes to a real human at <a href="mailto:asaf@amoss.co.il">asaf@amoss.co.il</a>.</p>`,
+      `<p>If anything's broken, just reply to this email — it goes to a real human at <a href="mailto:info@axlescan.com">info@axlescan.com</a>.</p>`,
       `<p style="color:#888;font-size:12px;">axle provides remediation assistance, not a compliance certificate.</p>`,
     ].join(""),
   });
@@ -303,7 +303,7 @@ export async function sendKeyDeliveryFailureAlert(alert: {
       );
       return;
     }
-    const to = process.env.LEAD_NOTIFY_TO?.trim() || "asaf@amoss.co.il";
+    const to = process.env.LEAD_NOTIFY_TO?.trim() || "info@axlescan.com";
     const payload = {
       to,
       subject: `⚠️ axle: ${alert.email} paid but did NOT receive their key`,
@@ -458,7 +458,7 @@ export async function sendScanReportEmail(opts: ScanReportOpts): Promise<void> {
     const from = fromAddress();
     const { error } = await r.emails.send({
       from,
-      replyTo: "asaf@amoss.co.il",
+      replyTo: "info@axlescan.com",
       to: opts.to,
       subject:
         total === 0
@@ -583,7 +583,7 @@ async function sendScanReportEmailHe(r: Resend, opts: ScanReportOpts): Promise<v
   try {
     const { error } = await r.emails.send({
       from: fromAddress(),
-      replyTo: "asaf@amoss.co.il",
+      replyTo: "info@axlescan.com",
       to: opts.to,
       subject:
         total === 0

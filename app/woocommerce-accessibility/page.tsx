@@ -204,8 +204,8 @@ export default function WooCommerceAccessibilityPage() {
 
         <footer className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-500">
           Updated: 1 September 2026.{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
         </footer>
       </article>

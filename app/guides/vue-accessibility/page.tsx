@@ -368,8 +368,8 @@ jobs:
 
         <footer className="mt-12 border-t border-slate-200 pt-6 text-sm text-slate-500">
           Updated: 22 April 2026. Covers Vue 3.5+ and Nuxt 3.14+. Not legal advice.{" "}
-          <a className="underline" href="mailto:asaf@amoss.co.il">
-            asaf@amoss.co.il
+          <a className="underline" href="mailto:info@axlescan.com">
+            info@axlescan.com
           </a>
           .
         </footer>
