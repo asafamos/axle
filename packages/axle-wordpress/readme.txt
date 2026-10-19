@@ -4,7 +4,7 @@ Tags: accessibility, accessibility checker, wcag, ada, a11y
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.4
+Stable tag: 1.3.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -19,6 +19,7 @@ Free WordPress accessibility checker: scan for WCAG 2.1/2.2 AA & ADA issues with
 * Loads the target page in a hidden iframe inside your WP admin and evaluates it with bundled axe-core 4.11. Nothing leaves your server during a normal scan.
 * Reports every violation grouped by severity (critical / serious / moderate / minor).
 * Links to axe-core documentation for each rule so you can fix it in your theme or content.
+* **New in 1.3:** a **Generate AI fix** button on every violation. Click it and Claude suggests the exact before / after code change for that element. Nothing is sent until you click — see &ldquo;Optional features&rdquo; below for exactly what is transmitted. Fixes are suggested code changes; you (or your developer) apply them in your theme or content.
 * Optional daily cron re-scans (off by default — see &ldquo;Optional features&rdquo; below for what it does and does not transmit).
 * Works with any theme, any page builder, any caching plugin.
 
@@ -36,7 +37,7 @@ Overlay widgets (the &ldquo;robot button&rdquo; you've seen on other sites) inje
 
 The plugin itself is free. Unlimited scans, optional daily cron, full per-rule violation report — all included.
 
-A separate hosted service at https://axlescan.com offers Claude-generated code-fix suggestions per violation. That service is not part of this plugin and is not used by the default scan flow. If you sign up there and obtain an API key, you can paste it in this plugin's Settings; it is then only used during the optional cron / hosted-scan path described below.
+A separate hosted service at https://axlescan.com generates the AI fix suggestions. The service is not part of this plugin and is never contacted by the default scan flow. A small number of AI fixes per day is free without an account. For unlimited fixes, the axle Site plan ($19/month) gives you an API key that you paste in this plugin's Settings; it is then sent with your fix requests and with the optional cron scan, both described below.
 
 **Not a compliance certificate**
 
@@ -67,11 +68,21 @@ This is the full and accurate transmission story for every feature. The default 
 * No visitor data, form data, or admin content is sent. Only the configured target URL.
 * Disabled by default. Setting can be turned off again at any time.
 
-**Service provider for #2 (the opt-in daily cron only):** axle (https://axlescan.com)
+**3. &ldquo;Generate AI fix&rdquo; button — only when an administrator clicks it**
+
+* Nothing is sent when the page loads or when a scan runs. A request is made only when a user with the `manage_options` capability clicks the &ldquo;Generate AI fix&rdquo; button on a violation row.
+* Your WordPress server then sends one request to `POST https://axlescan.com/api/fix`. The request contains: the axe-core rule id, impact, description, help text and documentation link for that violation; **one** element&rsquo;s HTML (truncated to 500 characters), its CSS selector, and axe-core&rsquo;s failure summary for that element.
+* If you entered an axle API key in Settings, it is sent in an `x-axle-key` header so the service can apply your plan. Without a key the free daily allowance is used.
+* **Not sent:** your site URL, other pages, visitor data, form data, WordPress users, passwords or any other admin content.
+* The service passes the violation text and the element snippet to Anthropic&rsquo;s Claude API to generate the suggested change, and returns the suggestion to your admin screen. The suggestion is displayed as plain text and is never applied to your site automatically.
+* No fix is requested unless you click, and you can stop using the feature at any time simply by not clicking it.
+
+**Service provider for #2 (the opt-in daily cron) and #3 (the Generate AI fix button):** axle (https://axlescan.com)
+**Sub-processor for #3:** Anthropic (https://www.anthropic.com/legal/privacy)
 **Terms of use:** https://axlescan.com/terms
 **Privacy policy:** https://axlescan.com/privacy
 
-You may disable all external communication by deactivating the plugin, by turning off Auto scan and not clicking Scan now, or by blocking the host `axlescan.com` at the network level.
+You may disable all external communication by deactivating the plugin, by turning off Auto scan and not clicking &ldquo;Generate AI fix&rdquo;, or by blocking the host `axlescan.com` at the network level.
 
 == Frequently Asked Questions ==
 
@@ -81,11 +92,15 @@ No. The bundled axe-core engine is loaded only inside your WordPress admin pages
 
 = What data leaves my site by default? =
 
-By default, **nothing**. The Scan now button runs entirely client-side in your admin browser via a hidden iframe — no analytics, no tracking, no calls to any external server. The only optional feature that contacts a server is the opt-in daily cron (Off by default), described in the &ldquo;Optional features&rdquo; section.
+By default, **nothing**. The Scan now button runs entirely client-side in your admin browser via a hidden iframe — no analytics, no tracking, no calls to any external server. Only two optional features contact a server: the opt-in daily cron (Off by default) and the &ldquo;Generate AI fix&rdquo; button, which sends data only when an administrator clicks it. Both are described in the &ldquo;Optional features&rdquo; section with the exact contents of each request.
 
 = Do I need an account? =
 
-No. The plugin works without any signup. The optional Claude-generated code-fix feature requires a paid axle API key entered in Settings, but you do not need it to scan.
+No. Scanning works without any signup. The &ldquo;Generate AI fix&rdquo; button also works without an account for a few fixes per day; for unlimited fixes, paste an axle API key (Site plan) in Settings.
+
+= Does the AI fix change my site automatically? =
+
+No. A fix is a suggested code change shown to you as before / after text. You (or your developer) apply it in your theme, page builder or content. Always review a suggestion before using it — automated suggestions can be wrong, which is why each one shows a confidence level and flags cases that need manual review.
 
 = Does this replace a professional accessibility audit? =
 
@@ -93,7 +108,7 @@ No. Automated scanning catches roughly 57% of WCAG issues. For full compliance, 
 
 = What about GDPR / privacy? =
 
-The plugin does not track you or your visitors and includes no analytics. The default scan flow makes no outbound HTTP requests to any external service. The only optional feature that contacts a server is the opt-in daily cron (Off by default), documented under &ldquo;Optional features&rdquo; with the exact request body.
+The plugin does not track you or your visitors and includes no analytics. The default scan flow makes no outbound HTTP requests to any external service. The only features that contact a server are the opt-in daily cron (Off by default) and the &ldquo;Generate AI fix&rdquo; button (only on click), documented under &ldquo;Optional features&rdquo; with the exact request contents. Visitor data is never involved.
 
 = I'm on LocalWP / staging behind basic auth / a VPN-only host. Will this still work? =
 
@@ -110,6 +125,11 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 3. Settings page with daily auto-scan toggle.
 
 == Changelog ==
+
+= 1.3.0 =
+* New: **Generate AI fix** button on every violation in the results table. On click, the plugin asks the hosted axle service (axlescan.com, powered by Claude) for a suggested before / after code change for that one element, and shows it in an accessible panel under the row. Nothing is sent until an administrator clicks; the request contents are documented in &ldquo;Optional features&rdquo;. Suggestions are plain text and are never applied automatically.
+* A few AI fixes per day are free without an account; the Site plan API key from Settings is forwarded to lift that limit.
+* Scan results now keep the full HTML of each affected element (previously tags such as `input` were stripped on save, which would have given the AI nothing to work with).
 
 = 1.2.4 =
 * Moved the hosted service to its own domain (axlescan.com). The optional daily cron scan and the Site-plan links now use the new address; the free in-browser scanner is unchanged and still transmits nothing.
@@ -141,6 +161,9 @@ The author's WordPress.org username is `asafamos1`. The plugin is part of the `a
 * Settings for target URL, severity threshold, optional API key.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Adds an optional &ldquo;Generate AI fix&rdquo; button per violation. It contacts axlescan.com only when you click it; scanning is unchanged and still transmits nothing. Update recommended.
 
 = 1.2.4 =
 Hosted service moved to axlescan.com. Free scanning is unchanged. Update recommended so the optional cron/Site-plan features use the new address.
