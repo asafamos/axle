@@ -115,10 +115,20 @@ export default async function CheckoutSuccessPage({
 
         {plan === "site" && (
           <div className="mt-6 rounded-md border border-emerald-300 bg-white p-4 text-sm text-emerald-900">
-            <p className="font-semibold">Next step in WordPress:</p>
+            <p className="font-semibold">Next steps:</p>
             <ol className="mt-2 list-decimal space-y-1 ps-5">
               <li>
-                Install the free{" "}
+                Open <Link href="/account" className="underline">/account</Link>{" "}
+                and paste the key above once. It stays in this browser.
+              </li>
+              <li>
+                On the <Link href="/" className="underline">home page</Link>,
+                scan your site&apos;s URL. Every issue gets a{" "}
+                <strong>Fix</strong> button that writes an AI-generated code
+                change.
+              </li>
+              <li>
+                On WordPress? The free{" "}
                 <a
                   className="underline"
                   href="https://wordpress.org/plugins/asafamos-accessibility-scanner/"
@@ -127,14 +137,10 @@ export default async function CheckoutSuccessPage({
                 >
                   AsafAmos Accessibility Scanner
                 </a>{" "}
-                plugin (if you haven&apos;t already).
+                plugin lists the same violations inside wp-admin. The AI fixes
+                themselves are generated here on axlescan.com, not yet inside
+                the plugin.
               </li>
-              <li>
-                In your admin: <strong>Tools → AsafAmos Accessibility
-                Scanner → Settings</strong>.
-              </li>
-              <li>Paste the key above into the &ldquo;axle API key&rdquo; field and save.</li>
-              <li>Click <strong>Scan now</strong> — AI fixes are unlocked for this site.</li>
             </ol>
           </div>
         )}

@@ -90,12 +90,12 @@ export default function PricingClient({
             price={sitePrice}
             cycle={cycle}
             highlight={false}
-            tagline="One website. AI fixes + compliance — no code, no keys."
+            tagline="One website. Hosted AI fixes — no Anthropic key needed."
             saving={cycle === "annual" ? `Save $${siteSaving} / year` : undefined}
             features={[
               "1 website",
               "Hosted AI fixes — no Anthropic key needed",
-              "Unlock inside the WordPress plugin (paste your key)",
+              "Paste your key at /account — AI Fix button on every scan result",
               "Accessibility statement (EN / HE)",
               "Public compliance badge",
               "Unlimited scans",

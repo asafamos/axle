@@ -204,11 +204,11 @@ export async function sendApiKeyEmail(opts: {
   const isSite = opts.plan === "site";
   const howToText = isSite
     ? [
-        "How to use it (in WordPress):",
-        "• In your WP admin, go to Tools → AsafAmos Accessibility Scanner → Settings.",
-        "• Paste this key into the 'axle API key' field and save.",
-        "• Click Scan now — you'll get AI-generated fixes for every violation found.",
-        `• Prefer the browser? Paste the key at ${accountUrl} to scan and fix any URL.`,
+        "How to use it:",
+        `• Open ${accountUrl} and paste this key once. It is stored in your browser.`,
+        `• On ${site}, scan your site's URL. Every issue gets a Fix button that writes an AI-generated code change.`,
+        "• On WordPress? The free AsafAmos Accessibility Scanner plugin lists the same violations inside wp-admin (Tools → AsafAmos Accessibility Scanner). The AI fix generation itself runs on axlescan.com, not yet inside the plugin.",
+        "• The fixes are code changes for your theme or content, so someone needs to apply them. Reply to this email if you want a hand.",
       ]
     : [
         "How to use it:",
@@ -218,12 +218,12 @@ export async function sendApiKeyEmail(opts: {
       ];
   const howToHtml = isSite
     ? [
-        `<h3>How to use it (in WordPress)</h3>`,
+        `<h3>How to use it</h3>`,
         `<ol>`,
-        `<li>In your WP admin, go to <strong>Tools → AsafAmos Accessibility Scanner → Settings</strong>.</li>`,
-        `<li>Paste this key into the <strong>axle API key</strong> field and save.</li>`,
-        `<li>Click <strong>Scan now</strong> — you'll get AI-generated fixes for every violation found.</li>`,
-        `<li>Prefer the browser? Paste the key at <a href="${accountUrl}">${accountUrl}</a> to scan and fix any URL.</li>`,
+        `<li>Open <a href="${accountUrl}">${accountUrl}</a> and paste this key once. It is stored in your browser.</li>`,
+        `<li>On <a href="${site}">${site}</a>, scan your site's URL. Every issue gets a <strong>Fix</strong> button that writes an AI-generated code change.</li>`,
+        `<li>On WordPress? The free <strong>AsafAmos Accessibility Scanner</strong> plugin lists the same violations inside wp-admin (Tools → AsafAmos Accessibility Scanner). The AI fix generation itself runs on axlescan.com, not yet inside the plugin.</li>`,
+        `<li>The fixes are code changes for your theme or content, so someone needs to apply them. Reply to this email if you want a hand.</li>`,
         `</ol>`,
       ].join("")
     : [
