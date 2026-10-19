@@ -137,9 +137,9 @@ export default async function CheckoutSuccessPage({
                 >
                   AsafAmos Accessibility Scanner
                 </a>{" "}
-                plugin lists the same violations inside wp-admin. The AI fixes
-                themselves are generated here on axlescan.com, not yet inside
-                the plugin.
+                plugin (version 1.3 or newer): open Tools → AsafAmos
+                Accessibility Scanner → Settings, paste the key, then click{" "}
+                <strong>Generate AI fix</strong> on any violation.
               </li>
             </ol>
           </div>

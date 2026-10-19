@@ -207,7 +207,7 @@ export async function sendApiKeyEmail(opts: {
         "How to use it:",
         `• Open ${accountUrl} and paste this key once. It is stored in your browser.`,
         `• On ${site}, scan your site's URL. Every issue gets a Fix button that writes an AI-generated code change.`,
-        "• On WordPress? The free AsafAmos Accessibility Scanner plugin lists the same violations inside wp-admin (Tools → AsafAmos Accessibility Scanner). The AI fix generation itself runs on axlescan.com, not yet inside the plugin.",
+        "• On WordPress? In the free AsafAmos Accessibility Scanner plugin (version 1.3 or newer), open Tools → AsafAmos Accessibility Scanner → Settings, paste this key, then click \"Generate AI fix\" on any violation.",
         "• The fixes are code changes for your theme or content, so someone needs to apply them. Reply to this email if you want a hand.",
       ]
     : [
@@ -222,7 +222,7 @@ export async function sendApiKeyEmail(opts: {
         `<ol>`,
         `<li>Open <a href="${accountUrl}">${accountUrl}</a> and paste this key once. It is stored in your browser.</li>`,
         `<li>On <a href="${site}">${site}</a>, scan your site's URL. Every issue gets a <strong>Fix</strong> button that writes an AI-generated code change.</li>`,
-        `<li>On WordPress? The free <strong>AsafAmos Accessibility Scanner</strong> plugin lists the same violations inside wp-admin (Tools → AsafAmos Accessibility Scanner). The AI fix generation itself runs on axlescan.com, not yet inside the plugin.</li>`,
+        `<li>On WordPress? In the free <strong>AsafAmos Accessibility Scanner</strong> plugin (version 1.3 or newer), open Tools → AsafAmos Accessibility Scanner → Settings, paste this key, then click <strong>Generate AI fix</strong> on any violation.</li>`,
         `<li>The fixes are code changes for your theme or content, so someone needs to apply them. Reply to this email if you want a hand.</li>`,
         `</ol>`,
       ].join("")

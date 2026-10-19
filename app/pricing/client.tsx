@@ -95,7 +95,7 @@ export default function PricingClient({
             features={[
               "1 website",
               "Hosted AI fixes — no Anthropic key needed",
-              "Paste your key at /account — AI Fix button on every scan result",
+              "AI Fix button on every scan result — on the web and inside the WordPress plugin",
               "Accessibility statement (EN / HE)",
               "Public compliance badge",
               "Unlimited scans",
