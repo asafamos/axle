@@ -1,6 +1,6 @@
 {
   "name": "axle-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "a11y / WCAG 2.2 AA accessibility CI — scan URLs for accessibility violations with axe-core, generate AI code fixes via Claude. Built for EAA 2025, ADA Title III, Section 508, EN 301 549.",
   "keywords": [
     "accessibility",
@@ -26,7 +26,7 @@
   ],
   "license": "MIT",
   "author": "axle",
-  "homepage": "https://github.com/asafamos/axle",
+  "homepage": "https://axlescan.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asafamos/axle.git",

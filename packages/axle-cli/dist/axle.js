@@ -77,10 +77,10 @@ function shouldFail(result, failOn) {
 function printBanner() {
     console.log("────────────────────────────────────────");
     console.log(" axle — accessibility compliance CI");
-    console.log(" https://axle-iota.vercel.app?utm_source=axle-cli");
+    console.log(" https://axlescan.com?utm_source=axle-cli");
     console.log("────────────────────────────────────────");
 }
-const TELEMETRY_ENDPOINT = "https://axle-iota.vercel.app/api/track";
+const TELEMETRY_ENDPOINT = "https://axlescan.com/api/track";
 const TELEMETRY_TIMEOUT_MS = 1500;
 /**
  * Anonymous attribution ping — lets axle the hosted service see how much
@@ -147,11 +147,31 @@ async function main() {
     await writeFile(args.markdownOut, markdown);
     console.log(`[axle] wrote ${args.jsonOut} and ${args.markdownOut}`);
     console.log(`[axle] ${failing ? "FAILING" : "passing"} (threshold: ${args.failOn})`);
+    // Upsell: when issues were found but no AI fixes were produced (no key, or
+    // --with-ai-fixes not passed), point to the paid plan at the moment of need.
+    if (result.violations.length > 0 && fixes.size === 0) {
+        console.log("");
+        console.log(`[axle] 💡 Get AI-generated code fixes for these ${result.violations.length} issue(s), plus unlimited scans + trend history:`);
+        console.log(`[axle]    https://axlescan.com/pricing?utm_source=axle-cli`);
+    }
     await pingTelemetry("scan_complete");
     process.exit(failing ? 1 : 0);
 }
 main().catch(async (err) => {
-    console.error("[axle] fatal:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    if (/Executable doesn't exist|playwright install/i.test(message)) {
+        // First run on a machine without Playwright's browser: say exactly what to do
+        // instead of dumping a stack trace.
+        console.error("[axle] The headless browser axle uses is not installed yet.");
+        console.error("[axle] Run this once, then re-run your scan:");
+        console.error("[axle]    npx playwright install chromium");
+    }
+    else if (/ERR_CONNECTION_REFUSED/.test(message)) {
+        console.error("[axle] Could not connect to the URL — is your dev server running at that address?");
+    }
+    else {
+        console.error("[axle] fatal:", err);
+    }
     await pingTelemetry("scan_error");
     process.exit(2);
 });

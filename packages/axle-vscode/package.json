@@ -1,12 +1,12 @@
 {
   "name": "axle-a11y",
   "displayName": "axle — a11y / WCAG scanner",
-  "description": "Scan any URL for WCAG 2.2 AA accessibility violations from inside VS Code. Powered by axe-core 4.11. Optional Claude-generated fix suggestions.",
-  "version": "0.1.0",
+  "description": "Scan any URL — or your localhost dev server — for WCAG 2.2 AA accessibility violations from inside VS Code, then click a violation for an AI-suggested code fix. Powered by axe-core 4.11.",
+  "version": "0.2.0",
   "publisher": "asafamos",
   "license": "MIT",
   "icon": "images/icon.png",
-  "homepage": "https://axle-iota.vercel.app",
+  "homepage": "https://axlescan.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/asafamos/axle.git",
@@ -34,7 +34,11 @@
     "linter",
     "ada",
     "eaa",
-    "section-508"
+    "section-508",
+    "ai-fix",
+    "localhost",
+    "nextjs",
+    "react"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -51,6 +55,11 @@
         "category": "axle"
       },
       {
+        "command": "axle.fixViolation",
+        "title": "axle: Generate AI fix for a violation from the last scan",
+        "category": "axle"
+      },
+      {
         "command": "axle.openLastResult",
         "title": "axle: Open last scan result",
         "category": "axle"
@@ -62,18 +71,30 @@
         "axle.defaultUrl": {
           "type": "string",
           "default": "http://localhost:3000",
-          "description": "URL to scan when running 'axle: Scan localhost dev server'."
+          "description": "URL to scan when running 'axle: Scan localhost dev server'. Local and private-network URLs are scanned on your machine with axle-cli."
         },
         "axle.failOn": {
           "type": "string",
-          "enum": ["critical", "serious", "moderate", "minor", "none"],
+          "enum": [
+            "critical",
+            "serious",
+            "moderate",
+            "minor",
+            "none"
+          ],
           "default": "serious",
-          "description": "Severity threshold below which violations are not flagged in the panel."
+          "description": "Lowest severity shown in the main list. Issues below it are not dropped — they are collapsed under \"lower-severity issues\". \"none\" shows everything."
         },
         "axle.apiKey": {
           "type": "string",
           "default": "",
-          "description": "Optional axle API key (Team / Business plans). Without it, the extension uses the public free-scan endpoint with daily limits."
+          "scope": "machine",
+          "description": "Optional axle API key (any paid plan). Lifts the free daily limit on AI fixes. Stored in your user settings, never in the workspace."
+        },
+        "axle.showCiTip": {
+          "type": "boolean",
+          "default": true,
+          "description": "Occasionally (at most weekly, never on your first scan) suggest running axle in CI after a scan that found issues."
         }
       }
     }
@@ -83,12 +104,19 @@
     "watch": "tsc -watch -p ./",
     "vscode:prepublish": "npm run compile",
     "package": "vsce package",
-    "publish": "vsce publish"
+    "publish": "vsce publish",
+    "test": "npm run compile && node --test test/api.test.mjs"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^3.2.0",
     "typescript": "^5"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Scanning a localhost/private URL runs `npx axle-cli` on your machine, so it is disabled until you trust the workspace. Scanning public URLs and generating AI fixes work in any workspace."
+    }
   }
 }

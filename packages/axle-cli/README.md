@@ -10,6 +10,7 @@ npx axle-cli scan https://example.com \
 ```
 
 - No signup. Run locally, in CI, on a cron.
+- First run on a new machine: `npx playwright install chromium` (one-time browser download).
 - `npx axle-cli scan --help` for all options.
 - Works behind any host: localhost, Vercel preview, Netlify preview, production.
 - Produces a machine-readable JSON report and a human-readable markdown report.
@@ -27,10 +28,10 @@ Remediation assistance only. Automated tools catch ~57% of WCAG issues. Human re
 
 At the end of each scan, axle-cli sends a single anonymous ping
 (`{ source: "axle-cli", event: "scan_complete" }`) to
-[axle-iota.vercel.app/api/track](https://axle-iota.vercel.app/api/track)
+[axlescan.com/api/track](https://axlescan.com/api/track)
 so we can see how much the CLI is being used. **No URL, no report contents,
 no user identifiers.** Disable with `AXLE_NO_TELEMETRY=1`.
 
 ---
 
-Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-cli) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-cli)
+Learn more: [axlescan.com](https://axlescan.com?utm_source=axle-cli) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-cli)
