@@ -72,7 +72,7 @@ child.on("exit", (code) => {
   }
   if (code === 1) {
     console.log(
-      "[axle] 💡 Get AI-generated code fixes for these issues, plus unlimited scans + trend history: https://axle-iota.vercel.app/pricing?utm_source=axle-cloudflare"
+      "[axle] 💡 Get AI-generated code fixes for these issues, plus unlimited scans + trend history: https://axlescan.com/pricing?utm_source=axle-cloudflare"
     );
   }
   process.exit(code ?? 0);

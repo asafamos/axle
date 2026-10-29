@@ -31,4 +31,4 @@ Remediation assistance only. Manual human review still recommended for full WCAG
 
 ---
 
-Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-netlify) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-netlify)
+Learn more: [axlescan.com](https://axlescan.com?utm_source=axle-netlify) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-netlify)

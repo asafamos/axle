@@ -1,6 +1,6 @@
 {
   "name": "axle-vercel-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Vercel a11y / WCAG 2.2 AA accessibility build step — scan your deploy preview for accessibility violations on every build, fail the deploy on regressions. Works with Next.js, Astro, Remix, SvelteKit. Built for EAA 2025, ADA, Section 508.",
   "keywords": [
     "vercel",

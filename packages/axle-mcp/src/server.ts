@@ -6,13 +6,13 @@
  * violations as a tool.
  *
  * The server is a thin wrapper over the public scan endpoint at
- *   POST https://axle-iota.vercel.app/api/scan
+ *   POST https://axlescan.com/api/scan
  * — same engine (axe-core 4.11) and same persistence layer that powers
  * the GitHub Action and the /r/<id> shareable certificate URLs.
  *
  * Transport: stdio (standard for MCP servers run by the host app).
  * Configurable via env:
- *   AXLE_API_BASE   — default "https://axle-iota.vercel.app"
+ *   AXLE_API_BASE   — default "https://axlescan.com"
  *   AXLE_API_KEY    — optional Bearer token; removes free-tier rate limits
  *   AXLE_SOURCE     — default "axle-mcp"; passed to the API for telemetry
  */
@@ -23,7 +23,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
-const API_BASE = process.env.AXLE_API_BASE ?? "https://axle-iota.vercel.app";
+const API_BASE = process.env.AXLE_API_BASE ?? "https://axlescan.com";
 const API_KEY = process.env.AXLE_API_KEY;
 const SOURCE = process.env.AXLE_SOURCE ?? "axle-mcp";
 

@@ -1,6 +1,6 @@
 {
   "name": "axle-storybook",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Storybook addon — runs axe-core 4.11 against every story and displays WCAG 2.2 AA violations in a Storybook panel. Same engine as axle CI, so what you see in the panel is what the GitHub Action will block on PR.",
   "license": "MIT",
   "author": "AsafAmos",
@@ -9,7 +9,7 @@
     "url": "https://github.com/asafamos/axle.git",
     "directory": "packages/axle-storybook"
   },
-  "homepage": "https://axle-iota.vercel.app",
+  "homepage": "https://axlescan.com",
   "bugs": {
     "url": "https://github.com/asafamos/axle/issues"
   },
@@ -69,7 +69,7 @@
   },
   "storybook": {
     "displayName": "axle a11y / WCAG",
-    "icon": "https://axle-iota.vercel.app/opengraph-image",
+    "icon": "https://axlescan.com/opengraph-image",
     "supportedFrameworks": [
       "react",
       "vue",

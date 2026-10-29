@@ -1,6 +1,6 @@
 {
   "name": "axle-netlify-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Netlify a11y / WCAG 2.2 AA accessibility build plugin — scan the deploy preview for accessibility violations, fail the build on regressions, post summary to the deploy log. Built for EAA 2025, ADA, Section 508.",
   "keywords": [
     "netlify",

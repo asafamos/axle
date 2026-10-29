@@ -1,6 +1,6 @@
 {
   "name": "axle-cloudflare-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Cloudflare Pages a11y / WCAG 2.2 AA accessibility plugin — scan your preview URL for accessibility violations on every build, fail the deploy on regressions. Built for EAA 2025, ADA, Section 508.",
   "keywords": [
     "cloudflare",

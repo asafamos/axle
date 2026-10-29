@@ -33,7 +33,7 @@ Continuous accessibility compliance for the modern web. Scans every PR for WCAG 
 - `packages/axle-action/` — composite GitHub Action for Marketplace (`asafamos/axle-action`)
 - `packages/axle-cli/` — `@axle/cli` npm package
 - `packages/axle-netlify/` — `@axle/netlify-plugin` Netlify Build Plugin
-- `packages/axle-mcp/` — Model Context Protocol server (Claude Desktop / Cursor / Cline / Continue) — see [`/mcp`](https://axle-iota.vercel.app/mcp)
+- `packages/axle-mcp/` — Model Context Protocol server (Claude Desktop / Cursor / Cline / Continue) — see [`/mcp`](https://axlescan.com/mcp)
 - `packages/axle-storybook/` — Storybook addon, runs axe-core against every story
 - `packages/axle-vscode/` — VS Code extension (Marketplace: `asafamos.axle-a11y`)
 

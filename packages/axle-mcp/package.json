@@ -1,10 +1,10 @@
 {
   "name": "axle-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP (Model Context Protocol) server — exposes the axle WCAG 2.2 AA scanner as a tool for Claude Desktop, Cursor, Cline, and any MCP-compatible agent.",
   "license": "MIT",
   "author": "AsafAmos",
-  "homepage": "https://axle-iota.vercel.app",
+  "homepage": "https://axlescan.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asafamos/axle.git",

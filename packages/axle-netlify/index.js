@@ -66,7 +66,7 @@ export const onPostBuild = async ({ utils, inputs, constants }) => {
 
   const upsell =
     code === 1
-      ? "\n\n💡 Get AI-generated code fixes for these issues, plus unlimited scans + trend history: https://axle-iota.vercel.app/pricing?utm_source=axle-netlify"
+      ? "\n\n💡 Get AI-generated code fixes for these issues, plus unlimited scans + trend history: https://axlescan.com/pricing?utm_source=axle-netlify"
       : "";
   utils.status.show({
     title: "axle",
@@ -76,7 +76,7 @@ export const onPostBuild = async ({ utils, inputs, constants }) => {
 
   if (code === 1) {
     console.log(
-      "[axle] 💡 Get AI-generated code fixes + unlimited scans: https://axle-iota.vercel.app/pricing?utm_source=axle-netlify"
+      "[axle] 💡 Get AI-generated code fixes + unlimited scans: https://axlescan.com/pricing?utm_source=axle-netlify"
     );
     return utils.build.failBuild("axle: accessibility violations detected.");
   }

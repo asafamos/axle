@@ -2,7 +2,7 @@
 
 > WCAG 2.2 AA / ADA / EAA accessibility scanner as an **MCP (Model Context Protocol) server**. Lets Claude Desktop, Cursor, Cline, Continue, and any MCP-compatible agent scan websites for accessibility violations.
 
-Same engine ([axe-core 4.11](https://github.com/dequelabs/axe-core)) and same persistence layer that powers the [axle GitHub Action](https://github.com/marketplace/actions/axle-accessibility-ci) and the [hosted scanner](https://axle-iota.vercel.app).
+Same engine ([axe-core 4.11](https://github.com/dequelabs/axe-core)) and same persistence layer that powers the [axle GitHub Action](https://github.com/marketplace/actions/axle-accessibility-ci) and the [hosted scanner](https://axlescan.com).
 
 ## What this gives your agent
 
@@ -90,7 +90,7 @@ The agent will call `scan_url`, get the structured violation report, summarize b
 
 ## Removing the rate limit
 
-The free tier is 5 scans / day per IP. To remove the limit, get an API key from <https://axle-iota.vercel.app/pricing> and add it to the env:
+The free tier is 5 scans / day per IP. To remove the limit, get an API key from <https://axlescan.com/pricing> and add it to the env:
 
 ```json
 {
@@ -108,7 +108,7 @@ The free tier is 5 scans / day per IP. To remove the limit, get an API key from 
 
 ## Privacy & data flow
 
-When the agent calls `scan_url`, the URL you pass is sent to `https://axle-iota.vercel.app/api/scan`. The axle hosted scanner loads that URL in headless Chromium and runs axe-core 4.11 against it. The scan result (violations, passes, the page title) is persisted to the axle KV store with a public `/r/<id>` permalink so you can share it; the scan _input_ (your URL) is logged for rate-limiting and abuse prevention but is not exposed publicly.
+When the agent calls `scan_url`, the URL you pass is sent to `https://axlescan.com/api/scan`. The axle hosted scanner loads that URL in headless Chromium and runs axe-core 4.11 against it. The scan result (violations, passes, the page title) is persisted to the axle KV store with a public `/r/<id>` permalink so you can share it; the scan _input_ (your URL) is logged for rate-limiting and abuse prevention but is not exposed publicly.
 
 If you don't want the public permalink, scan locally with the [axle CLI](https://www.npmjs.com/package/axle-cli) instead — it runs entirely on your machine.
 

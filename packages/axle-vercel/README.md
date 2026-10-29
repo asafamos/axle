@@ -47,4 +47,4 @@ Remediation assistance only. Automated tools catch ~57% of WCAG issues — manua
 
 ---
 
-Learn more: [axle-iota.vercel.app](https://axle-iota.vercel.app?utm_source=axle-vercel) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-vercel)
+Learn more: [axlescan.com](https://axlescan.com?utm_source=axle-vercel) · [GitHub](https://github.com/asafamos/axle?utm_source=axle-vercel)

@@ -1,6 +1,6 @@
 # axle-storybook
 
-Storybook addon — runs **axe-core 4.11** against every story and shows WCAG 2.2 AA violations in a Storybook panel. Same engine as [axle](https://axle-iota.vercel.app)'s GitHub Action and CLI.
+Storybook addon — runs **axe-core 4.11** against every story and shows WCAG 2.2 AA violations in a Storybook panel. Same engine as [axle](https://axlescan.com)'s GitHub Action and CLI.
 
 ## Why use this and not `@storybook/addon-a11y`
 
@@ -89,7 +89,7 @@ export default preview;
 | Vercel plugin | `axle-vercel-plugin` |
 | WordPress plugin | "AsafAmos Accessibility Scanner" on WP.org |
 | VS Code extension | `axle-a11y` on VS Code Marketplace |
-| Web (no install) | [axle-iota.vercel.app](https://axle-iota.vercel.app) |
+| Web (no install) | [axlescan.com](https://axlescan.com) |
 
 All of these use the same axe-core 4.11 engine and the same rule set, so violations are consistent across surfaces.
 
