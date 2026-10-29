@@ -37,6 +37,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Reject malformed requests before any quota is consumed or the model is
+    // called: the fixer reads violation.nodes[nodeIndex].
+    const requestedIndex = body.nodeIndex ?? 0;
+    if (
+      !Array.isArray(body.violation.nodes) ||
+      !Number.isInteger(requestedIndex) ||
+      requestedIndex < 0 ||
+      !body.violation.nodes[requestedIndex]
+    ) {
+      return NextResponse.json(
+        { error: "violation.nodes[nodeIndex] is required" },
+        { status: 400 }
+      );
+    }
+
     // Tiered access:
     // 1. A subscriber API key (header or cookie) → unlimited, using our
     //    Anthropic key.

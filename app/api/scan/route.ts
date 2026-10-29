@@ -93,6 +93,38 @@ async function checkWebRateLimit(
   return { allowed: true };
 }
 
+/**
+ * Turn Playwright's raw navigation errors (which include a multi-line call
+ * log) into a message a person can act on. Returns null for anything that is
+ * not a "could not load that page" problem, so real bugs still surface as 500s.
+ */
+function explainScanFailure(err: unknown, url: string): string | null {
+  const raw = err instanceof Error ? err.message : String(err);
+  let host = url;
+  try {
+    host = new URL(url).host;
+  } catch {
+    /* keep the raw url */
+  }
+  if (/ERR_NAME_NOT_RESOLVED/.test(raw)) {
+    return `Could not find "${host}" — check the hostname for typos.`;
+  }
+  if (
+    /ERR_CONNECTION_REFUSED|ERR_ADDRESS_UNREACHABLE|ERR_CONNECTION_TIMED_OUT|ERR_CONNECTION_RESET|ERR_CONNECTION_CLOSED/.test(
+      raw
+    )
+  ) {
+    return `The scanner could not connect to ${host}. Hosted scans can only reach public websites — a localhost or private-network address is not reachable from our servers. Scan a deployed/preview URL instead, or run the free CLI on your machine: npx axle-cli scan ${url}`;
+  }
+  if (/ERR_CERT|ERR_SSL/.test(raw)) {
+    return `${host} presented an invalid or untrusted HTTPS certificate, so the page could not be loaded.`;
+  }
+  if (/Timeout \d+ms exceeded|ERR_TIMED_OUT/.test(raw)) {
+    return `${host} did not finish loading in time. Try again, or scan a lighter page.`;
+  }
+  return null;
+}
+
 async function bumpScanStats(source: string): Promise<void> {
   const redis = kv();
   if (!redis) return;
@@ -151,7 +183,19 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await scanUrl(normalized);
+    let result: Awaited<ReturnType<typeof scanUrl>>;
+    try {
+      result = await scanUrl(normalized);
+    } catch (err) {
+      const friendly = explainScanFailure(err, normalized);
+      if (friendly) {
+        return NextResponse.json(
+          { error: friendly, code: "unreachable" },
+          { status: 422 }
+        );
+      }
+      throw err;
+    }
     await bumpScanStats(source);
 
     // Persist the scan for 30 days under an unguessable ID so the user can
