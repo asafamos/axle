@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <article className="prose prose-slate max-w-none">
+    <main className="min-h-screen bg-slate-50">
+      <article className="prose prose-slate mx-auto max-w-3xl px-6 py-12">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
           Legal
         </p>
