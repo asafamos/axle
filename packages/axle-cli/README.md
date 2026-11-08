@@ -10,7 +10,7 @@ npx axle-cli scan https://example.com \
 ```
 
 - No signup. Run locally, in CI, on a cron.
-- First run on a new machine: `npx playwright install chromium` (one-time browser download).
+- Browser: axle uses the Google Chrome or Microsoft Edge already on your machine. With neither, it tells you the exact one-time command to run (`npx playwright@<version> install chromium`, using the version it prints — a browser installed by a different Playwright version is not found).
 - `npx axle-cli scan --help` for all options.
 - Works behind any host: localhost, Vercel preview, Netlify preview, production.
 - Produces a machine-readable JSON report and a human-readable markdown report.

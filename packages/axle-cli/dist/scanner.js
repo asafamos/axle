@@ -7,13 +7,49 @@ function resolveAxeScript() {
     const axePath = require.resolve("axe-core/axe.min.js");
     return readFileSync(axePath, "utf-8");
 }
+/** The Playwright version this CLI is really running — what a matching browser install must name. */
+export function playwrightVersion() {
+    try {
+        return require("playwright/package.json").version;
+    }
+    catch {
+        return "latest";
+    }
+}
+/**
+ * Playwright's bundled Chromium has to match the Playwright version that
+ * `npx axle-cli` resolves (a ^range, so the newest 1.x), and that is easy to get
+ * out of step: `npx playwright install chromium` run inside a project that pins an
+ * older Playwright downloads the wrong revision. So when the bundled browser is
+ * missing, use the Chrome or Edge the developer already has before asking them
+ * to download anything.
+ */
+async function launchBrowser() {
+    try {
+        return await chromium.launch({ headless: true });
+    }
+    catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (!/Executable doesn't exist|playwright install/i.test(message))
+            throw err;
+        for (const channel of ["chrome", "msedge"]) {
+            try {
+                return await chromium.launch({ headless: true, channel });
+            }
+            catch {
+                /* not installed — try the next one */
+            }
+        }
+        throw err;
+    }
+}
 export async function scanUrl(url) {
     if (!/^https?:\/\//i.test(url)) {
         throw new Error("URL must start with http:// or https://");
     }
     let browser = null;
     try {
-        browser = await chromium.launch({ headless: true });
+        browser = await launchBrowser();
         const context = await browser.newContext({
             userAgent: "Mozilla/5.0 (axle/0.1; +https://axle.dev/bot)",
             viewport: { width: 1280, height: 800 },

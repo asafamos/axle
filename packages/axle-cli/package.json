@@ -1,6 +1,6 @@
 {
   "name": "axle-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a11y / WCAG 2.2 AA accessibility CI — scan URLs for accessibility violations with axe-core, generate AI code fixes via Claude. Built for EAA 2025, ADA Title III, Section 508, EN 301 549.",
   "keywords": [
     "accessibility",

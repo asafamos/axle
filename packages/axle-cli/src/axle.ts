@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { writeFile, mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
-import { scanUrl, type AxeViolation, type ScanResult } from "./scanner.js";
+import { scanUrl, playwrightVersion, type AxeViolation, type ScanResult } from "./scanner.js";
 import { generateFix, type FixResult } from "./fixer.js";
 import { renderMarkdown } from "./markdown.js";
 
@@ -199,11 +199,12 @@ async function main() {
 main().catch(async (err) => {
   const message = err instanceof Error ? err.message : String(err);
   if (/Executable doesn't exist|playwright install/i.test(message)) {
-    // First run on a machine without Playwright's browser: say exactly what to do
-    // instead of dumping a stack trace.
-    console.error("[axle] The headless browser axle uses is not installed yet.");
-    console.error("[axle] Run this once, then re-run your scan:");
-    console.error("[axle]    npx playwright install chromium");
+    // No bundled browser and no Chrome/Edge to fall back to: say exactly what to do
+    // instead of dumping a stack trace. The version is pinned to the Playwright this
+    // CLI is running, because a browser installed by any other version is not found.
+    console.error("[axle] axle could not find a browser to run the scan in.");
+    console.error("[axle] Install Google Chrome, or run this once and re-run your scan:");
+    console.error(`[axle]    npx playwright@${playwrightVersion()} install chromium`);
   } else if (/ERR_CONNECTION_REFUSED/.test(message)) {
     console.error(
       "[axle] Could not connect to the URL — is your dev server running at that address?"
