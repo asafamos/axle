@@ -3,19 +3,25 @@ import { publicSiteUrl } from "./stripe";
 
 let client: Polar | null = null;
 
+/**
+ * Polar exposes two server environments: "production" and "sandbox".
+ * Sandbox tokens are prefixed the same but routed to the sandbox API.
+ * We infer from the token's prefix when available; otherwise default to
+ * sandbox, which is safer during development.
+ */
+export function isPolarSandbox(
+  token: string = process.env.POLAR_ACCESS_TOKEN ?? "",
+): boolean {
+  return process.env.POLAR_SERVER === "sandbox" || token.includes("sandbox");
+}
+
 export function polar(): Polar {
   if (client) return client;
   const token = process.env.POLAR_ACCESS_TOKEN;
   if (!token) {
     throw new Error("POLAR_ACCESS_TOKEN not set");
   }
-  // Polar exposes two server environments: "production" and "sandbox".
-  // Sandbox tokens are prefixed the same but routed to the sandbox API.
-  // We infer from the token's prefix when available; otherwise default to
-  // sandbox, which is safer during development.
-  const isSandbox =
-    process.env.POLAR_SERVER === "sandbox" ||
-    token.includes("sandbox");
+  const isSandbox = isPolarSandbox(token);
   client = new Polar({
     accessToken: token,
     server: isSandbox ? "sandbox" : "production",

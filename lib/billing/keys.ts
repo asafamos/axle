@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { kv } from "./kv";
+import { isPolarSandbox } from "./polar";
 
 /**
  * Axle API key format: `axle_<env>_<base64url>`. The plaintext is shown to
@@ -16,10 +17,16 @@ export type KeyRecord = {
   createdAt: number;
 };
 
-function liveOrTest(): "live" | "test" {
-  return process.env.STRIPE_SECRET_KEY?.startsWith("sk_live_")
-    ? "live"
-    : "test";
+/**
+ * Billing runs through Polar now, so "live" means a production Polar token.
+ * This used to look only at STRIPE_SECRET_KEY, which is a leftover: every key
+ * minted for a paying customer came out as `axle_test_…`. A live Stripe key
+ * still counts, for the legacy Stripe webhook.
+ */
+export function liveOrTest(): "live" | "test" {
+  if (process.env.STRIPE_SECRET_KEY?.startsWith("sk_live_")) return "live";
+  const polarToken = process.env.POLAR_ACCESS_TOKEN;
+  return polarToken && !isPolarSandbox(polarToken) ? "live" : "test";
 }
 
 export function generatePlaintextKey(): string {
