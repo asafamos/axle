@@ -4,6 +4,8 @@ export const metadata: Metadata = {
   title: "Privacy policy",
   description:
     "What axle collects, how long we keep it, and what we never do with it.",
+  // Without this the page inherits the root layout's canonical (the home page).
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

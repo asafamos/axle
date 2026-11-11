@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of service",
   description: "axle terms of service and acceptable use policy.",
+  // Without this the page inherits the root layout's canonical (the home page).
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
